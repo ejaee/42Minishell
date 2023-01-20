@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 14:46:26 by choiejae          #+#    #+#             */
-/*   Updated: 2023/01/18 21:31:19 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/01/18 21:41:10 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,19 @@ void print_intro()
 	close(intro_fd);
 }
 
-void	prompt(char *buffer)
+int	getcmd(char *buffer)
 {
-	while (gets(buffer) >= 0)
+	printf("$ ");
+	memset(buffer, 0, sizeof(buffer));
+	gets(buffer);
+	if (buffer[0] == '\0')
+		return -1;
+	return 0;
+}
+
+int	prompt(char *buffer)
+{
+	while (getcmd(buffer) >= 0)
 	{
 		
 	}
@@ -54,6 +64,7 @@ int main(int argc, char **argv, char **env)
 	static char *buffer[1024];
 
 	print_intro();
+	getcmd(buffer);
 
 	// init();
 	// prompt(buffer);
