@@ -6,7 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/08 21:24:48 by ilhna             #+#    #+#              #
-#    Updated: 2022/07/20 16:35:16 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/23 19:30:27 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SOURCES_MANDATORY = \
 			ft_memchr.c      ft_striteri.c       ft_toupper.c \
 			ft_memcmp.c      ft_strjoin.c \
 			ft_memcpy.c      ft_strlcat.c \
+			ft_free_split.c \
 
 SOURCES_BONUS = \
 			ft_lstadd_back.c  \
@@ -45,7 +46,7 @@ OBJECTS_BONUS = $(SOURCES_BONUS:.c=.o)
 ifdef WITH_BONUS
 	OBJ_FILES = $(OBJECTS_MANDATORY) $(OBJECTS_BONUS)
 else
-	OBJ_FILES = $(OBJECTS_MANDATORY)
+	OBJ_FILES = $(OBJECTS_MANDATORY) $(OBJECTS_BONUS)
 endif
 
 .PHONY : all bonus clean fclean re
