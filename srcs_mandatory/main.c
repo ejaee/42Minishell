@@ -18,6 +18,17 @@
 
 #define MAXARGS 10
 
+typedef struct s_env
+{
+	 char *key;
+	 char *value;
+}	t_env;
+
+typedef struct s_config
+{
+	t_list	*env_node;
+}	t_config;
+
 struct cmd
 {
 	int type;
@@ -76,6 +87,27 @@ char *ft_gets(char *buf, int max)
 }
 
 #include <sys/param.h>
+// int builtin_echo(char *const argv[])
+// {
+// }
+
+// int builtin_cd(char *const argv[], t_config config)
+// {
+// 	if (argv[1] == NULL)
+// 	// go to $HOME dir
+// 		goto_home_dir();
+// 	else
+// 	{
+// 			if (argv[1][0] == '-' || argv[1][0] == '~')
+
+
+// 			if (chdir(argv[1] == 0))
+// 			{
+				
+// 			}
+// 	}
+
+// }
 
 int	builtin_pwd(void)
 {
@@ -94,7 +126,7 @@ int	builtin_pwd(void)
 }
 
 // Execute cmd.  Never returns.
-void runcmd(struct cmd *cmd)
+void runcmd(struct cmd *cmd, t_config config)
 {
 	int status;
 	int	result;
@@ -116,9 +148,9 @@ void runcmd(struct cmd *cmd)
 		// if (ft_strnstr(ecmd->argv[0], "echo", 5))
 		// 	builtin_echo(ecmd->argv);
 		// else if (ft_strnstr(ecmd->argv[0], "cd", 3))
-		// 	builtin_cd(ecmd->argv);
+		// 	builtin_cd(ecmd->argv, config);
 		if (ft_strnstr(ecmd->argv[0], "pwd", 4))
-			result = builtin_pwd(ecmd->argv);
+			result = builtin_pwd();
 		// else if (ft_strnstr(ecmd->argv[0], "export", 7))
 		// 	builtin_export(ecmd->argv);
 		// else if (ft_strnstr(ecmd->argv[0], "unset", 6))
@@ -142,7 +174,7 @@ void runcmd(struct cmd *cmd)
 			printf("open %s failed\n", rcmd->file);
 			exit(1);
 		}
-		runcmd(rcmd->cmd);
+		runcmd(rcmd->cmd, config);
 	}
 	else if (cmd->type == PIPE)
 	{
@@ -155,7 +187,7 @@ void runcmd(struct cmd *cmd)
 			dup(p[1]);
 			close(p[0]);
 			close(p[1]);
-			runcmd(pcmd->left);
+			runcmd(pcmd->left, config);
 		}
 		if (fork() == 0)
 		{
@@ -163,7 +195,7 @@ void runcmd(struct cmd *cmd)
 			dup(p[0]);
 			close(p[0]);
 			close(p[1]);
-			runcmd(pcmd->right);
+			runcmd(pcmd->right, config);
 		}
 		close(p[0]);
 		close(p[1]);
@@ -174,7 +206,7 @@ void runcmd(struct cmd *cmd)
 	{
 		bcmd = (struct backcmd *)cmd;
 		if (fork() == 0)
-			runcmd(bcmd->cmd);
+			runcmd(bcmd->cmd, config);
 	}
 	else
 		panic("runcmd");
@@ -209,16 +241,76 @@ int getcmd(char *buf, int nbuf)
 // 9. quoting " '
 // 10. 
 
-int main(int argc, char **argv, char **env)
+size_t	get_envp_count(char **system_envp)
+{
+	size_t	len;
+
+	len = 0;
+	while (system_envp[len])
+		len++;
+	return (len);
+}
+
+// t_env_node	*new_environ(char **system_envp)
+// {
+// 	size_t	env_count;
+// 	t_env_node *new_envp;
+
+// 	env_count = get_envp_count(system_envp);
+// 	new_envp = new_node;
+// 	return (new_envp);
+// }
+
+t_env	*new_env(const char	*env)
+{
+	t_env	*new_env;
+	char	**splited_env;
+
+	new_env = ft_calloc(1, sizeof(t_env));
+	splited_env = ft_split(env, '=');
+	if (new_env == NULL || splited_env == NULL)
+		panic("Fail: new_env()");
+	new_env->key = splited_env[0];
+	new_env->value = splited_env[1];
+	free(splited_env);
+	return (new_env);
+}
+
+void load_config(t_config *config, char **envp)
+{
+	int		env_idx;
+	t_list	*node;
+	char	**sp_env_line;
+
+
+	env_idx = 0;
+	node = ft_lstnew(new_env(envp[env_idx]));
+	if (node == NULL)
+		panic("Fail: ft_lstnew()");
+	config->env_node = node;
+	while (envp[++env_idx])
+	{
+		node->next = ft_lstnew((void *)new_env(envp[env_idx]));
+		if (node->next == NULL)
+			panic("Fail: ft_lstnew()");
+		node = node->next;
+	}
+	node = config->env_node;
+}
+
+int main(int argc, char **argv, char **envp)
 {
 	static char	buf[100];
 	int			fd;
 	int			status;
+	t_config config;
+
+	load_config(&config, envp);
 
 	while (getcmd(buf, sizeof(buf)) >= 0)
 	{
 		if (fork() == 0)
-			runcmd(parsecmd(buf));
+			runcmd(parsecmd(buf), config);
 		wait(&status);
 	}
 	exit(0);
