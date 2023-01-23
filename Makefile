@@ -6,10 +6,9 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/21 02:09:23 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/24 02:03:57 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
@@ -19,7 +18,9 @@ INCLUDES_DIR = ./includes
 
 MANDATORY_DIR = ./srcs_mandatory
 MANDATORY_SRCS = \
+load_config.c \
 main.c \
+new_env.c \
 
 OBJS_DIR = ./objs
 OBJS = $(addprefix $(OBJS_DIR)/, $(notdir $(SRCS:.c=.o)))
@@ -33,7 +34,7 @@ LIB_READLINE_VER = readline-8.2
 LIB_READLINE_VER_TAR = $(LIB_READLINE_VER).tar.gz
 
 LIBS =	$(LIB_FT_DIR)/$(LIB_FT) \
-		# $(LIB_READLINE_DIR)/$(LIB_READLINE)
+		-lreadline
 
 ifeq "$(findstring debug, $(MAKECMDGOALS))" "debug"
 	DFLAGS = -g -fsanitize=address
@@ -57,13 +58,11 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	make -C $(LIB_FT_DIR)
-	# make $(LIB_READLINE) -C $(LIB_READLINE_DIR)
 	$(CC) $(CFLAGS) $(DFLAGS) -o $(NAME) $(OBJS) $(LIBS)
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) $(DFLAGS) -c $< -o $@ -I$(INCLUDES_DIR) \
 	-I$(LIB_FT_DIR) \
-	# -I$(LIB_READLINE_DIR) \
 	-MJ $@.part.json 
 
 $(OBJS_DIR):
@@ -83,13 +82,11 @@ $(LIB_READLINE_DIR):
 .PHONY: clean
 clean:
 	make clean -C $(LIB_FT_DIR)
-	# make clean -C $(LIB_READLINE_DIR)
 	rm -f $(OBJS)
 
 .PHONY: fclean
 fclean:
 	make fclean -C $(LIB_FT_DIR)
-	# make clean -C $(LIB_READLINE_DIR)
 	make clean
 	rm -rf $(OBJS_DIR)
 	rm -f $(NAME)
@@ -97,9 +94,6 @@ fclean:
 
 .PHONY: re
 re:
-	# make re -C $(LIB_FT_DIR)
-	# make clean -C $(LIB_READLINE_DIR)
-	# make $(LIB_READLINE) -C $(LIB_READLINE_DIR)
 	make fclean
 	make all
 
