@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-// #include "libft.h"
+#include "libft.h"
 
 // Parsed command representation
 #define EXEC 1
@@ -75,10 +75,29 @@ char *ft_gets(char *buf, int max)
 	return buf;
 }
 
+#include <sys/param.h>
+
+int	builtin_pwd(void)
+{
+	char	*buf;
+
+	buf = ft_calloc(1, MAXPATHLEN);
+	if (getcwd(buf, MAXPATHLEN) == NULL)
+	{
+		printf("check error\n");
+		return (1);
+	}
+	ft_putstr_fd(buf, STDOUT_FILENO);
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	free(buf);
+	return (0);
+}
+
 // Execute cmd.  Never returns.
 void runcmd(struct cmd *cmd)
 {
 	int status;
+	int	result;
 	int p[2];
 	struct backcmd *bcmd;
 	struct execcmd *ecmd;
@@ -98,8 +117,8 @@ void runcmd(struct cmd *cmd)
 		// 	builtin_echo(ecmd->argv);
 		// else if (ft_strnstr(ecmd->argv[0], "cd", 3))
 		// 	builtin_cd(ecmd->argv);
-		// else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
-		// 	builtin_pwd(ecmd->argv);
+		if (ft_strnstr(ecmd->argv[0], "pwd", 4))
+			result = builtin_pwd(ecmd->argv);
 		// else if (ft_strnstr(ecmd->argv[0], "export", 7))
 		// 	builtin_export(ecmd->argv);
 		// else if (ft_strnstr(ecmd->argv[0], "unset", 6))
@@ -109,9 +128,10 @@ void runcmd(struct cmd *cmd)
 		// else if (ft_strnstr(ecmd->argv[0], "exit", 5))
 		// 	builtin_exit(ecmd->argv);
 		
-		// else
-		execv(ecmd->argv[0], ecmd->argv);
-		printf("exec %s failed\n", ecmd->argv[0]);
+		else
+			execv(ecmd->argv[0], ecmd->argv);
+		if (result)
+			printf("exec %s failed\n", ecmd->argv[0]);
 	}
 	else if (cmd->type == REDIR)
 	{
