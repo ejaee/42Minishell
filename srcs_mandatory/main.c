@@ -280,8 +280,6 @@ void load_config(t_config *config, char **envp)
 {
 	int		env_idx;
 	t_list	*node;
-	char	**sp_env_line;
-
 
 	env_idx = 0;
 	node = ft_lstnew(new_env(envp[env_idx]));
@@ -295,7 +293,6 @@ void load_config(t_config *config, char **envp)
 			panic("Fail: ft_lstnew()");
 		node = node->next;
 	}
-	node = config->env_node;
 }
 
 int main(int argc, char **argv, char **envp)
