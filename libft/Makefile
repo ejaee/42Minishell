@@ -6,7 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/08 21:24:48 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/23 19:30:27 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/24 00:19:27 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,8 @@ SOURCES_MANDATORY = \
 			ft_memcmp.c      ft_strjoin.c \
 			ft_memcpy.c      ft_strlcat.c \
 			ft_free_split.c \
+			\
+			ft_split_one_cstm.c \
 
 SOURCES_BONUS = \
 			ft_lstadd_back.c  \
