@@ -28,7 +28,6 @@ parsing 부분 재귀 이해하기
 
 '23. 1. 22. 
 
-
 라이브 쉐어 기능을 활용한 코드 분석 및 리펙토링
 
 parsing 부분 재귀 이해하기
@@ -36,6 +35,12 @@ parsing 부분 재귀 이해하기
 - swich -> if else
 - refactor func name
 - study func
+
+'23. 1. 23. 
+
++ built-in pwd 구현
++ built-in cd 구현
++ envp linked list 생성
 
 
 ### 🍄 **parsing**
