@@ -1,37 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   new_env.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/24 01:55:08 by ilhna            ###   ########.fr       */
+/*   Created: 2023/01/24 01:49:55 by ilhna             #+#    #+#             */
+/*   Updated: 2023/01/24 01:50:23 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
+#include "minishell.h"
 
-# include "libft.h"
-
-typedef struct s_env
+t_env	*new_env(const char	*env)
 {
-	char	*key;
-	char	*value;
-}	t_env;
+	t_env	*new_env;
+	char	**splited_env;
 
-typedef struct s_config
-{
-	t_list	*env_node;
-}	t_config;
-
-void	load_config(t_config *config, char **envp);
-t_env	*new_env(const char	*env);
-
-
-
-void	panic(char *s);
-
-
-#endif
+	new_env = ft_calloc(1, sizeof(t_env));
+	splited_env = ft_split_one_cstm(env, '=');
+	if (new_env == NULL || splited_env == NULL)
+		panic("Fail: new_env()");
+	new_env->key = splited_env[0];
+	new_env->value = splited_env[1];
+	free(splited_env);
+	return (new_env);
+}

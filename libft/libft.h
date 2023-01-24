@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:47:08 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/23 17:15:06 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/24 00:19:49 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,7 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 void	ft_free_split(char ***outarr_p);
+
+char	**ft_split_one_cstm(char const *s, char c);
 
 #endif

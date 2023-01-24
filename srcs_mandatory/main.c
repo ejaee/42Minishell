@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "libft.h"
+#include "minishell.h"
 
 // Parsed command representation
 #define EXEC 1
@@ -17,17 +18,6 @@
 #define BACK 5
 
 #define MAXARGS 10
-
-typedef struct s_env
-{
-	 char *key;
-	 char *value;
-}	t_env;
-
-typedef struct s_config
-{
-	t_list	*env_node;
-}	t_config;
 
 struct cmd
 {
@@ -139,6 +129,7 @@ void runcmd(struct cmd *cmd, t_config config)
 	if (cmd == 0)
 		exit(0);
 
+	result = -1;
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
@@ -261,47 +252,14 @@ size_t	get_envp_count(char **system_envp)
 // 	return (new_envp);
 // }
 
-t_env	*new_env(const char	*env)
-{
-	t_env	*new_env;
-	char	**splited_env;
-
-	new_env = ft_calloc(1, sizeof(t_env));
-	splited_env = ft_split(env, '=');
-	if (new_env == NULL || splited_env == NULL)
-		panic("Fail: new_env()");
-	new_env->key = splited_env[0];
-	new_env->value = splited_env[1];
-	free(splited_env);
-	return (new_env);
-}
-
-void load_config(t_config *config, char **envp)
-{
-	int		env_idx;
-	t_list	*node;
-
-	env_idx = 0;
-	node = ft_lstnew(new_env(envp[env_idx]));
-	if (node == NULL)
-		panic("Fail: ft_lstnew()");
-	config->env_node = node;
-	while (envp[++env_idx])
-	{
-		node->next = ft_lstnew((void *)new_env(envp[env_idx]));
-		if (node->next == NULL)
-			panic("Fail: ft_lstnew()");
-		node = node->next;
-	}
-}
-
 int main(int argc, char **argv, char **envp)
 {
 	static char	buf[100];
-	int			fd;
 	int			status;
-	t_config config;
+	t_config	config;
 
+	(void)argc;
+	(void)argv;
 	load_config(&config, envp);
 
 	while (getcmd(buf, sizeof(buf)) >= 0)
