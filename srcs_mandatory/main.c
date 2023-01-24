@@ -76,6 +76,21 @@ char *ft_gets(char *buf, int max)
 	return buf;
 }
 
+int	builtin_echo(char *const argv[])
+{
+	int	idx;
+
+	idx = 0;
+	while (argv[++idx])
+	{
+		if (idx > 1)
+			ft_putchar_fd(' ', STDOUT_FILENO);
+		ft_putstr_fd(argv[idx], STDOUT_FILENO);
+	}
+	ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
+}
+
 #include <sys/param.h>
 
 t_list	*get_env_list(t_list *env_list, char *env_key)
@@ -108,10 +123,6 @@ void	set_env_list(t_list *env_list, char *env_key, char *new_value)
 	}
 }
 
-
-// int builtin_echo(char *const argv[])
-// {
-// }
 
 int builtin_cd(char *const buf, t_config config)
 {
@@ -181,8 +192,8 @@ void runcmd(struct cmd *cmd, t_config config)
 		if (ecmd->argv[0] == 0)
 			exit(1);
 
-		// if (ft_strnstr(ecmd->argv[0], "echo", 5))
-		// 	builtin_echo(ecmd->argv);
+		if (ft_strnstr(ecmd->argv[0], "echo", 5))
+			result = builtin_echo(ecmd->argv);
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
 			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
