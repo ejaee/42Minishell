@@ -107,32 +107,56 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 	return NULL;
 }
 
-void	set_env_list(t_list *env_list, char *env_key, char *new_value)
+int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 {
 	t_env *cur_env;
-	
+
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
 		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
 		{
 			cur_env->value = new_value;
-			return ;
+			return (0);
 		}
 		env_list = env_list->next;
 	}
+	return (1);
 }
 
-
-int builtin_cd(char *const buf, t_config config)
+int builtin_cd(char *const buf, t_config *config)
 {
-	buf[strlen(buf)-1] = 0;
+	char	*pwd_buf;
+
+	buf[strlen(buf)-1] = '\0';
     if (chdir(buf+3))
 	{
 		printf("error check\n");
 		return (1);
 	}
-	set_env_list(config.env_list, "PWD", buf);
+	pwd_buf = ft_calloc(1, MAXPATHLEN);
+	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
+	{
+		printf("check error\n");
+		return (1);
+	}
+	set_env_list(config->env_list, "PWD", pwd_buf);
+	free(pwd_buf);
+	return (0);
+}
+
+int builtin_export(char *const buf, t_config *config)
+{
+	t_list *list;
+	char **splited_env;
+
+	buf[strlen(buf)-1] = '\0';
+	list = config->env_list;
+	splited_env = ft_split_one_cstm(buf+7, '=');
+	if (splited_env == NULL)
+		panic("Fail: new_env()");
+	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
+		ft_lstadd_back(&list, ft_lstnew(new_env(buf+7)));
 	return (0);
 }
 
@@ -198,8 +222,8 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
 			result = builtin_pwd();
-		// else if (ft_strnstr(ecmd->argv[0], "export", 7))
-		// 	builtin_export(ecmd->argv);
+		else if (ft_strnstr(ecmd->argv[0], "export", 7))
+			result = 0;
 		// else if (ft_strnstr(ecmd->argv[0], "unset", 6))
 		// 	builtin_unset(ecmd->argv);
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
@@ -313,6 +337,7 @@ int main(int argc, char **argv, char **envp)
 	static char	buf[100];
 	int			status;
 	t_config	config;
+	char **splited_cmd;
 
 	(void)argc;
 	(void)argv;
@@ -322,9 +347,16 @@ int main(int argc, char **argv, char **envp)
 	{
 		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
 		{
-			if (builtin_cd(buf, config))
+			if (builtin_cd(buf, &config))
 				printf("cannot cd %s\n", buf+3);
       		// continue;
+    	}
+		if(ft_strnstr(buf, "export ", 7))
+		{
+			buf[strlen(buf)-1] = '\0';
+			splited_cmd = ft_split_one_cstm(buf+7, ' ');
+			if (splited_cmd[1] == NULL && builtin_export(buf, &config))
+				printf("cannot export %s\n", buf+7);
     	}
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
