@@ -77,27 +77,53 @@ char *ft_gets(char *buf, int max)
 }
 
 #include <sys/param.h>
+
+t_list	*get_env_list(t_list *env_list, char *env_key)
+{
+	t_env *cur_env;
+	
+	while (env_list)
+	{
+		cur_env = (t_env *)env_list->content;
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
+			return (env_list);
+		env_list = env_list->next;
+	}
+	return NULL;
+}
+
+void	set_env_list(t_list *env_list, char *env_key, char *new_value)
+{
+	t_env *cur_env;
+	
+	while (env_list)
+	{
+		cur_env = (t_env *)env_list->content;
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
+		{
+			cur_env->value = new_value;
+			return ;
+		}
+		env_list = env_list->next;
+	}
+}
+
+
 // int builtin_echo(char *const argv[])
 // {
 // }
 
-// int builtin_cd(char *const argv[], t_config config)
-// {
-// 	if (argv[1] == NULL)
-// 	// go to $HOME dir
-// 		goto_home_dir();
-// 	else
-// 	{
-// 			if (argv[1][0] == '-' || argv[1][0] == '~')
-
-
-// 			if (chdir(argv[1] == 0))
-// 			{
-				
-// 			}
-// 	}
-
-// }
+int builtin_cd(char *const buf, t_config config)
+{
+	buf[strlen(buf)-1] = 0;
+    if (chdir(buf+3))
+	{
+		printf("error check\n");
+		return (1);
+	}
+	set_env_list(config.env_list, "PWD", buf);
+	return (0);
+}
 
 int	builtin_pwd(void)
 {
@@ -138,9 +164,9 @@ void runcmd(struct cmd *cmd, t_config config)
 
 		// if (ft_strnstr(ecmd->argv[0], "echo", 5))
 		// 	builtin_echo(ecmd->argv);
-		// else if (ft_strnstr(ecmd->argv[0], "cd", 3))
-		// 	builtin_cd(ecmd->argv, config);
-		if (ft_strnstr(ecmd->argv[0], "pwd", 4))
+		if (ft_strnstr(ecmd->argv[0], "cd", 3))
+			result = 0;
+		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
 			result = builtin_pwd();
 		// else if (ft_strnstr(ecmd->argv[0], "export", 7))
 		// 	builtin_export(ecmd->argv);
@@ -264,6 +290,12 @@ int main(int argc, char **argv, char **envp)
 
 	while (getcmd(buf, sizeof(buf)) >= 0)
 	{
+		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
+		{
+			if (builtin_cd(buf, config))
+				printf("cannot cd %s\n", buf+3);
+      		continue;
+    	}
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);

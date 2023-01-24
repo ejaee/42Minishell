@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   load_config.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:47:41 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/24 01:50:26 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/24 12:56:11 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,18 @@
 void	load_config(t_config *config, char **envp)
 {
 	int		env_idx;
-	t_list	*node;
+	t_list	*cur;
 
 	env_idx = 0;
-	node = ft_lstnew(new_env(envp[env_idx]));
-	if (node == NULL)
+	config->env_list = ft_lstnew(new_env(envp[env_idx]));
+	if (config->env_list == NULL)
 		panic("Fail: ft_lstnew()");
-	config->env_node = node;
+	cur = config->env_list;
 	while (envp[++env_idx])
 	{
-		node->next = ft_lstnew((void *)new_env(envp[env_idx]));
-		if (node->next == NULL)
+		cur->next = ft_lstnew((void *)new_env(envp[env_idx]));
+		if (cur->next == NULL)
 			panic("Fail: ft_lstnew()");
-		node = node->next;
+		cur = cur->next;
 	}
 }
