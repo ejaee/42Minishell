@@ -141,6 +141,25 @@ int	builtin_pwd(void)
 	return (0);
 }
 
+int builtin_env(t_config config)
+{
+	t_list *list;
+	t_env *env;
+
+	list = config.env_list;
+	while (list)
+	{
+		env = list->content;
+		ft_putstr_fd(env->key, STDOUT_FILENO);
+		ft_putstr_fd("=", STDOUT_FILENO);
+		ft_putstr_fd(env->value, STDOUT_FILENO);
+		ft_putstr_fd("\n", STDOUT_FILENO);
+		list = list->next;
+	}
+	return (0);
+	// error 인 경우가 있을까?
+}
+
 // Execute cmd.  Never returns.
 void runcmd(struct cmd *cmd, t_config config)
 {
@@ -172,8 +191,8 @@ void runcmd(struct cmd *cmd, t_config config)
 		// 	builtin_export(ecmd->argv);
 		// else if (ft_strnstr(ecmd->argv[0], "unset", 6))
 		// 	builtin_unset(ecmd->argv);
-		// else if (ft_strnstr(ecmd->argv[0], "env", 4))
-		// 	builtin_env(ecmd->argv);
+		else if (ft_strnstr(ecmd->argv[0], "env", 4))
+			result = builtin_env(config);
 		// else if (ft_strnstr(ecmd->argv[0], "exit", 5))
 		// 	builtin_exit(ecmd->argv);
 		
