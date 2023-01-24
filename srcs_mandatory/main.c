@@ -294,7 +294,7 @@ int main(int argc, char **argv, char **envp)
 		{
 			if (builtin_cd(buf, config))
 				printf("cannot cd %s\n", buf+3);
-      		continue;
+      		// continue;
     	}
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
