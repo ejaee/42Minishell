@@ -355,7 +355,6 @@ int main(int argc, char **argv, char **envp)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
 		free(buf);
-		buf = readline(PROMPT);
 	}
 	exit(0);
 }
