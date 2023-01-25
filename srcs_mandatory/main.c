@@ -78,21 +78,6 @@ char *ft_gets(char *buf, int max)
 	return buf;
 }
 
-int	builtin_echo(char *const argv[])
-{
-	int	idx;
-
-	idx = 0;
-	while (argv[++idx])
-	{
-		if (idx > 1)
-			ft_putchar_fd(' ', STDOUT_FILENO);
-		ft_putstr_fd(argv[idx], STDOUT_FILENO);
-	}
-	ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
-}
-
 #include <sys/param.h>
 
 t_list	*get_env_list(t_list *env_list, char *env_key)
@@ -124,6 +109,21 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 		env_list = env_list->next;
 	}
 	return (1);
+}
+
+int	builtin_echo(char *const argv[])
+{
+	int	idx;
+
+	idx = 0;
+	while (argv[++idx])
+	{
+		if (idx > 1)
+			ft_putchar_fd(' ', STDOUT_FILENO);
+		ft_putstr_fd(argv[idx], STDOUT_FILENO);
+	}
+	ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
 }
 
 int builtin_cd(char *const buf, t_config *config)
