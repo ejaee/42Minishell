@@ -98,6 +98,7 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 	}
 	return NULL;
 }
+
 int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 {
 	t_env *cur_env;
@@ -150,7 +151,8 @@ int	builtin_echo(char *const argv[])
 	ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }
-		int builtin_cd(char *const buf, t_config *config)
+
+int builtin_cd(char *const buf, t_config *config)
 {
 	char	*pwd_buf;
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
