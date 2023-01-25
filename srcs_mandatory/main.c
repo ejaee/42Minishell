@@ -253,6 +253,7 @@ int builtin_env(t_config config)
 	return (0);
 }
 
+
 size_t	get_argv_count(char *const argv[])
 {
 	size_t	len;
@@ -440,96 +441,6 @@ size_t	get_envp_count(char **system_envp)
 	while (system_envp[len])
 		len++;
 	return (len);
-}
-
-extern int	g_exit_code;
-
-
-void	sig_ctrl_c(int signal)
-{
-	int	pid;
-	pid = waitpid(-1, NULL, WNOHANG);
-	g_exit_code = 1;
-	if (signal == SIGINT)
-	{
-		if (pid == -1)
-		{
-			if (rl_on_new_line() == -1)
-				exit(1);
-			rl_replace_line("", 1);
-			ft_putstr_fd("\n", STDOUT_FILENO);
-			rl_redisplay();
-		}
-		else
-		{
-			ft_putstr_fd("\n", STDOUT_FILENO);
-		}
-	}
-}
-
-
-void	set_signal()
-{
-	signal(SIGINT, sig_ctrl_c);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-void	check_buf(char **buf)
-{
-	if (*buf == NULL)
-	{
-		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
-		ft_putstr_fd("\033[19C", STDOUT_FILENO);
-		ft_putstr_fd(RED"exit\n"RESET, 1);
-		exit(0);
-	}
-	if (**buf == '\0')
-	{
-		**buf ='\n';
-	}
-}
-
-void	check_run_exit_parent(struct cmd *cmd)
-{
-	struct execcmd	*ecmd;
-
-	if (cmd == 0)
-		exit(0);
-
-	if (cmd->type == EXEC)
-	{
-		ecmd = (struct execcmd *)cmd;
-		if (ecmd->argv[0] == 0)
-			exit(1);
-		if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			builtin_exit(ecmd->argv);
-	}
-}
-
-void	show_logo_1(void)
-{
-	printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                             %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║            ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗                 ║%s\n", BROWN, WHITE);
-	printf("%s║            %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║            ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║                 ║%s\n", BROWN, WHITE);
-	printf("%s║            %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║            ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗           ║%s\n", BROWN, WHITE);
-	printf("%s║            ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝           ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                             %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
-	printf("\n");
-}
-
-void	show_shell_logo(void)
-{
-	show_logo_1();
-	// show_logo_2();
 }
 
 int main(int argc, char **argv, char **envp)
