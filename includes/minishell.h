@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/24 12:54:40 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/01/25 15:15:58 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define PROMPT "minishell$ "
 
 # include "libft.h"
 
