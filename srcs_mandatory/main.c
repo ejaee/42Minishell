@@ -135,6 +135,21 @@ int	builtin_echo(char *const argv[])
 	ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }
+
+int	builtin_echo(char *const argv[])
+{
+	int	idx;
+
+	idx = 0;
+	while (argv[++idx])
+	{
+		if (idx > 1)
+			ft_putchar_fd(' ', STDOUT_FILENO);
+		ft_putstr_fd(argv[idx], STDOUT_FILENO);
+	}
+	ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
+}
 		int builtin_cd(char *const buf, t_config *config)
 {
 	char	*pwd_buf;
