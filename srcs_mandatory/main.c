@@ -94,6 +94,7 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 		cur_env = (t_env *)env_list->content;
 		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
 			return (env_list);
+			
 		env_list = env_list->next;
 	}
 	return NULL;
@@ -200,6 +201,8 @@ int builtin_export(char *buf, t_config *config)
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
+
+	printf("||%s||\n", splited_env_by_space[0]);
 	if (splited_env == NULL)
 		panic("Fail: splited_env");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
