@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   load_config.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:47:41 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/24 12:56:11 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/01/25 19:46:07 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	load_config(t_config *config, char **envp)
 	while (envp[++env_idx])
 	{
 		cur->next = ft_lstnew((void *)new_env(envp[env_idx]));
+		cur->next->prev = cur;
 		if (cur->next == NULL)
 			panic("Fail: ft_lstnew()");
 		cur = cur->next;

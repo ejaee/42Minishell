@@ -89,6 +89,7 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 		cur_env = (t_env *)env_list->content;
 		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
 			return (env_list);
+			
 		env_list = env_list->next;
 	}
 	return NULL;
@@ -180,11 +181,14 @@ int builtin_export(char *buf, t_config *config)
 	char **splited_env_by_space;
 	char **splited_env;
 
+	printf("||%s||\n", buf);
 	list = config->env_list;
 
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
+
+	printf("||%s||\n", splited_env_by_space[0]);
 	if (splited_env == NULL)
 		panic("Fail: new_env()");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
@@ -209,16 +213,34 @@ void	ft_del(void *content)
 
 int builtin_unset(char *const buf, t_config *config)
 {
-	t_list *list;
+	// t_list	*tmp;
+	t_list	*cur;
 	char **splited_env;
 
-	list = config->env_list;
+	cur = config->env_list;
+
 	splited_env = ft_split_one_cstm(buf, '=');
 	if (splited_env == NULL)
-		panic("Fail: new_env()");
-	list = get_env_list(list, splited_env[0]);
-	if (splited_env[1] == NULL && list)
-		ft_lstdelone(list, ft_del);
+		panic("Fail:  ");
+
+// printf("find\n");
+// printf("|||%s|||\n", splited_env[0]);
+
+	cur = get_env_list(cur, splited_env[0]);
+
+	t_env *env;
+	env = (t_env *)cur->content;
+
+printf("key ||%s||\n", env->key);
+printf("value ||%s||\n", env->value);
+
+	// config->env_list->prev->next = config->env_list->next;
+	// config->env_list->next->prev = config->env_list->prev;
+	
+	
+	if (splited_env[1] == NULL && cur)
+		ft_lstdelone(cur, ft_del);
+		
 	free_split(splited_env);
 	return (0);
 }
@@ -389,30 +411,24 @@ int main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		buf = readline(PROMPT);
-		
-		while (*buf && *buf == ' ')
-			buf++;
-		if (ft_strnstr(buf, "cd ", 3))
+		splited_cmd = ft_split(buf, ' ');
+		if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
 			if (builtin_cd(buf, &config))
 				printf("cannot cd %s\n", buf+3);
 		}
-		if(ft_strnstr(buf, "export ", 7))
+		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
-			splited_cmd = ft_split_one_cstm(buf, ' ');
 			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], &config))
 				printf("cannot export %s\n", splited_cmd[1]);
-			free_split(splited_cmd);
-    	}
-		if(ft_strnstr(buf, "unset ", 6))
+		}
+		if (ft_strnstr(buf, "unset", 5))
 		{
-			splited_cmd = ft_split_one_cstm(buf, ' ');
 			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
 				printf("cannot unset %s\n", splited_cmd[1]);
-			free_split(splited_cmd);
-    	}
-		system("leaks minishell");
-
+		}
+		// system("leaks minishell");
+		free_split(splited_cmd);
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
