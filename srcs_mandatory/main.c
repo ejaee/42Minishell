@@ -337,7 +337,7 @@ int main(int argc, char **argv, char **envp)
 
 	while (1)
 	{
-		buf = readline("minishell$ ");
+		buf = readline(PROMPT);
 		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
 		{
 			if (builtin_cd(buf, &config))
