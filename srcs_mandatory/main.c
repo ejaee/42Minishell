@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "libft.h"
 #include "minishell.h"
 
@@ -284,16 +286,6 @@ void runcmd(struct cmd *cmd, t_config config)
 	exit(0);
 }
 
-int getcmd(char *buf, int nbuf)
-{
-	write(1, "$ ", 2);
-	memset(buf, 0, nbuf);
-	ft_gets(buf, nbuf);
-	if (buf[0] == 0)
-		return -1;
-	return 0;
-}
-
 // 1. init_env
 // 2. 히어독 추가
 // 3. 시그널 처리 (ctrl-C, ctrl-D, ctrl-\)
@@ -334,7 +326,7 @@ size_t	get_envp_count(char **system_envp)
 
 int main(int argc, char **argv, char **envp)
 {
-	static char	buf[100];
+	char	*buf;
 	int			status;
 	t_config	config;
 	char **splited_cmd;
@@ -343,24 +335,27 @@ int main(int argc, char **argv, char **envp)
 	(void)argv;
 	load_config(&config, envp);
 
-	while (getcmd(buf, sizeof(buf)) >= 0)
+	while (1)
 	{
+		buf = readline("minishell$ ");
 		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
 		{
 			if (builtin_cd(buf, &config))
 				printf("cannot cd %s\n", buf+3);
       		// continue;
-    	}
+		}
 		if(ft_strnstr(buf, "export ", 7))
 		{
 			buf[strlen(buf)-1] = '\0';
 			splited_cmd = ft_split_one_cstm(buf+7, ' ');
 			if (splited_cmd[1] == NULL && builtin_export(buf, &config))
 				printf("cannot export %s\n", buf+7);
-    	}
+		}
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
+		free(buf);
+		buf = readline(PROMPT);
 	}
 	exit(0);
 }
