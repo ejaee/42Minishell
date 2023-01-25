@@ -314,16 +314,6 @@ size_t	get_envp_count(char **system_envp)
 	return (len);
 }
 
-// t_env_node	*new_environ(char **system_envp)
-// {
-// 	size_t	env_count;
-// 	t_env_node *new_envp;
-
-// 	env_count = get_envp_count(system_envp);
-// 	new_envp = new_node;
-// 	return (new_envp);
-// }
-
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
