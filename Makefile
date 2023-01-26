@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/24 13:30:48 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/26 15:08:41 by choiejae         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -99,6 +99,10 @@ re:
 
 .PHONY: debug
 debug: $(NAME)
+
+run:
+	make
+	./minishell
 
 .PHONY: ccm
 ccm:
