@@ -3,31 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   load_config.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:47:41 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/24 12:56:11 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/01/26 13:41:00 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "minishell.h"
 
+#include <stdio.h>
+
 void	load_config(t_config *config, char **envp)
 {
 	int		env_idx;
+	
 	t_list	*cur;
 
-	env_idx = 0;
-	config->env_list = ft_lstnew(new_env(envp[env_idx]));
-	if (config->env_list == NULL)
-		panic("Fail: ft_lstnew()");
-	cur = config->env_list;
+	env_idx = -1;
+	config->head = ft_lstnew(new_env("dummy node=(null)"));
+	if (config->head == NULL)
+		panic("Fail: make head node");
+	config->tail = ft_lstnew(new_env("dummy node=(null)"));
+	if (config->tail == NULL)
+		panic("Fail: make tail node");
+	config->head->next = config->tail;
+	config->tail->prev = config->head;
+	cur = config->head;
 	while (envp[++env_idx])
 	{
 		cur->next = ft_lstnew((void *)new_env(envp[env_idx]));
+		cur->next->prev = cur;
+		config->tail->prev = cur->next;
+		cur->next->next = config->tail;
 		if (cur->next == NULL)
-			panic("Fail: ft_lstnew()");
+			panic("Fail: make next node");
 		cur = cur->next;
 	}
+	cur = config->head;
 }

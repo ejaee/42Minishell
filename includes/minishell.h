@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
 /*   Updated: 2023/01/26 22:14:32 by ilhna            ###   ########.fr       */
@@ -17,6 +17,13 @@
 
 # include "libft.h"
 
+// color.h
+# define RED	"\x1b[31m"
+# define GREEN	"\x1b[32m"
+# define YELLOW	"\x1b[33m"
+# define BLUE	"\x1b[34m"
+# define RESET	"\x1b[0m"
+
 typedef struct s_env
 {
 	char	*key;
@@ -25,7 +32,8 @@ typedef struct s_env
 
 typedef struct s_config
 {
-	t_list	*env_list;
+	t_list	*head;
+	t_list	*tail;
 }	t_config;
 
 int	g_is_sig_interupt;

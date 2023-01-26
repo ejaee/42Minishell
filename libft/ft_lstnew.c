@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 14:46:05 by ilhna             #+#    #+#             */
-/*   Updated: 2022/07/21 09:36:56 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/25 19:44:31 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,6 @@ t_list	*ft_lstnew(void *content)
 		return ((void *)0);
 	newnode->content = content;
 	newnode->next = (void *)0;
+	newnode->prev = (void *)0;
 	return (newnode);
 }
