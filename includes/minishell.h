@@ -6,14 +6,18 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
+<<<<<<< Updated upstream
 /*   Updated: 2023/01/25 15:15:58 by ilhna            ###   ########.fr       */
+=======
+/*   Updated: 2023/01/26 19:52:00 by choiejae         ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define PROMPT "minishell$ "
+# define PROMPT "M O N G S H E L L$ "
 
 # include "libft.h"
 
