@@ -78,6 +78,45 @@ char *ft_gets(char *buf, int max)
 	return buf;
 }
 
+#include <sys/param.h>
+
+t_list	*get_env_list(t_list *env_list, char *env_key)
+{
+	t_env *cur_env;
+	
+	while (env_list)
+	{
+		cur_env = (t_env *)env_list->content;
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
+			return (env_list);
+		env_list = env_list->next;
+	}
+	return NULL;
+}
+
+int	set_env_list(t_list *env_list, char *env_key, char *new_value)
+{
+	t_env *cur_env;
+	
+	while (env_list)
+	{
+		cur_env = (t_env *)env_list->content;
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
+		{
+			if (cur_env->value != NULL)
+				free(cur_env->value);
+			
+			cur_env->value = ft_strdup(new_value);
+			cur_env = NULL;
+			// printf(RED"check result ||%s||\n"RESET, cur_env->value);
+			return (0);
+		}
+		env_list = env_list->next;
+	}
+	cur_env = NULL;
+	return (1);
+}
+
 int	builtin_echo(char *const argv[])
 {
 	int	idx;
@@ -93,72 +132,94 @@ int	builtin_echo(char *const argv[])
 	return (0);
 }
 
-#include <sys/param.h>
-
-t_list	*get_env_list(t_list *env_list, char *env_key)
-{
-	t_env *cur_env;
-	
-	while (env_list)
-	{
-		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
-			return (env_list);
-		env_list = env_list->next;
-	}
-	return NULL;
-}
-
-int	set_env_list(t_list *env_list, char *env_key, char *new_value)
-{
-	t_env *cur_env;
-
-	while (env_list)
-	{
-		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
-		{
-			cur_env->value = new_value;
-			return (0);
-		}
-		env_list = env_list->next;
-	}
-	return (1);
-}
-
 int builtin_cd(char *const buf, t_config *config)
 {
 	char	*pwd_buf;
 
-	buf[strlen(buf)-1] = '\0';
-    if (chdir(buf+3))
-	{
-		printf("error check\n");
-		return (1);
-	}
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
 		printf("check error\n");
 		return (1);
 	}
-	set_env_list(config->env_list, "PWD", pwd_buf);
+	
+	set_env_list(config->head, "OLDPWD", pwd_buf);
+    
+	if (chdir(buf+3))
+	{
+		printf("error check\n");
+		return (1);
+	}
+	
+	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
+	{
+		printf("check error\n");
+		return (1);
+	}
+	
+	set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
 	return (0);
 }
 
-int builtin_export(char *const buf, t_config *config)
+void	free_split(char **str)
+{
+	int idx;
+
+	idx = -1;
+	while(str[++idx])
+		free(str[idx]);
+	free(str);
+}
+
+int builtin_export(char *buf, t_config *config)
 {
 	t_list *list;
+	char **splited_env_by_pipe;
+	char **splited_env_by_space;
 	char **splited_env;
 
-	buf[strlen(buf)-1] = '\0';
-	list = config->env_list;
-	splited_env = ft_split_one_cstm(buf+7, '=');
+	list = config->head;
+	splited_env_by_pipe = ft_split(buf, '|');
+	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
+	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
 	if (splited_env == NULL)
-		panic("Fail: new_env()");
+		panic("Fail: splited_env");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
-		ft_lstadd_back(&list, ft_lstnew(new_env(buf+7)));
+		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
+	free_split(splited_env_by_pipe);
+	free_split(splited_env_by_space);
+	free_split(splited_env);
+	return (0);
+}
+
+void	ft_del(void *content)
+{
+	t_env *env;
+
+	env = (t_env *)content;
+	free(env->key);
+	free(env->value);
+	free(content);
+}
+
+int builtin_unset(char *const buf, t_config *config)
+{
+	t_list	*cur;
+	char **splited_env;
+
+	cur = config->head;
+	splited_env = ft_split_one_cstm(buf, '=');
+	if (splited_env == NULL)
+		panic("Fail: ft_split_one_cstm()");
+	cur = get_env_list(cur, splited_env[0]);
+	if (splited_env[1] == NULL && cur)
+	{
+		cur->prev->next = cur->next;
+		cur->next->prev = cur->prev;
+		ft_lstdelone(cur, ft_del);
+	}
+	free_split(splited_env);
 	return (0);
 }
 
@@ -183,8 +244,8 @@ int builtin_env(t_config config)
 	t_list *list;
 	t_env *env;
 
-	list = config.env_list;
-	while (list)
+	list = config.head->next;
+	while (list->next)
 	{
 		env = list->content;
 		ft_putstr_fd(env->key, STDOUT_FILENO);
@@ -194,10 +255,8 @@ int builtin_env(t_config config)
 		list = list->next;
 	}
 	return (0);
-	// error 인 경우가 있을까?
 }
 
-// Execute cmd.  Never returns.
 void runcmd(struct cmd *cmd, t_config config)
 {
 	int status;
@@ -226,8 +285,8 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = builtin_pwd();
 		else if (ft_strnstr(ecmd->argv[0], "export", 7))
 			result = 0;
-		// else if (ft_strnstr(ecmd->argv[0], "unset", 6))
-		// 	builtin_unset(ecmd->argv);
+		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
+			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
 			result = builtin_env(config);
 		// else if (ft_strnstr(ecmd->argv[0], "exit", 5))
@@ -286,23 +345,15 @@ void runcmd(struct cmd *cmd, t_config config)
 	exit(0);
 }
 
-// 1. init_env
 // 2. 히어독 추가
 // 3. 시그널 처리 (ctrl-C, ctrl-D, ctrl-\)
 // 4. 빌트인 함수 만들기
-//		4-1. echo
-//		4-2. cd
-//		4-3. pwd
-//		4-4. export
-//		4-5. unset
-//		4-6. env
 //		4-7. exit
 // 5. exit() 코드($?)
 // 6. add_history();
 // 7. parsing 에서 argc[] 이해
 // 8. $
 // 9. quoting " '
-// 10. 
 
 size_t	get_envp_count(char **system_envp)
 {
@@ -313,16 +364,6 @@ size_t	get_envp_count(char **system_envp)
 		len++;
 	return (len);
 }
-
-// t_env_node	*new_environ(char **system_envp)
-// {
-// 	size_t	env_count;
-// 	t_env_node *new_envp;
-
-// 	env_count = get_envp_count(system_envp);
-// 	new_envp = new_node;
-// 	return (new_envp);
-// }
 
 int main(int argc, char **argv, char **envp)
 {
@@ -338,19 +379,25 @@ int main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		buf = readline(PROMPT);
-		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
+		splited_cmd = ft_split(buf, ' ');
+		if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
 			if (builtin_cd(buf, &config))
 				printf("cannot cd %s\n", buf+3);
-      		// continue;
 		}
-		if(ft_strnstr(buf, "export ", 7))
+		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
-			buf[strlen(buf)-1] = '\0';
-			splited_cmd = ft_split_one_cstm(buf+7, ' ');
-			if (splited_cmd[1] == NULL && builtin_export(buf, &config))
-				printf("cannot export %s\n", buf+7);
+			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], &config))
+				printf("cannot export %s\n", splited_cmd[1]);
 		}
+		if (ft_strnstr(buf, "unset", 5))
+		{
+			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
+				printf("cannot unset %s\n", splited_cmd[1]);
+		}
+		// system("leaks minishell");
+		free_split(splited_cmd);
+
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
@@ -364,9 +411,6 @@ void panic(char *s)
 	printf("%s\n", s);
 	exit(1);
 }
-
-// PAGEBREAK!
-//  Constructors
 
 struct cmd *init_execcmd(void)
 {
