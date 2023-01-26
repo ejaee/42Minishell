@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:47:08 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 15:32:03 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/30 21:10:41 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
+	struct s_list	*prev;
 }					t_list;
 
 int			ft_isalpha(int c);
@@ -75,5 +76,6 @@ void		ft_free_split(char ***outarr_p);
 char		**ft_split_one_cstm(char const *s, char c);
 long long	ft_atolld(const char *str);
 size_t		ft_strnumlen(const char *s);
+void	ft_d_lstadd_back(t_list **lst, t_list *new);
 
 #endif

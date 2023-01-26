@@ -92,27 +92,32 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
 			return (env_list);
 		env_list = env_list->next;
 	}
 	return NULL;
 }
-
 int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 {
 	t_env *cur_env;
-
+	
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
 		{
-			cur_env->value = new_value;
+			if (cur_env->value != NULL)
+				free(cur_env->value);
+			
+			cur_env->value = ft_strdup(new_value);
+			cur_env = NULL;
+			// printf(RED"check result ||%s||\n"RESET, cur_env->value);
 			return (0);
 		}
 		env_list = env_list->next;
 	}
+	cur_env = NULL;
 	return (1);
 }
 
@@ -130,40 +135,88 @@ int	builtin_echo(char *const argv[])
 	ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }
-
-int builtin_cd(char *const buf, t_config *config)
+		int builtin_cd(char *const buf, t_config *config)
 {
 	char	*pwd_buf;
-
-	buf[strlen(buf)-1] = '\0';
-    if (chdir(buf+3))
-	{
-		printf("error check\n");
-		return (1);
-	}
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
 		printf("check error\n");
 		return (1);
 	}
-	set_env_list(config->env_list, "PWD", pwd_buf);
+	
+	set_env_list(config->head, "OLDPWD", pwd_buf);
+    
+	if (chdir(buf+3))
+	{
+		printf("error check\n");
+		return (1);
+	}
+	
+	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
+	{
+		printf("check error\n");
+		return (1);
+	}
+	
+	set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
 	return (0);
 }
 
-int builtin_export(char *const buf, t_config *config)
+void	free_split(char **str)
+{
+	int idx;
+	idx = -1;
+	while(str[++idx])
+		free(str[idx]);
+	free(str);
+}
+
+int builtin_export(char *buf, t_config *config)
 {
 	t_list *list;
+	char **splited_env_by_pipe;
+	char **splited_env_by_space;
 	char **splited_env;
-
-	buf[strlen(buf)-1] = '\0';
-	list = config->env_list;
-	splited_env = ft_split_one_cstm(buf+7, '=');
+	list = config->head;
+	splited_env_by_pipe = ft_split(buf, '|');
+	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
+	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
 	if (splited_env == NULL)
-		panic("Fail: new_env()");
+		panic("Fail: splited_env");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
-		ft_lstadd_back(&list, ft_lstnew(new_env(buf+7)));
+		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
+	free_split(splited_env_by_pipe);
+	free_split(splited_env_by_space);
+	free_split(splited_env);
+	return (0);
+}
+
+void	ft_del(void *content)
+{
+	t_env *env;
+	env = (t_env *)content;
+	free(env->key);
+	free(env->value);
+	free(content);
+}
+int builtin_unset(char *const buf, t_config *config)
+{
+	t_list	*cur;
+	char **splited_env;
+	cur = config->head;
+	splited_env = ft_split_one_cstm(buf, '=');
+	if (splited_env == NULL)
+		panic("Fail: ft_split_one_cstm()");
+	cur = get_env_list(cur, splited_env[0]);
+	if (splited_env[1] == NULL && cur)
+	{
+		cur->prev->next = cur->next;
+		cur->next->prev = cur->prev;
+		ft_lstdelone(cur, ft_del);
+	}
+	free_split(splited_env);
 	return (0);
 }
 
@@ -187,9 +240,8 @@ int builtin_env(t_config config)
 {
 	t_list *list;
 	t_env *env;
-
-	list = config.env_list;
-	while (list)
+	list = config.head->next;
+	while (list->next)
 	{
 		env = list->content;
 		ft_putstr_fd(env->key, STDOUT_FILENO);
@@ -199,7 +251,6 @@ int builtin_env(t_config config)
 		list = list->next;
 	}
 	return (0);
-	// error 인 경우가 있을까?
 }
 
 size_t	get_argv_count(char *const argv[])
@@ -252,40 +303,33 @@ int	check_exit_param(char *arg, int *out_exit_code)
 int	builtin_exit(char *const argv[])
 {
 	size_t			argc;
-	int	exit_code;
 
-	exit_code = 0;
 	argc = get_argv_count(argv);
-	if (argc > 2 && check_exit_param(argv[1], &exit_code) == true)
+	if (argc == 1)
 	{
-		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
-		
-		return (0);
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		exit (0);
+	}
+	if (argc > 2 && check_exit_param(argv[1], &g_exit_code) == false)
+	{
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
+					PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
+		g_exit_code = 255;
 	}
 	else if (argc > 2)
 	{
-		ft_fprintf(STDOUT_FILENO, "exit\n");
-		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
-		exit_code = 255;
+		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		return (0);
 	}
-	// if (argc == 2)
-	// {
-	// 	if (check_exit_param(argv[1], &exit_code) == false)
-	// 	{
-	// 		perror("numeric argument required");
-	// 		// 에러 메시지 출력
-	// 		// bash: exit: -9223372036854775809: numeric argument required
-	// 	}
-	// 	printf("exit_cde=%d\n", exit_code);
-	// }
-
-
-	// ft_putendl_fd("exit!!", 1);
-	// exit (exit_code);
-	return (0);///////////////////////////////////////////////////////////////////////
+	exit (g_exit_code);
 }
 
-// Execute cmd.  Never returns.
+void	set_son_signal()
+{
+	signal(SIGQUIT, SIG_DFL);
+}
+
 void runcmd(struct cmd *cmd, t_config config)
 {
 	int status;
@@ -295,17 +339,15 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct execcmd *ecmd;
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
-
+	set_son_signal();
 	if (cmd == 0)
 		exit(0);
-
 	result = -1;
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
 		if (ecmd->argv[0] == 0)
 			exit(1);
-
 		if (ft_strnstr(ecmd->argv[0], "echo", 5))
 			result = builtin_echo(ecmd->argv);
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
@@ -314,12 +356,12 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = builtin_pwd();
 		else if (ft_strnstr(ecmd->argv[0], "export", 7))
 			result = 0;
-		// else if (ft_strnstr(ecmd->argv[0], "unset", 6))
-		// 	builtin_unset(ecmd->argv);
+		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
+			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
 			result = builtin_env(config);
-		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			builtin_exit(ecmd->argv);
+		// else if (ft_strnstr(ecmd->argv[0], "exit", 5))
+		// 	builtin_exit(ecmd->argv);
 		
 		else
 			execv(ecmd->argv[0], ecmd->argv);
@@ -373,7 +415,6 @@ void runcmd(struct cmd *cmd, t_config config)
 		panic("runcmd");
 	exit(0);
 }
-
 // 1. init_env
 // 2. 히어독 추가
 // 3. 시그널 처리 (ctrl-C, ctrl-D, ctrl-\)
@@ -391,16 +432,61 @@ void runcmd(struct cmd *cmd, t_config config)
 // 8. $
 // 9. quoting " '
 // 10. 
+size_t	get_envp_count(char **system_envp)
+{
+	size_t	len;
 
-// t_env_node	*new_environ(char **system_envp)
-// {
-// 	size_t	env_count;
-// 	t_env_node *new_envp;
+	len = 0;
+	while (system_envp[len])
+		len++;
+	return (len);
+}
 
-// 	env_count = get_envp_count(system_envp);
-// 	new_envp = new_node;
-// 	return (new_envp);
-// }
+extern int	g_exit_code;
+
+void	sig_ctrl_c(int signal)
+{
+	int	pid;
+	pid = waitpid(-1, NULL, WNOHANG);
+	g_exit_code = 1;
+	if (signal == SIGINT)
+	{
+		if (pid == -1)
+		{
+			if (rl_on_new_line() == -1)
+				exit(1);
+			rl_replace_line("", 1);
+			ft_putstr_fd("\n", STDOUT_FILENO);
+			rl_redisplay();
+		}
+		else
+		{
+			ft_putstr_fd("\n", STDOUT_FILENO);
+		}
+	}
+}
+
+
+void	set_signal()
+{
+	signal(SIGINT, sig_ctrl_c);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	check_buf(char **buf)
+{
+	if (*buf == NULL)
+	{
+		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+		ft_putstr_fd("\033[19C", STDOUT_FILENO);
+		ft_putstr_fd(RED"exit\n"RESET, 1);
+		exit(0);
+	}
+	if (**buf == '\0')
+	{
+		**buf ='\n';
+	}
+}
 
 void	check_run_exit_parent(struct cmd *cmd)
 {
@@ -419,6 +505,32 @@ void	check_run_exit_parent(struct cmd *cmd)
 	}
 }
 
+void	show_logo_1(void)
+{
+	printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                             %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║            ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗                 ║%s\n", BROWN, WHITE);
+	printf("%s║            %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	printf("%s║            ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║                 ║%s\n", BROWN, WHITE);
+	printf("%s║            %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	printf("%s║            ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗           ║%s\n", BROWN, WHITE);
+	printf("%s║            ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝           ║%s\n", BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║                                                                             %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
+	printf("\n");
+}
+
+void	show_shell_logo(void)
+{
+	show_logo_1();
+	// show_logo_2();
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
@@ -428,26 +540,31 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	show_shell_logo();
 	load_config(&config, envp);
-
 	while (1)
 	{
-	printf("main >> pid=%d, ppid=%d\n", getpid(), getppid()); ////////////////////
-		
+		set_signal();
 		buf = readline(PROMPT);
-		if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' ')
+		check_buf(&buf);
+		splited_cmd = ft_split(buf, ' ');
+		if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
 			if (builtin_cd(buf, &config))
 				printf("cannot cd %s\n", buf+3);
-      		// continue;
 		}
-		if(ft_strnstr(buf, "export ", 7))
+		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
-			buf[strlen(buf)-1] = '\0';
-			splited_cmd = ft_split_one_cstm(buf+7, ' ');
-			if (splited_cmd[1] == NULL && builtin_export(buf, &config))
-				printf("cannot export %s\n", buf+7);
+			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], &config))
+				printf("cannot export %s\n", splited_cmd[1]);
 		}
+		if (ft_strnstr(buf, "unset", 5))
+		{
+			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
+				printf("cannot unset %s\n", splited_cmd[1]);
+		}
+		// system("leaks minishell");
+		free_split(splited_cmd);
 		check_run_exit_parent(parsecmd(buf));
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);

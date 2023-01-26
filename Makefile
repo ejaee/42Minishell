@@ -6,7 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/30 14:26:08 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/30 20:49:54 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,10 +38,10 @@ LIB_READLINE_VER_TAR = $(LIB_READLINE_VER).tar.gz
 
 LIBS =	-L$(LIB_FT_DIR) -l$(LIB_FT) \
 		-L$(LIB_FT_PRINTF_DIR) -l$(LIB_FT_PRINTF) \
-		-lreadline
+		-L/opt/homebrew/opt/readline/lib -lreadline -lhistory
 
 ifeq "$(findstring debug, $(MAKECMDGOALS))" "debug"
-	DFLAGS = -g -fsanitize=address
+	DFLAGS = -g3 -fsanitize=address
 else
 	ARG.DEBUG = 0
 	DFLAGS = 
@@ -69,6 +69,7 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) $(DFLAGS) -c $< -o $@ -I$(INCLUDES_DIR) \
 	-I$(LIB_FT_DIR) \
 	-I$(LIB_FT_PRINTF_DIR) \
+	-I/opt/homebrew/opt/readline/include \
 	-MJ $@.part.json 
 
 $(OBJS_DIR):
