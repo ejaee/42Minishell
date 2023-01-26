@@ -108,9 +108,6 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 		cur_env = (t_env *)env_list->content;
 		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
 		{
-			printf("export! 원래 값이 있습니다\n");
-			printf("key ||%s||\n", cur_env->key);
-			printf("origin value ||%s||\n", cur_env->value);
 			if (cur_env->value != NULL)
 				free(cur_env->value);
 			
@@ -203,7 +200,6 @@ int builtin_export(char *buf, t_config *config)
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
-
 	if (splited_env == NULL)
 		panic("Fail: splited_env");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
@@ -441,12 +437,6 @@ void runcmd(struct cmd *cmd, t_config config)
 // 2. 히어독 추가
 // 3. 시그널 처리 (ctrl-C, ctrl-D, ctrl-\)
 // 4. 빌트인 함수 만들기
-//		4-1. echo
-//		4-2. cd
-//		4-3. pwd
-//		4-4. export
-//		4-5. unset
-//		4-6. env
 //		4-7. exit
 // 5. exit() 코드($?)
 // 6. add_history();
@@ -512,9 +502,6 @@ void panic(char *s)
 	printf("%s\n", s);
 	exit(1);
 }
-
-// PAGEBREAK!
-//  Constructors
 
 struct cmd *init_execcmd(void)
 {
