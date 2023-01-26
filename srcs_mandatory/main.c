@@ -273,8 +273,8 @@ int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 		lld_str = lld_minmax_str[0];
 	else
 		lld_str = lld_minmax_str[1];
-	if  (ft_strncmp(lld_str, arg, lld_max_len) < 0)
-			return (false);
+	if (ft_strncmp(lld_str, arg, lld_max_len) < 0)
+		return (false);
 	return (true);
 }
 
@@ -443,6 +443,7 @@ size_t	get_envp_count(char **system_envp)
 }
 
 extern int	g_exit_code;
+
 
 void	sig_ctrl_c(int signal)
 {
