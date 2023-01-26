@@ -6,16 +6,19 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:47:41 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:27:29 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/30 21:29:04 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "minishell.h"
 
+#include <stdio.h>
+
 void	load_config(t_config *config, char **envp)
 {
 	int		env_idx;
+	
 	t_list	*cur;
 
 	env_idx = -1;
