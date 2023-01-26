@@ -6,11 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2023/01/25 15:15:58 by ilhna            ###   ########.fr       */
-=======
-/*   Updated: 2023/01/26 19:52:00 by choiejae         ###   ########.fr       */
->>>>>>> Stashed changes
+/*   Updated: 2023/01/26 22:14:32 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +28,7 @@ typedef struct s_config
 	t_list	*env_list;
 }	t_config;
 
+int	g_is_sig_interupt;
 void	load_config(t_config *config, char **envp);
 t_env	*new_env(const char	*env);
 

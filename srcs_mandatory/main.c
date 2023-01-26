@@ -314,19 +314,9 @@ size_t	get_envp_count(char **system_envp)
 	return (len);
 }
 
-<<<<<<< Updated upstream
-// t_env_node	*new_environ(char **system_envp)
-// {
-// 	size_t	env_count;
-// 	t_env_node *new_envp;
 
-// 	env_count = get_envp_count(system_envp);
-// 	new_envp = new_node;
-// 	return (new_envp);
-// }
-=======
+// int	g_is_sig_interupt;
 extern int	g_is_sig_interupt;
-
 void	sig_ctrl_c(int signal)
 {
 	int	pid;
@@ -351,7 +341,6 @@ void	set_signal()
 	signal(SIGINT, sig_ctrl_c);
 	signal(SIGQUIT, SIG_IGN);
 }
->>>>>>> Stashed changes
 
 int main(int argc, char **argv, char **envp)
 {

@@ -3,3 +3,4 @@ a.out
 readline
 *.json
 .cache
+-std*

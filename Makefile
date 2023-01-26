@@ -6,11 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-<<<<<<< Updated upstream
-#    Updated: 2023/01/24 13:30:48 by ilhna            ###   ########.fr        #
-=======
-#    Updated: 2023/01/26 19:53:57 by choiejae         ###   ########.fr        #
->>>>>>> Stashed changes
+#    Updated: 2023/01/26 22:23:13 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,11 +34,10 @@ LIB_READLINE_VER = readline-8.2
 LIB_READLINE_VER_TAR = $(LIB_READLINE_VER).tar.gz
 
 LIBS =	$(LIB_FT_DIR)/$(LIB_FT) \
-		-lreadline -lhistory -L/opt/homebrew/opt/readline/lib
-		# -L/opt/homebrew/opt/readline/lib -lreadline
+		-L/opt/homebrew/opt/readline/lib -lreadline
 
 ifeq "$(findstring debug, $(MAKECMDGOALS))" "debug"
-	DFLAGS = -g -fsanitize=address
+	DFLAGS = -g3 -fsanitize=address
 else
 	ARG.DEBUG = 0
 	DFLAGS = 
@@ -63,12 +58,13 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	make -C $(LIB_FT_DIR)
-	$(CC) $(CFLAGS) $(DFLAGS) -o $(NAME) $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) $(DFLAGS) -o $(NAME) $(OBJS) $(LIBS) \
+
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) $(DFLAGS) -c $< -o $@ -I$(INCLUDES_DIR) \
 	-I$(LIB_FT_DIR) \
-	-I./readline \
+	-I/opt/homebrew/opt/readline/include \
 	-MJ $@.part.json 
 
 $(OBJS_DIR):
