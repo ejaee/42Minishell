@@ -87,9 +87,8 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
 			return (env_list);
-			
 		env_list = env_list->next;
 	}
 	return NULL;
@@ -102,12 +101,18 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key)))
+		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
 		{
+			printf("export! 원래 값이 있습니다\n");
+			printf("key ||%s||\n", cur_env->key);
+			printf("origin value ||%s||\n", cur_env->value);
 			if (cur_env->value != NULL)
 				free(cur_env->value);
-			cur_env->value = new_value;
+			printf("changed value ||%s||\n", new_value);
+			
+			cur_env->value = ft_strdup(new_value);
 			cur_env = NULL;
+			// printf(RED"check result ||%s||\n"RESET, cur_env->value);
 			return (0);
 		}
 		env_list = env_list->next;
@@ -142,7 +147,7 @@ int builtin_cd(char *const buf, t_config *config)
 		return (1);
 	}
 	
-	set_env_list(config->env_list, "OLDPWD", pwd_buf);
+	set_env_list(config->head, "OLDPWD", pwd_buf);
     
 	if (chdir(buf+3))
 	{
@@ -156,7 +161,7 @@ int builtin_cd(char *const buf, t_config *config)
 		return (1);
 	}
 	
-	set_env_list(config->env_list, "PWD", pwd_buf);
+	set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
 	return (0);
 }
@@ -167,10 +172,7 @@ void	free_split(char **str)
 
 	idx = -1;
 	while(str[++idx])
-	{
-		printf("free : %s\n", str[idx]);
 		free(str[idx]);
-	}
 	free(str);
 }
 
@@ -181,18 +183,17 @@ int builtin_export(char *buf, t_config *config)
 	char **splited_env_by_space;
 	char **splited_env;
 
-	printf("||%s||\n", buf);
-	list = config->env_list;
+	list = config->head;
 
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
 
-	printf("||%s||\n", splited_env_by_space[0]);
 	if (splited_env == NULL)
-		panic("Fail: new_env()");
+		panic("Fail: splited_env");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
 		ft_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
+
 	free_split(splited_env_by_pipe);
 	free_split(splited_env_by_space);
 	free_split(splited_env);
@@ -213,34 +214,25 @@ void	ft_del(void *content)
 
 int builtin_unset(char *const buf, t_config *config)
 {
-	// t_list	*tmp;
 	t_list	*cur;
 	char **splited_env;
 
-	cur = config->env_list;
-
+	cur = config->head;
 	splited_env = ft_split_one_cstm(buf, '=');
 	if (splited_env == NULL)
-		panic("Fail:  ");
-
-// printf("find\n");
-// printf("|||%s|||\n", splited_env[0]);
-
+		panic("Fail: ft_split_one_cstm()");
 	cur = get_env_list(cur, splited_env[0]);
 
-	t_env *env;
-	env = (t_env *)cur->content;
-
-printf("key ||%s||\n", env->key);
-printf("value ||%s||\n", env->value);
-
-	// config->env_list->prev->next = config->env_list->next;
-	// config->env_list->next->prev = config->env_list->prev;
-	
-	
 	if (splited_env[1] == NULL && cur)
+	{
+		cur->prev->next = cur->next;
+		cur->next->prev = cur->prev;
+		cur->next = NULL;
+		cur->prev = NULL;
 		ft_lstdelone(cur, ft_del);
-		
+	}
+
+	cur = config->head;
 	free_split(splited_env);
 	return (0);
 }
@@ -266,8 +258,8 @@ int builtin_env(t_config config)
 	t_list *list;
 	t_env *env;
 
-	list = config.env_list;
-	while (list)
+	list = config.head->next;
+	while (list->next)
 	{
 		env = list->content;
 		ft_putstr_fd(env->key, STDOUT_FILENO);
@@ -429,6 +421,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		// system("leaks minishell");
 		free_split(splited_cmd);
+
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
