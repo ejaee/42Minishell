@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:15:47 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/30 21:28:54 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@
 # define ERR_EXIT_NUMERIC "numeric argument required"
 
 # include "libft.h"
+
+// color.h
+# define RED	"\x1b[31m"
+# define GREEN	"\x1b[32m"
+# define YELLOW	"\x1b[33m"
+# define BLUE	"\x1b[34m"
+# define RESET	"\x1b[0m"
 
 typedef struct s_env
 {
