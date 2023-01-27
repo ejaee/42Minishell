@@ -485,6 +485,21 @@ void	set_signal()
 	signal(SIGQUIT, SIG_IGN);
 }
 
+void	check_buf(char **buf)
+{
+	if (*buf == NULL)
+	{
+		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+		ft_putstr_fd("\033[19C", STDOUT_FILENO);
+		ft_putstr_fd("exit\n", 1);
+		exit(0);
+	}
+	if (**buf == '\0')
+	{
+		**buf ='\n';
+	}
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
