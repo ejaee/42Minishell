@@ -491,7 +491,7 @@ void	check_buf(char **buf)
 	{
 		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
 		ft_putstr_fd("\033[19C", STDOUT_FILENO);
-		ft_putstr_fd("exit\n", 1);
+		ft_putstr_fd(RED"exit\n"RESET, 1);
 		exit(0);
 	}
 	if (**buf == '\0')
