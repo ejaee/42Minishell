@@ -6,7 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/24 13:30:48 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/25 15:38:44 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -99,6 +99,10 @@ re:
 
 .PHONY: debug
 debug: $(NAME)
+
+run:
+	make
+	./minishell
 
 .PHONY: ccm
 ccm:

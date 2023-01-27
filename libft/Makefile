@@ -6,7 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/08 21:24:48 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/24 00:19:27 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/26 15:56:08 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ SOURCES_MANDATORY = \
 			ft_free_split.c \
 			\
 			ft_split_one_cstm.c \
+			ft_atolld.c \
 
 SOURCES_BONUS = \
 			ft_lstadd_back.c  \
