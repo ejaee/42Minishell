@@ -3,6 +3,8 @@ a.out
 readline
 *.json
 .cache
+objs
+minishell
 -std*
 objs
 minishell

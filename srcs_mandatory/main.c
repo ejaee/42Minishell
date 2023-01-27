@@ -348,6 +348,79 @@ void	set_son_signal()
 	signal(SIGQUIT, SIG_DFL);
 }
 
+size_t	get_argv_count(char *const argv[])
+{
+	size_t	len;
+
+	len = 0;
+	while (argv[len])
+		len++;
+	return (len);
+}
+
+int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
+{
+	const char	*lld_str;
+
+	if (ft_strlen(arg) != lld_max_len)
+		return (false);
+	if (arg[0] == '-')
+		lld_str = lld_minmax_str[0];
+	else
+		lld_str = lld_minmax_str[1];
+	if  (ft_strncmp(lld_str, arg, lld_max_len) < 0)
+			return (false);
+	return (true);
+}
+
+int	check_exit_param(char *arg, int *out_exit_code)
+{
+	const char	*lld_minmax_str[2];
+	size_t	lld_max_len;
+	long long	lld_arg;
+
+	lld_minmax_str[0] = "-9223372036854775808";
+	lld_minmax_str[1] = "9223372036854775807";
+	lld_max_len = ft_strlen(lld_minmax_str[0]);
+	if (ft_strlen(arg) > lld_max_len)
+		return (false);
+	if (arg[0] != '-'  && ft_isdigit(arg[0]) == false)
+		return (false);
+	if (arg[0] != '-')
+		lld_max_len--;
+	if (check_lld_range(arg, lld_max_len, lld_minmax_str) == false)
+		return (false);
+	lld_arg = ft_atolld(arg);
+	*out_exit_code = lld_arg % 256;
+	return (true);
+}
+
+int	builtin_exit(char *const argv[])
+{
+	size_t			argc;
+	int	exit_code;
+
+	exit_code = 0;
+	argc = get_argv_count(argv);
+	if (argc > 2)
+		{
+			ft_putendl_fd("minishell: exit: too many arguments", 2);
+			exit_code = 1;
+		}
+	if (argc == 2)
+	{
+		if (check_exit_param(argv[1], &exit_code) == false)
+		{
+			perror("numeric argument required");
+			// 에러 메시지 출력
+			// bash: exit: -9223372036854775809: numeric argument required
+		}
+		printf("exit_cde=%d\n", exit_code);
+	}
+	// ft_putendl_fd("exit!!", 1);
+	exit (exit_code);
+}
+
 void runcmd(struct cmd *cmd, t_config config)
 {
 	int status;
@@ -378,8 +451,8 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
 			result = builtin_env(config);
-		// else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-		// 	builtin_exit(ecmd->argv);
+		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
+			builtin_exit(ecmd->argv);
 		
 		else
 			execv(ecmd->argv[0], ecmd->argv);
@@ -525,6 +598,23 @@ void	show_shell_logo(void)
 	// show_logo_2();
 }
 
+void	check_run_exit_parent(struct cmd *cmd)
+{
+	struct execcmd	*ecmd;
+
+	if (cmd == 0)
+		exit(0);
+
+	if (cmd->type == EXEC)
+	{
+		ecmd = (struct execcmd *)cmd;
+		if (ecmd->argv[0] == 0)
+			exit(1);
+		if (ft_strnstr(ecmd->argv[0], "exit", 5))
+			builtin_exit(ecmd->argv);
+	}
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
@@ -538,6 +628,8 @@ int main(int argc, char **argv, char **envp)
 	load_config(&config, envp);
 	while (1)
 	{
+	printf("main >> pid=%d, ppid=%d\n", getpid(), getppid()); ////////////////////
+		
 		set_signal();
 		buf = readline(PROMPT);
 		check_buf(&buf);
@@ -557,6 +649,7 @@ int main(int argc, char **argv, char **envp)
 			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
 				printf("cannot unset %s\n", splited_cmd[1]);
 		}
+		check_run_exit_parent(parsecmd(buf));
 		// system("leaks minishell");
 		free_split(splited_cmd);
 		check_run_exit_parent(parsecmd(buf));
