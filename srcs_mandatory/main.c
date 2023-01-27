@@ -378,13 +378,17 @@ void	sig_ctrl_c(int signal)
 	{
 		if (pid == -1)
 		{
+			if (rl_on_new_line() == -1)
+				exit(1);
 			rl_replace_line("", 1);
 			ft_putstr_fd("\n", STDOUT_FILENO);
-			rl_on_new_line();
 			rl_redisplay();
 		}
+		else
+		{
+			ft_putstr_fd("\n", STDOUT_FILENO);
+		}
 	}
-	
 }
 
 void	set_signal()
@@ -403,9 +407,10 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	load_config(&config, envp);
-	set_signal();
+	
 	while (1)
 	{
+		set_signal();
 		buf = readline(PROMPT);
 		splited_cmd = ft_split(buf, ' ');
 		if (ft_strnstr(splited_cmd[0], "cd", 2))
