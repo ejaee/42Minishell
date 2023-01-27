@@ -6,14 +6,14 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/26 22:14:32 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/27 17:29:29 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define PROMPT "M O N G S H E L L$ "
+# define PROMPT BLUE"M O N G S H E L L$ "RESET
 
 # include "libft.h"
 
