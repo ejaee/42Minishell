@@ -6,14 +6,14 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/26 13:44:11 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/01/27 17:29:29 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define PROMPT "minishell$ "
+# define PROMPT BLUE"M O N G S H E L L$ "RESET
 
 # include "libft.h"
 
@@ -36,6 +36,7 @@ typedef struct s_config
 	t_list	*tail;
 }	t_config;
 
+int	g_is_sig_interupt;
 void	load_config(t_config *config, char **envp);
 t_env	*new_env(const char	*env);
 

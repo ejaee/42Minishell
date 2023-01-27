@@ -365,6 +365,51 @@ size_t	get_envp_count(char **system_envp)
 	return (len);
 }
 
+extern int	g_is_sig_interupt;
+void	sig_ctrl_c(int signal)
+{
+	int	pid;
+
+	pid = waitpid(-1, NULL, WNOHANG);
+	g_is_sig_interupt = 1;
+	if (signal == SIGINT)
+	{
+		if (pid == -1)
+		{
+			if (rl_on_new_line() == -1)
+				exit(1);
+			rl_replace_line("", 1);
+			ft_putstr_fd("\n", STDOUT_FILENO);
+			rl_redisplay();
+		}
+		else
+		{
+			ft_putstr_fd("\n", STDOUT_FILENO);
+		}
+	}
+}
+
+void	set_signal()
+{
+	signal(SIGINT, sig_ctrl_c);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	check_buf(char **buf)
+{
+	if (*buf == NULL)
+	{
+		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+		ft_putstr_fd("\033[19C", STDOUT_FILENO);
+		ft_putstr_fd(RED"exit\n"RESET, 1);
+		exit(0);
+	}
+	if (**buf == '\0')
+	{
+		**buf ='\n';
+	}
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
@@ -375,10 +420,11 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	load_config(&config, envp);
-
 	while (1)
 	{
+		set_signal();
 		buf = readline(PROMPT);
+		check_buf(&buf);
 		splited_cmd = ft_split(buf, ' ');
 		if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
