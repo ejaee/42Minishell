@@ -454,6 +454,37 @@ size_t	get_envp_count(char **system_envp)
 	return (len);
 }
 
+
+extern int	g_exit_code;
+void	sig_ctrl_c(int signal)
+{
+	int	pid;
+
+	pid = waitpid(-1, NULL, WNOHANG);
+	g_exit_code = 1;
+	if (signal == SIGINT)
+	{
+		if (pid == -1)
+		{
+			if (rl_on_new_line() == -1)
+				exit(1);
+			rl_replace_line("", 1);
+			ft_putstr_fd("\n", STDOUT_FILENO);
+			rl_redisplay();
+		}
+		else
+		{
+			ft_putstr_fd("\n", STDOUT_FILENO);
+		}
+	}
+}
+
+void	set_signal()
+{
+	signal(SIGINT, sig_ctrl_c);
+	signal(SIGQUIT, SIG_IGN);
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
