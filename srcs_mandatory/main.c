@@ -257,6 +257,11 @@ int builtin_env(t_config config)
 	return (0);
 }
 
+void	set_son_signal()
+{
+	signal(SIGQUIT, SIG_DFL);
+}
+
 void runcmd(struct cmd *cmd, t_config config)
 {
 	int status;
@@ -267,6 +272,7 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
 
+	set_son_signal();
 	if (cmd == 0)
 		exit(0);
 
@@ -376,6 +382,7 @@ void	sig_ctrl_c(int signal)
 	{
 		if (pid == -1)
 		{
+			printf("pid = -1\n");
 			if (rl_on_new_line() == -1)
 				exit(1);
 			rl_replace_line("", 1);
@@ -384,6 +391,7 @@ void	sig_ctrl_c(int signal)
 		}
 		else
 		{
+			printf("pid = ??\n");
 			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
 	}
