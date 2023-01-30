@@ -415,6 +415,31 @@ void	check_buf(char **buf)
 		**buf ='\n';
 	}
 }
+void	show_logo_1(void)
+{
+	printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                             %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║            ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗                 ║%s\n", BROWN, WHITE);
+	printf("%s║            %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	printf("%s║            ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║                 ║%s\n", BROWN, WHITE);
+	printf("%s║            %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	printf("%s║            ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗           ║%s\n", BROWN, WHITE);
+	printf("%s║            ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝           ║%s\n", BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s║                                                                             %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
+	printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
+	printf("\n");
+}
+
+void	show_shell_logo(void)
+{
+	show_logo_1();
+	// show_logo_2();
+}
 
 int main(int argc, char **argv, char **envp)
 {
@@ -425,6 +450,7 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	show_shell_logo();
 	load_config(&config, envp);
 	while (1)
 	{
