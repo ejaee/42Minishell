@@ -6,23 +6,25 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/27 17:29:29 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/01/30 17:45:05 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define PROMPT BLUE"M O N G S H E L L$ "RESET
-
-# include "libft.h"
-
 // color.h
 # define RED	"\x1b[31m"
 # define GREEN	"\x1b[32m"
 # define YELLOW	"\x1b[33m"
 # define BLUE	"\x1b[34m"
+# define WHITE	"\x1b[0m"
+# define BROWN	"\e[38;5;137m"
 # define RESET	"\x1b[0m"
+
+# define PROMPT BROWN"M O N G S H E L L$ "RESET
+
+# include "libft.h"
 
 typedef struct s_env
 {
