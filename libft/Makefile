@@ -3,7 +3,7 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/08 21:24:48 by ilhna             #+#    #+#              #
 #    Updated: 2023/01/30 21:37:42 by ilhna            ###   ########.fr        #

@@ -140,6 +140,7 @@ int	builtin_echo(char *const argv[])
 int builtin_cd(char *const buf, t_config *config)
 {
 	char	*pwd_buf;
+
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
@@ -169,6 +170,7 @@ int builtin_cd(char *const buf, t_config *config)
 void	free_split(char **str)
 {
 	int idx;
+
 	idx = -1;
 	while(str[++idx])
 		free(str[idx]);
@@ -181,6 +183,7 @@ int builtin_export(char *buf, t_config *config)
 	char **splited_env_by_pipe;
 	char **splited_env_by_space;
 	char **splited_env;
+
 	list = config->head;
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
@@ -198,15 +201,18 @@ int builtin_export(char *buf, t_config *config)
 void	ft_del(void *content)
 {
 	t_env *env;
+
 	env = (t_env *)content;
 	free(env->key);
 	free(env->value);
 	free(content);
 }
+
 int builtin_unset(char *const buf, t_config *config)
 {
 	t_list	*cur;
 	char **splited_env;
+
 	cur = config->head;
 	splited_env = ft_split_one_cstm(buf, '=');
 	if (splited_env == NULL)
@@ -242,6 +248,7 @@ int builtin_env(t_config config)
 {
 	t_list *list;
 	t_env *env;
+
 	list = config.head->next;
 	while (list->next)
 	{
@@ -341,6 +348,7 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct execcmd *ecmd;
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
+
 	set_son_signal();
 	if (cmd == 0)
 		exit(0);
@@ -417,7 +425,7 @@ void runcmd(struct cmd *cmd, t_config config)
 		panic("runcmd");
 	exit(0);
 }
-// 1. init_env
+
 // 2. 히어독 추가
 // 3. 시그널 처리 (ctrl-C, ctrl-D, ctrl-\)
 // 4. 빌트인 함수 만들기
@@ -427,7 +435,7 @@ void runcmd(struct cmd *cmd, t_config config)
 // 7. parsing 에서 argc[] 이해
 // 8. $
 // 9. quoting " '
-// 10. 
+
 size_t	get_envp_count(char **system_envp)
 {
 	size_t	len;
@@ -439,12 +447,14 @@ size_t	get_envp_count(char **system_envp)
 }
 
 extern int	g_exit_code;
+
 void	sig_ctrl_c(int signal)
 {
 	int	pid;
 
 	pid = waitpid(-1, NULL, WNOHANG);
 	g_exit_code = 1;
+
 	if (signal == SIGINT)
 	{
 		if (pid == -1)
@@ -557,10 +567,10 @@ int main(int argc, char **argv, char **envp)
 			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
 				printf("cannot unset %s\n", splited_cmd[1]);
 		}
-		check_run_exit_parent(parsecmd(buf));
 		// system("leaks minishell");/////////////////////////////////////////////
 		free_split(splited_cmd);
 		check_run_exit_parent(parsecmd(buf));
+
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
