@@ -489,7 +489,7 @@ void	check_buf(char **buf)
 	}
 	if (**buf == '\0')
 	{
-		**buf ='\n';
+		**buf ='a';
 	}
 }
 void	show_logo_1(void)
