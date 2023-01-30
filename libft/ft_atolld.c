@@ -1,29 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_env.c                                          :+:      :+:    :+:   */
+/*   ft_atolld.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/24 01:49:55 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:04:15 by ilhna            ###   ########.fr       */
+/*   Created: 2022/07/07 10:45:12 by ilhna             #+#    #+#             */
+/*   Updated: 2023/01/26 15:55:42 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "minishell.h"
 
-t_env	*new_env(const char	*env)
+long long	ft_atolld(const char *str)
 {
-	t_env	*new_env;
-	char	**splited_env;
+	long long	res;
+	int	sign;
 
-	new_env = ft_calloc(1, sizeof(t_env));
-	splited_env = ft_split_one_cstm(env, '=');
-	if (new_env == NULL || splited_env == NULL)
-		panic("Fail: new_env()");
-	new_env->key = splited_env[0];
-	new_env->value = splited_env[1];
-	free(splited_env);
-	return (new_env);
+	res = 0;
+	sign = 1;
+	while (*str == '\t' || *str == '\n' || *str == '\v' || \
+			*str == '\f' || *str == '\r' || *str == ' ')
+		str++;
+	if (*str == '-')
+	{
+		sign *= -1;
+		str++;
+	}
+	else if (*str == '+')
+		str++;
+	while (ft_isdigit(*str) == 1)
+	{
+		res *= 10;
+		res += (sign) * (*str - '0');
+		str++;
+	}
+	return (res);
 }

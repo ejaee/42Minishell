@@ -6,7 +6,7 @@
 #    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/08 21:24:48 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/26 15:11:56 by choiejae         ###   ########.fr        #
+#    Updated: 2023/01/30 21:37:42 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,9 @@ SOURCES_MANDATORY = \
 			ft_free_split.c \
 			\
 			ft_split_one_cstm.c \
+			ft_atolld.c \
+			ft_strnumlen.c \
+			ft_d_lstadd_back.c \
 
 SOURCES_BONUS = \
 			ft_d_lstadd_back.c  \

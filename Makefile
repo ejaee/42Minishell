@@ -6,7 +6,7 @@
 #    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/01/26 22:23:13 by ilhna            ###   ########.fr        #
+#    Updated: 2023/01/30 21:36:45 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,15 +26,19 @@ OBJS_DIR = ./objs
 OBJS = $(addprefix $(OBJS_DIR)/, $(notdir $(SRCS:.c=.o)))
 
 LIB_FT_DIR = ./libft
-LIB_FT = libft.a
+LIB_FT = ft
+
+LIB_FT_PRINTF_DIR = ./libftprintf
+LIB_FT_PRINTF = ftprintf
 
 LIB_READLINE_DIR = ./readline
 LIB_READLINE = libreadline.a
 LIB_READLINE_VER = readline-8.2
 LIB_READLINE_VER_TAR = $(LIB_READLINE_VER).tar.gz
 
-LIBS =	$(LIB_FT_DIR)/$(LIB_FT) \
-		-L/opt/homebrew/opt/readline/lib -lreadline
+LIBS =	-L$(LIB_FT_DIR) -l$(LIB_FT) \
+		-L$(LIB_FT_PRINTF_DIR) -l$(LIB_FT_PRINTF) \
+		-L/opt/homebrew/opt/readline/lib -lreadline -lhistory
 
 ifeq "$(findstring debug, $(MAKECMDGOALS))" "debug"
 	DFLAGS = -g3 -fsanitize=address
@@ -58,12 +62,13 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	make -C $(LIB_FT_DIR)
-	$(CC) $(CFLAGS) $(DFLAGS) -o $(NAME) $(OBJS) $(LIBS) \
-
+	make -C $(LIB_FT_PRINTF_DIR)
+	$(CC) $(CFLAGS) $(DFLAGS) -o $(NAME) $(OBJS) $(LIBS)
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJS_DIR)
 	$(CC) $(CFLAGS) $(DFLAGS) -c $< -o $@ -I$(INCLUDES_DIR) \
 	-I$(LIB_FT_DIR) \
+	-I$(LIB_FT_PRINTF_DIR) \
 	-I/opt/homebrew/opt/readline/include \
 	-MJ $@.part.json 
 
@@ -84,11 +89,13 @@ $(LIB_READLINE_DIR):
 .PHONY: clean
 clean:
 	make clean -C $(LIB_FT_DIR)
+	make clean -C $(LIB_FT_PRINTF_DIR)
 	rm -f $(OBJS)
 
 .PHONY: fclean
 fclean:
 	make fclean -C $(LIB_FT_DIR)
+	make fclean -C $(LIB_FT_PRINTF_DIR)
 	make clean
 	rm -rf $(OBJS_DIR)
 	rm -f $(NAME)

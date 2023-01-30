@@ -1,17 +1,22 @@
 // Shell.
 #include <fcntl.h>
 #include <signal.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/_types/_pid_t.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <limits.h>
+#include <stdbool.h>
 #include "libft.h"
 #include "minishell.h"
+#include "ft_printf.h"
 
 // Parsed command representation
 #define EXEC 1
@@ -257,6 +262,78 @@ int builtin_env(t_config config)
 	return (0);
 }
 
+size_t	get_argv_count(char *const argv[])
+{
+	size_t	len;
+
+	len = 0;
+	while (argv[len])
+		len++;
+	return (len);
+}
+
+int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
+{
+	const char	*lld_str;
+
+	if (lld_max_len > ft_strlen(arg))
+		return (true);
+	if (arg[0] == '-')
+		lld_str = lld_minmax_str[0];
+	else
+		lld_str = lld_minmax_str[1];
+	if (ft_strncmp(lld_str, arg, lld_max_len) < 0)
+		return (false);
+	return (true);
+}
+
+int	check_exit_param(char *arg, int *out_exit_code)
+{
+	const char	*lld_minmax_str[2];
+	size_t	lld_max_len;
+	long long	lld_arg;
+	size_t	arg_len;
+
+	lld_minmax_str[0] = "-9223372036854775808";
+	lld_minmax_str[1] = "9223372036854775807";
+	arg_len = ft_strnumlen(arg);
+	lld_max_len = ft_strlen(lld_minmax_str[0]);
+	if (arg_len == 0 || arg_len > lld_max_len)
+		return (false);
+	if (arg[0] != '-')
+		lld_max_len--;
+	if (check_lld_range(arg, lld_max_len, lld_minmax_str) == false)
+		return (false);
+	lld_arg = ft_atolld(arg);
+	*out_exit_code = lld_arg % 256;
+	return (true);
+}
+
+int	builtin_exit(char *const argv[])
+{
+	size_t			argc;
+
+	argc = get_argv_count(argv);
+	if (argc == 1)
+	{
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		exit (0);
+	}
+	if (argc > 2 && check_exit_param(argv[1], &g_exit_code) == false)
+	{
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
+					PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
+		g_exit_code = 255;
+	}
+	else if (argc > 2)
+	{
+		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		return (0);
+	}
+	exit (g_exit_code);
+}
+
 void	set_son_signal()
 {
 	signal(SIGQUIT, SIG_DFL);
@@ -275,14 +352,12 @@ void runcmd(struct cmd *cmd, t_config config)
 	set_son_signal();
 	if (cmd == 0)
 		exit(0);
-
 	result = -1;
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
 		if (ecmd->argv[0] == 0)
 			exit(1);
-
 		if (ft_strnstr(ecmd->argv[0], "echo", 5))
 			result = builtin_echo(ecmd->argv);
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
@@ -295,9 +370,9 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
 			result = builtin_env(config);
-		// else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-		// 	builtin_exit(ecmd->argv);
-		
+		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
+			builtin_exit(ecmd->argv);
+
 		else
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
@@ -371,13 +446,15 @@ size_t	get_envp_count(char **system_envp)
 	return (len);
 }
 
-extern int	g_is_sig_interupt;
+extern int	g_exit_code;
+
 void	sig_ctrl_c(int signal)
 {
 	int	pid;
 
 	pid = waitpid(-1, NULL, WNOHANG);
-	g_is_sig_interupt = 1;
+	g_exit_code = 1;
+
 	if (signal == SIGINT)
 	{
 		if (pid == -1)
@@ -441,6 +518,23 @@ void	show_shell_logo(void)
 	// show_logo_2();
 }
 
+void	check_run_exit_parent(struct cmd *cmd)
+{
+	struct execcmd	*ecmd;
+
+	if (cmd == 0)
+		exit(0);
+
+	if (cmd->type == EXEC)
+	{
+		ecmd = (struct execcmd *)cmd;
+		if (ecmd->argv[0] == 0)
+			exit(1);
+		if (ft_strnstr(ecmd->argv[0], "exit", 5))
+			builtin_exit(ecmd->argv);
+	}
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*buf;
@@ -473,8 +567,9 @@ int main(int argc, char **argv, char **envp)
 			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
 				printf("cannot unset %s\n", splited_cmd[1]);
 		}
-		// system("leaks minishell");
+		// system("leaks minishell");/////////////////////////////////////////////
 		free_split(splited_cmd);
+		check_run_exit_parent(parsecmd(buf));
 
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);

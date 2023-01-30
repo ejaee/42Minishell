@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_env.c                                          :+:      :+:    :+:   */
+/*   print_s.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/24 01:49:55 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:04:15 by ilhna            ###   ########.fr       */
+/*   Created: 2022/10/04 17:45:24 by ilhna             #+#    #+#             */
+/*   Updated: 2023/01/30 14:02:01 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "minishell.h"
+#include "ft_printf.h"
 
-t_env	*new_env(const char	*env)
+int	print_s(va_list *ap, int fd)
 {
-	t_env	*new_env;
-	char	**splited_env;
+	int		len;
+	char	*str;
 
-	new_env = ft_calloc(1, sizeof(t_env));
-	splited_env = ft_split_one_cstm(env, '=');
-	if (new_env == NULL || splited_env == NULL)
-		panic("Fail: new_env()");
-	new_env->key = splited_env[0];
-	new_env->value = splited_env[1];
-	free(splited_env);
-	return (new_env);
+	str = va_arg(*ap, char *);
+	if (str == NULL)
+	{
+		write(fd, "(null)", 6);
+		return (NULL_STR);
+	}
+	len = 0;
+	while (*(str + len))
+	{
+		if (ft_putchar_fd_cstm(*(str + len), fd) == PF_ERROR)
+			return (PF_ERROR);
+		len++;
+	}
+	return (len);
 }
