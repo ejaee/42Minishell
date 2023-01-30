@@ -382,7 +382,6 @@ void	sig_ctrl_c(int signal)
 	{
 		if (pid == -1)
 		{
-			printf("pid = -1\n");
 			if (rl_on_new_line() == -1)
 				exit(1);
 			rl_replace_line("", 1);
@@ -391,7 +390,6 @@ void	sig_ctrl_c(int signal)
 		}
 		else
 		{
-			printf("pid = ??\n");
 			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
 	}
