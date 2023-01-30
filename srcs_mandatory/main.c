@@ -362,8 +362,8 @@ int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 {
 	const char	*lld_str;
 
-	if (ft_strlen(arg) != lld_max_len)
-		return (false);
+	if (lld_max_len > ft_strlen(arg))
+		return (true);
 	if (arg[0] == '-')
 		lld_str = lld_minmax_str[0];
 	else
@@ -378,13 +378,13 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	const char	*lld_minmax_str[2];
 	size_t	lld_max_len;
 	long long	lld_arg;
+	size_t	arg_len;
 
 	lld_minmax_str[0] = "-9223372036854775808";
 	lld_minmax_str[1] = "9223372036854775807";
+	arg_len = ft_strnumlen(arg);
 	lld_max_len = ft_strlen(lld_minmax_str[0]);
-	if (ft_strlen(arg) > lld_max_len)
-		return (false);
-	if (arg[0] != '-'  && ft_isdigit(arg[0]) == false)
+	if (arg_len == 0 || arg_len > lld_max_len)
 		return (false);
 	if (arg[0] != '-')
 		lld_max_len--;
@@ -402,23 +402,37 @@ int	builtin_exit(char *const argv[])
 
 	exit_code = 0;
 	argc = get_argv_count(argv);
-	if (argc > 2)
-		{
-			ft_putendl_fd("minishell: exit: too many arguments", 2);
-			exit_code = 1;
-		}
-	if (argc == 2)
+	if (argc > 2 && check_exit_param(argv[1], &exit_code) == true)
+	{
+		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		
+		return (0);
+	}
+	else if (argc > 2)
 	{
 		if (check_exit_param(argv[1], &exit_code) == false)
 		{
-			perror("numeric argument required");
-			// 에러 메시지 출력
-			// bash: exit: -9223372036854775809: numeric argument required
+			ft_fprintf(STDOUT_FILENO, "exit\n");
+			ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
+			exit_code = 255;
 		}
 		printf("exit_cde=%d\n", exit_code);
 	}
+	// if (argc == 2)
+	// {
+	// 	if (check_exit_param(argv[1], &exit_code) == false)
+	// 	{
+	// 		perror("numeric argument required");
+	// 		// 에러 메시지 출력
+	// 		// bash: exit: -9223372036854775809: numeric argument required
+	// 	}
+	// 	printf("exit_cde=%d\n", exit_code);
+	// }
+
+
 	// ft_putendl_fd("exit!!", 1);
-	exit (exit_code);
+	// exit (exit_code);
+	return (0);///////////////////////////////////////////////////////////////////////
 }
 
 void runcmd(struct cmd *cmd, t_config config)
