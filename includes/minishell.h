@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:33:13 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/30 21:34:46 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,13 @@
 # define GREEN	"\x1b[32m"
 # define YELLOW	"\x1b[33m"
 # define BLUE	"\x1b[34m"
+# define WHITE	"\x1b[0m"
+# define BROWN	"\e[38;5;137m"
 # define RESET	"\x1b[0m"
+
+# define PROMPT BROWN"M O N G S H E L L$ "RESET
+
+# include "libft.h"
 
 typedef struct s_env
 {
