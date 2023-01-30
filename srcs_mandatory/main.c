@@ -137,21 +137,6 @@ int	builtin_echo(char *const argv[])
 	return (0);
 }
 
-int	builtin_echo(char *const argv[])
-{
-	int	idx;
-
-	idx = 0;
-	while (argv[++idx])
-	{
-		if (idx > 1)
-			ft_putchar_fd(' ', STDOUT_FILENO);
-		ft_putstr_fd(argv[idx], STDOUT_FILENO);
-	}
-	ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
-}
-
 int builtin_cd(char *const buf, t_config *config)
 {
 	char	*pwd_buf;
@@ -343,10 +328,6 @@ int	builtin_exit(char *const argv[])
 	exit (g_exit_code);
 }
 
-void	set_son_signal()
-{
-	signal(SIGQUIT, SIG_DFL);
-}
 
 size_t	get_argv_count(char *const argv[])
 {
@@ -368,8 +349,8 @@ int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 		lld_str = lld_minmax_str[0];
 	else
 		lld_str = lld_minmax_str[1];
-	if  (ft_strncmp(lld_str, arg, lld_max_len) < 0)
-			return (false);
+	if (ft_strncmp(lld_str, arg, lld_max_len) < 0)
+		return (false);
 	return (true);
 }
 
@@ -398,26 +379,104 @@ int	check_exit_param(char *arg, int *out_exit_code)
 int	builtin_exit(char *const argv[])
 {
 	size_t			argc;
-	int	exit_code;
 
-	exit_code = 0;
 	argc = get_argv_count(argv);
-	if (argc > 2 && check_exit_param(argv[1], &exit_code) == true)
+	if (argc == 1)
 	{
-		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
-		
-		return (0);
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		exit (0);
+	}
+	if (argc > 2 && check_exit_param(argv[1], &g_exit_code) == false)
+	{
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
+					PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
+		g_exit_code = 255;
 	}
 	else if (argc > 2)
 	{
-		if (check_exit_param(argv[1], &exit_code) == false)
-		{
-			ft_fprintf(STDOUT_FILENO, "exit\n");
-			ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
-			exit_code = 255;
-		}
-		printf("exit_cde=%d\n", exit_code);
+		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		return (0);
 	}
+	exit (g_exit_code);
+}
+
+void	set_son_signal()
+{
+	signal(SIGQUIT, SIG_DFL);
+}
+
+size_t	get_argv_count(char *const argv[])
+{
+	size_t	len;
+
+	len = 0;
+	while (argv[len])
+		len++;
+	return (len);
+}
+
+int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
+{
+	const char	*lld_str;
+
+	if (lld_max_len > ft_strlen(arg))
+		return (true);
+	if (arg[0] == '-')
+		lld_str = lld_minmax_str[0];
+	else
+		lld_str = lld_minmax_str[1];
+	if (ft_strncmp(lld_str, arg, lld_max_len) < 0)
+		return (false);
+	return (true);
+}
+
+int	check_exit_param(char *arg, int *out_exit_code)
+{
+	const char	*lld_minmax_str[2];
+	size_t		lld_max_len;
+	long long	lld_arg;
+	size_t		arg_len;
+
+	lld_minmax_str[0] = "-9223372036854775808";
+	lld_minmax_str[1] = "9223372036854775807";
+	arg_len = ft_strnumlen(arg);
+	lld_max_len = ft_strlen(lld_minmax_str[0]);
+	if (arg_len == 0 || arg_len > lld_max_len)
+		return (false);
+	if (arg[0] != '-')
+		lld_max_len--;
+	if (check_lld_range(arg, lld_max_len, lld_minmax_str) == false)
+		return (false);
+	lld_arg = ft_atolld(arg);
+	*out_exit_code = lld_arg % 256;
+	return (true);
+}
+
+int	builtin_exit(char *const argv[])
+{
+	size_t	argc;
+
+	argc = get_argv_count(argv);
+	if (argc == 1)
+		exit (0);
+	if (check_exit_param(argv[1], &g_exit_code) == false)
+	{
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
+					PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
+		g_exit_code = 255;
+	}
+	else if (argc > 2)
+	{
+		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		g_exit_code = 1;
+		return (0);
+	}
+	else if (argc == 2)
+		ft_fprintf(STDOUT_FILENO, "exit\n");
+	exit (g_exit_code);
+
 	// if (argc == 2)
 	// {
 	// 	if (check_exit_param(argv[1], &exit_code) == false)
@@ -431,8 +490,8 @@ int	builtin_exit(char *const argv[])
 
 
 	// ft_putendl_fd("exit!!", 1);
-	// exit (exit_code);
-	return (0);///////////////////////////////////////////////////////////////////////
+	exit (g_exit_code);
+	// return (0);///////////////////////////////////////////////////////////////////////
 }
 
 void runcmd(struct cmd *cmd, t_config config)
@@ -467,7 +526,7 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = builtin_env(config);
 		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
 			builtin_exit(ecmd->argv);
-		
+
 		else
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
@@ -540,7 +599,6 @@ size_t	get_envp_count(char **system_envp)
 		len++;
 	return (len);
 }
-
 
 extern int	g_exit_code;
 void	sig_ctrl_c(int signal)
@@ -642,8 +700,6 @@ int main(int argc, char **argv, char **envp)
 	load_config(&config, envp);
 	while (1)
 	{
-	printf("main >> pid=%d, ppid=%d\n", getpid(), getppid()); ////////////////////
-		
 		set_signal();
 		buf = readline(PROMPT);
 		check_buf(&buf);
@@ -664,7 +720,7 @@ int main(int argc, char **argv, char **envp)
 				printf("cannot unset %s\n", splited_cmd[1]);
 		}
 		check_run_exit_parent(parsecmd(buf));
-		// system("leaks minishell");
+		// system("leaks minishell");/////////////////////////////////////////////
 		free_split(splited_cmd);
 		check_run_exit_parent(parsecmd(buf));
 		if (fork() == 0)
