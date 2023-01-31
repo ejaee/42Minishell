@@ -144,7 +144,7 @@ int builtin_cd(char *const buf, t_config *config)
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
-		printf("check error\n");
+		ft_printf("check error\n");
 		return (1);
 	}
 	
@@ -152,13 +152,13 @@ int builtin_cd(char *const buf, t_config *config)
     
 	if (chdir(buf+3))
 	{
-		printf("error check\n");
+		ft_printf("error check\n");
 		return (1);
 	}
 	
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
-		printf("check error\n");
+		ft_printf("check error\n");
 		return (1);
 	}
 	
@@ -235,7 +235,7 @@ int	builtin_pwd(void)
 	buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(buf, MAXPATHLEN) == NULL)
 	{
-		printf("check error\n");
+		ft_printf("check error\n");
 		return (1);
 	}
 	ft_putstr_fd(buf, STDOUT_FILENO);
@@ -309,29 +309,39 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	return (true);
 }
 
-int	builtin_exit(char *const argv[])
+int	builtin_exit(char *const argv[], int flag)
 {
 	size_t			argc;
 
 	argc = get_argv_count(argv);
+
 	if (argc == 1)
 	{
-		ft_fprintf(STDOUT_FILENO, "exit\n");
+		if (!flag)
+			ft_fprintf(STDOUT_FILENO, "exit\n");
 		exit (0);
 	}
-	if (argc > 2 && check_exit_param(argv[1], &g_exit_code) == false)
+	if (argc >= 2 && check_exit_param(argv[1], &g_exit_code) == false)
 	{
-		ft_fprintf(STDOUT_FILENO, "exit\n");
+		if (!flag)
+			ft_fprintf(STDOUT_FILENO, "exit\n");
 		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
-					PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
-		g_exit_code = 255;
+			PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
+		exit (255);
+	}
+	else if (argc == 2)
+	{
+		if (!flag)
+			ft_fprintf(STDOUT_FILENO, "exit\n");
+		exit (g_exit_code);
 	}
 	else if (argc > 2)
 	{
-		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
-		return (0);
+		if (flag)
+			ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		g_exit_code = 1;
 	}
-	exit (g_exit_code);
+	return (0);
 }
 
 void	set_son_signal()
@@ -371,12 +381,12 @@ void runcmd(struct cmd *cmd, t_config config)
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
 			result = builtin_env(config);
 		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			builtin_exit(ecmd->argv);
+			result = builtin_exit(ecmd->argv, 1);
 
 		else
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
-			printf("exec %s failed\n", ecmd->argv[0]);
+			ft_printf("exec %s failed\n", ecmd->argv[0]);
 	}
 	else if (cmd->type == REDIR)
 	{
@@ -384,7 +394,7 @@ void runcmd(struct cmd *cmd, t_config config)
 		close(rcmd->fd);
 		if (open(rcmd->file, rcmd->mode, 0755) < 0)
 		{
-			printf("open %s failed\n", rcmd->file);
+			ft_printf("open %s failed\n", rcmd->file);
 			exit(1);
 		}
 		runcmd(rcmd->cmd, config);
@@ -494,45 +504,28 @@ void	check_buf(char **buf)
 }
 void	show_logo_1(void)
 {
-	printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                             %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║            ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗                 ║%s\n", BROWN, WHITE);
-	printf("%s║            %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║            ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║                 ║%s\n", BROWN, WHITE);
-	printf("%s║            %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║            ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗           ║%s\n", BROWN, WHITE);
-	printf("%s║            ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝           ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                             %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
-	printf("\n");
+	ft_printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
+	ft_printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                         %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
+	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗               ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	ft_printf("%s║          ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║               ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	ft_printf("%s║          ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗         ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝         ║%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                         %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
+	ft_printf("%s╚════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
+	ft_printf("\n");
 }
 
 void	show_shell_logo(void)
 {
 	show_logo_1();
 	// show_logo_2();
-}
-
-void	check_run_exit_parent(struct cmd *cmd)
-{
-	struct execcmd	*ecmd;
-
-	if (cmd == 0)
-		exit(0);
-
-	if (cmd->type == EXEC)
-	{
-		ecmd = (struct execcmd *)cmd;
-		if (ecmd->argv[0] == 0)
-			exit(1);
-		if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			builtin_exit(ecmd->argv);
-	}
 }
 
 int main(int argc, char **argv, char **envp)
@@ -555,21 +548,29 @@ int main(int argc, char **argv, char **envp)
 		if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
 			if (builtin_cd(buf, &config))
-				printf("cannot cd %s\n", buf+3);
+				ft_printf("cannot cd %s\n", buf+3);
 		}
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
 			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], &config))
-				printf("cannot export %s\n", splited_cmd[1]);
+				ft_printf("cannot export %s\n", splited_cmd[1]);
 		}
 		if (ft_strnstr(buf, "unset", 5))
 		{
 			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
-				printf("cannot unset %s\n", splited_cmd[1]);
+				ft_printf("cannot unset %s\n", splited_cmd[1]);
 		}
+		if (ft_strnstr(buf, "exit", 5))
+		{
+			if (!ft_strchr(buf, '|'))
+			{
+				builtin_exit(splited_cmd, 0);
+			}
+		}
+
 		// system("leaks minishell");/////////////////////////////////////////////
+		// check_run_exit_parent(parsecmd(buf));
 		free_split(splited_cmd);
-		check_run_exit_parent(parsecmd(buf));
 
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
@@ -581,7 +582,7 @@ int main(int argc, char **argv, char **envp)
 
 void panic(char *s)
 {
-	printf("%s\n", s);
+	ft_printf("%s\n", s);
 	exit(1);
 }
 
@@ -711,14 +712,13 @@ struct cmd *parsecmd(char *str)
 {
 	char *str_end;
 	struct cmd *cmd;
-
 	// str_end = str + ft_strlen(str);
 	str_end = str + strlen(str);
 	cmd = parseline(&str, str_end);
 	skip_space_check_toks(&str, str_end, "");
 	if (str != str_end)
 	{
-		printf("leftovers: %s\n", str);
+		ft_printf("leftovers: %s\n", str);
 		panic("syntax");
 	}
 	nulterminate(cmd);
