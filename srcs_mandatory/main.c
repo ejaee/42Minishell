@@ -143,18 +143,12 @@ int builtin_cd(char *const buf, t_config *config)
 
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-	{
-		ft_printf("check error\n");
 		return (1);
-	}
 	
 	set_env_list(config->head, "OLDPWD", pwd_buf);
     
 	if (chdir(buf+3))
-	{
-		ft_printf("error check\n");
 		return (1);
-	}
 	
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
@@ -528,12 +522,41 @@ void	show_shell_logo(void)
 	// show_logo_2();
 }
 
+void	builtin_func(char *buf, t_config *config)
+{
+	char **splited_cmd;
+	
+	splited_cmd = ft_split(buf, ' ');
+	if (ft_strnstr(splited_cmd[0], "cd", 2))
+		{
+			if (!ft_strchr(buf, '|'))
+				if (builtin_cd(buf, config))
+					ft_fprintf(STDERR_FILENO, "%s: cd: %s: %s\n", \
+			PROMPT_NAME, buf + 3, ERR_CD);
+		}
+		if (ft_strnstr(splited_cmd[0], "export", 6))
+		{
+			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], config))
+				ft_printf("cannot export %s\n", splited_cmd[1]);
+		}
+		if (ft_strnstr(buf, "unset", 5))
+		{
+			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], config))
+				ft_printf("cannot unset %s\n", splited_cmd[1]);
+		}
+		if (ft_strnstr(buf, "exit", 5))
+		{
+			if (!ft_strchr(buf, '|'))
+				builtin_exit(splited_cmd, 0);
+		}
+		free_split(splited_cmd);
+}
+
 int main(int argc, char **argv, char **envp)
 {
-	char	*buf;
+	char		*buf;
 	int			status;
 	t_config	config;
-	char **splited_cmd;
 
 	(void)argc;
 	(void)argv;
@@ -544,34 +567,7 @@ int main(int argc, char **argv, char **envp)
 		set_signal();
 		buf = readline(PROMPT);
 		check_buf(&buf);
-		splited_cmd = ft_split(buf, ' ');
-		if (ft_strnstr(splited_cmd[0], "cd", 2))
-		{
-			if (builtin_cd(buf, &config))
-				ft_printf("cannot cd %s\n", buf+3);
-		}
-		if (ft_strnstr(splited_cmd[0], "export", 6))
-		{
-			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], &config))
-				ft_printf("cannot export %s\n", splited_cmd[1]);
-		}
-		if (ft_strnstr(buf, "unset", 5))
-		{
-			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
-				ft_printf("cannot unset %s\n", splited_cmd[1]);
-		}
-		if (ft_strnstr(buf, "exit", 5))
-		{
-			if (!ft_strchr(buf, '|'))
-			{
-				builtin_exit(splited_cmd, 0);
-			}
-		}
-
-		// system("leaks minishell");/////////////////////////////////////////////
-		// check_run_exit_parent(parsecmd(buf));
-		free_split(splited_cmd);
-
+		builtin_func(buf, &config);
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
