@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:41:40 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/01/31 16:38:34 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 # define ERR_EXIT_MANY_ARGS "exit: too many arguments"
 # define ERR_EXIT_NUMERIC "numeric argument required"
+# define ERR_CD "No such file or directory"
 
 # include "libft.h"
 
