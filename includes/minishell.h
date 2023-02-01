@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/01 18:52:10 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/01 19:05:38 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define RESET	"\x1b[0m"
 
 # define PROMPT BROWN"M O N G S H E L L$ "RESET
-# define PROMPT_NAME "M O N G S H E L L"
+# define PROMPT_NAME RED"M O N G S H E L L"RESET
 
 # define ERR_EXIT_MANY_ARGS "exit: too many arguments"
 # define ERR_EXIT_NUMERIC "numeric argument required"

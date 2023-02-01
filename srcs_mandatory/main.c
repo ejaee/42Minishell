@@ -113,7 +113,11 @@ void runcmd(struct cmd *cmd, t_config config)
 		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
 			result = builtin_pwd();
 		else if (ft_strnstr(ecmd->argv[0], "export", 7))
+		{
+			builtin_export(ecmd->argv[1], &config, 1);
 			result = 0;
+		}
+			
 		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
 			result = 0;
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))

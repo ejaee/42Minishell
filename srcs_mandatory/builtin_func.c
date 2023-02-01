@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/01 18:23:22 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/01 19:36:30 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,14 @@ int builtin_export(char *buf, t_config *config, int flag)
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
 	if (splited_env == NULL)
 		panic("Fail: splited_env");
-	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
+	if (!ft_isalpha(splited_env_by_pipe[0][0]))
 	{
 		if (flag)
 			ft_fprintf(STDERR_FILENO, "%s: export: '%s': %s\n", \
-			PROMPT_NAME, buf + 6, ERR_EXPORT);
+			PROMPT_NAME, splited_env_by_space[0], ERR_EXPORT);
+	}
+	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
+	{
 		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
 	}
 	free_split(splited_env_by_pipe);
@@ -97,8 +100,10 @@ void	builtin_func(char *buf, t_config *config)
 		}
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
-			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], config, 1))
-				ft_printf("cannot export %s\n", splited_cmd[1]);
+			// if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], config, 1))
+			// 	ft_printf("cannot export %s\n", splited_cmd[1]);
+			if (splited_cmd[2] == NULL)
+				builtin_export(buf, config, 0);
 		}
 		if (ft_strnstr(buf, "unset", 5))
 		{
