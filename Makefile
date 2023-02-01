@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/01 12:43:51 by ilhna            ###   ########.fr        #
+#    Updated: 2023/02/01 18:42:19 by ejachoi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,14 @@ INCLUDES_DIR = ./includes
 MANDATORY_DIR = ./srcs_mandatory
 
 MANDATORY_SRCS = \
+builtin_func.c \
+builtin_func2.c \
+builtin_exit.c \
 load_config.c \
 main.c \
 new_env.c \
+signal.c \
+utils.c \
 
 OBJS_DIR = ./objs
 
