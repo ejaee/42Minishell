@@ -26,6 +26,8 @@
 
 #define MAXARGS 10
 
+int builtin_export(char *buf, t_config *config, int flag);
+
 struct cmd
 {
 	int type;
@@ -119,28 +121,39 @@ int	builtin_echo(char *const argv[])
 	return (0);
 }
 
-int builtin_cd(char *const buf, t_config *config)
+
+
+void	builtin_cd(char *const buf, t_config *config, int flag)
 {
 	char	*pwd_buf;
 
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-		return (1);
-	
-	set_env_list(config->head, "OLDPWD", pwd_buf);
-    
+	{
+		ft_printf("fail: getcwd()\n");
+	}
+		
 	if (chdir(buf+3))
-		return (1);
+	{
+		if (flag)
+			ft_fprintf(STDERR_FILENO, "%s: cd: %s: %s\n", \
+			PROMPT_NAME, buf + 3, ERR_CD);
+		return ;
+	}
+	if (flag)
+	{
+		char key[MAXPATHLEN] = {"OLDPWD="};
+
+		builtin_export(ft_strcat(key, pwd_buf), config, 0);
+	}
 	
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
-		ft_printf("check error\n");
-		return (1);
+		ft_printf("fail: getcwd()\n");
 	}
-	
-	set_env_list(config->head, "PWD", pwd_buf);
+	if (flag)
+		set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
-	return (0);
 }
 
 void	free_split(char **str)
@@ -153,7 +166,7 @@ void	free_split(char **str)
 	free(str);
 }
 
-int builtin_export(char *buf, t_config *config)
+int builtin_export(char *buf, t_config *config, int flag)
 {
 	t_list *list;
 	char **splited_env_by_pipe;
@@ -164,10 +177,17 @@ int builtin_export(char *buf, t_config *config)
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
+
 	if (splited_env == NULL)
 		panic("Fail: splited_env");
 	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
+	{
+		if (flag)
+			ft_fprintf(STDERR_FILENO, "%s: export: '%s': %s\n", \
+			PROMPT_NAME, buf + 6, ERR_EXPORT);
 		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
+	}
+		
 	free_split(splited_env_by_pipe);
 	free_split(splited_env_by_space);
 	free_split(splited_env);
@@ -475,7 +495,7 @@ void	check_buf(char **buf)
 	}
 	if (**buf == '\0')
 	{
-		**buf ='a';
+		**buf ='\n';
 	}
 }
 void	show_logo_1(void)
@@ -494,7 +514,7 @@ void	show_logo_1(void)
 	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
 	ft_printf("%s║                                                                         %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
 	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s╚════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
+	ft_printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
 	ft_printf("\n");
 }
 
@@ -511,14 +531,13 @@ void	builtin_func(char *buf, t_config *config)
 	splited_cmd = ft_split(buf, ' ');
 	if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
-			if (!ft_strchr(buf, '|'))
-				if (builtin_cd(buf, config))
-					ft_fprintf(STDERR_FILENO, "%s: cd: %s: %s\n", \
-			PROMPT_NAME, buf + 3, ERR_CD);
+printf("enter cd\n");
+			builtin_cd(buf, config, 1);
+printf("out cd\n");
 		}
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
-			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], config))
+			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], config, 1))
 				ft_printf("cannot export %s\n", splited_cmd[1]);
 		}
 		if (ft_strnstr(buf, "unset", 5))
@@ -528,8 +547,7 @@ void	builtin_func(char *buf, t_config *config)
 		}
 		if (ft_strnstr(buf, "exit", 5))
 		{
-			if (!ft_strchr(buf, '|'))
-				builtin_exit(splited_cmd, 0);
+			builtin_exit(splited_cmd, 0);
 		}
 		free_split(splited_cmd);
 }
@@ -549,7 +567,8 @@ int main(int argc, char **argv, char **envp)
 		set_signal();
 		buf = readline(PROMPT);
 		check_buf(&buf);
-		builtin_func(buf, &config);
+		if (!ft_strchr(buf, '|'))
+			builtin_func(buf, &config);
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);

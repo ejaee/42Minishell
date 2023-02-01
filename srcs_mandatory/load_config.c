@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   load_config.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:47:41 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:29:04 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/01 15:12:44 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,16 @@ void	load_config(t_config *config, char **envp)
 			panic("Fail: make next node");
 		cur = cur->next;
 	}
-	cur = config->head;
+	// cur = config->head;
+
+	// t_list *target = config->head;
+	// t_env *env;
+
+	// while (target->next)
+	// {
+	// 	env = (t_env *)target->content;
+	// 	printf("%s = ", env->key);
+	// 	printf("%s\n", env->value);
+	// 	target = target->next;
+	// }
 }

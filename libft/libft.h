@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:47:08 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 21:37:56 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/01 15:26:47 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void		*ft_memset(void *b, int c, size_t len);
 void		ft_bzero(void *s, size_t n);
 void		*ft_memcpy(void *dst, const void *src, size_t n);
 void		*ft_memmove(void *dst, const void *src, size_t len);
+char		*ft_strcat(char *dest, char *src);
 size_t		ft_strlcpy(char *dst, \
 					const char *src, size_t dstsize);
 size_t		ft_strlcat(char *dst, \
