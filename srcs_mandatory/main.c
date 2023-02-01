@@ -382,7 +382,7 @@ void runcmd(struct cmd *cmd, t_config config)
 	{
 		rcmd = (struct redircmd *)cmd;
 		close(rcmd->fd);
-		if (open(rcmd->file, rcmd->mode) < 0)
+		if (open(rcmd->file, rcmd->mode, 0755) < 0)
 		{
 			printf("open %s failed\n", rcmd->file);
 			exit(1);
