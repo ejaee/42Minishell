@@ -121,32 +121,27 @@ int	builtin_echo(char *const argv[])
 	return (0);
 }
 
-
-
-void	builtin_cd(char *const buf, t_config *config, int flag)
+void	builtin_cd(char *buf, t_config *config, int flag)
 {
 	char	*pwd_buf;
 
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-	{
 		ft_printf("fail: getcwd()\n");
-	}
-		
-	if (chdir(buf+3))
+	if (flag)
+		buf += 3;
+	if (chdir(buf))
 	{
-		if (flag)
+		if (!flag)
 			ft_fprintf(STDERR_FILENO, "%s: cd: %s: %s\n", \
-			PROMPT_NAME, buf + 3, ERR_CD);
+			PROMPT_NAME, buf, ERR_CD);
 		return ;
 	}
 	if (flag)
 	{
 		char key[MAXPATHLEN] = {"OLDPWD="};
-
 		builtin_export(ft_strcat(key, pwd_buf), config, 0);
 	}
-	
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 	{
 		ft_printf("fail: getcwd()\n");
@@ -367,7 +362,11 @@ void runcmd(struct cmd *cmd, t_config config)
 		if (ft_strnstr(ecmd->argv[0], "echo", 5))
 			result = builtin_echo(ecmd->argv);
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
+		{
+			builtin_cd(ecmd->argv[1], &config, 0);
 			result = 0;
+		}
+			
 		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
 			result = builtin_pwd();
 		else if (ft_strnstr(ecmd->argv[0], "export", 7))
@@ -531,9 +530,7 @@ void	builtin_func(char *buf, t_config *config)
 	splited_cmd = ft_split(buf, ' ');
 	if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
-printf("enter cd\n");
 			builtin_cd(buf, config, 1);
-printf("out cd\n");
 		}
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
