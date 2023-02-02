@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/02 16:23:09 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 17:40:35 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	builtin_func(char *buf, t_config *config);
 
 
 /* builtin_func.c */
-void	builtin_echo(char *const argv[]);
+void	builtin_echo(char *const argv[], t_config *config);
 void	builtin_pwd(void);
 void	builtin_env(char *buf, t_config config);
 
