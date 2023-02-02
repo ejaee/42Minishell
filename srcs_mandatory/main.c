@@ -119,7 +119,11 @@ void runcmd(struct cmd *cmd, t_config config)
 		}
 			
 		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
+		{
+			builtin_unset(ecmd->argv[1], &config, 1);
 			result = 0;
+		}
+			
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
 			result = builtin_env(config);
 		else if (ft_strnstr(ecmd->argv[0], "exit", 5))

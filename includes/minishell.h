@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/01 19:05:38 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 12:30:59 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int		builtin_exit(char *const argv[], int flag);
 /* builtin_func.c */
 void	builtin_cd(char *buf, t_config *config, int flag);
 int		builtin_export(char *buf, t_config *config, int flag);
-int		builtin_unset(char *const buf, t_config *config);
+int		builtin_unset(char *const buf, t_config *config, int flag);
 void	builtin_func(char *buf, t_config *config);
 
 
