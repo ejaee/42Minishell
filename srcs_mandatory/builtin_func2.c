@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/01 18:38:06 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 14:00:07 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int builtin_env(t_config config)
 		env = list->content;
 		ft_putstr_fd(env->key, STDOUT_FILENO);
 		ft_putstr_fd("=", STDOUT_FILENO);
-		ft_putstr_fd(env->value, STDOUT_FILENO);
+		if (env->value != NULL)
+			ft_putstr_fd(env->value, STDOUT_FILENO);
 		ft_putstr_fd("\n", STDOUT_FILENO);
 		list = list->next;
 	}

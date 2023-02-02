@@ -73,9 +73,11 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 			if (cur_env->value != NULL)
 				free(cur_env->value);
 			
-			cur_env->value = ft_strdup(new_value);
+			if (new_value == NULL)
+				cur_env->value = NULL;	
+			else
+				cur_env->value = ft_strdup(new_value);
 			cur_env = NULL;
-			// printf(RED"check result ||%s||\n"RESET, cur_env->value);
 			return (0);
 		}
 		env_list = env_list->next;
