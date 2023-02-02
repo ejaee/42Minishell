@@ -6,13 +6,13 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 15:32:48 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 16:24:27 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin_echo(char *const argv[])
+void	builtin_echo(char *const argv[])
 {
 	int	idx;
 
@@ -24,7 +24,6 @@ int	builtin_echo(char *const argv[])
 		ft_putstr_fd(argv[idx], STDOUT_FILENO);
 	}
 	ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
 }
 
 void	builtin_pwd(void)
@@ -33,10 +32,7 @@ void	builtin_pwd(void)
 
 	buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(buf, MAXPATHLEN) == NULL)
-	{
-		ft_printf("check error\n");
-		return ;
-	}
+		ft_printf("fail: getcwd()\n");
 	ft_putstr_fd(buf, STDOUT_FILENO);
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	free(buf);
