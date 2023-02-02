@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 14:00:07 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 15:32:48 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	builtin_echo(char *const argv[])
 	return (0);
 }
 
-int	builtin_pwd(void)
+void	builtin_pwd(void)
 {
 	char	*buf;
 
@@ -35,19 +35,21 @@ int	builtin_pwd(void)
 	if (getcwd(buf, MAXPATHLEN) == NULL)
 	{
 		ft_printf("check error\n");
-		return (1);
+		return ;
 	}
 	ft_putstr_fd(buf, STDOUT_FILENO);
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	free(buf);
-	return (0);
 }
 
-int builtin_env(t_config config)
+void	builtin_env(char *buf, t_config config)
 {
 	t_list *list;
 	t_env *env;
-
+	
+	if (buf)
+		ft_fprintf(STDERR_FILENO, RED"env: %s: %s\n"RESET, \
+			buf, ERR_CD);
 	list = config.head->next;
 	while (list->next)
 	{
@@ -59,5 +61,4 @@ int builtin_env(t_config config)
 		ft_putstr_fd("\n", STDOUT_FILENO);
 		list = list->next;
 	}
-	return (0);
 }
