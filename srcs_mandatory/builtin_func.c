@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 13:50:23 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 14:39:19 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,26 @@
 void	builtin_cd(char *buf, t_config *config, int flag)
 {
 	char	*pwd_buf;
+	char 	key[MAXPATHLEN];
 
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 		ft_printf("fail: getcwd()\n");
-	if (flag)
+	if (!flag)
 		buf += 3;
 	if (chdir(buf))
 	{
-		if (!flag)
+		if (flag)
 			ft_fprintf(STDERR_FILENO, "%s: cd: %s: %s\n", \
 			PROMPT_NAME, buf, ERR_CD);
 		return ;
 	}
-	if (flag)
-	{
-		char key[MAXPATHLEN] = {"OLDPWD="};
-		builtin_export(ft_strcat(key, pwd_buf), config, 0);
-	}
+	key[0] = '\0';
+	ft_strcat(key, "OLDPWD=");
+	builtin_export(ft_strcat(key, pwd_buf), config, 0);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 		ft_printf("fail: getcwd()\n");
-	if (flag)
-		set_env_list(config->head, "PWD", pwd_buf);
+	set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
 }
 
@@ -107,7 +105,7 @@ void	builtin_func(char *buf, t_config *config)
 	splited_cmd = ft_split(buf, ' ');
 	if (ft_strnstr(splited_cmd[0], "cd", 2))
 		{
-			builtin_cd(buf, config, 1);
+			builtin_cd(buf, config, 0);
 		}
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{

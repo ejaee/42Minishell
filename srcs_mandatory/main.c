@@ -109,7 +109,7 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = builtin_echo(ecmd->argv);
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
 		{
-			builtin_cd(ecmd->argv[1], &config, 0);
+			builtin_cd(ecmd->argv[1], &config, 1);
 			result = 0;
 		}
 		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
