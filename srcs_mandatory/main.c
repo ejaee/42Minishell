@@ -107,7 +107,7 @@ void runcmd(struct cmd *cmd, t_config config)
 			exit(1);
 		if (ft_strnstr(ecmd->argv[0], "echo", 5))
 		{
-			builtin_echo(ecmd->argv);
+			builtin_echo(ecmd->argv, &config);
 			result = 0;
 		}
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
