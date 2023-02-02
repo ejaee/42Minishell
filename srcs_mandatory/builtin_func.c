@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/01 19:36:30 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 13:32:31 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int builtin_export(char *buf, t_config *config, int flag)
 	return (0);
 }
 
-int builtin_unset(char *const buf, t_config *config)
+int builtin_unset(char *buf, t_config *config, int flag)
 {
 	t_list	*cur;
 	char **splited_env;
@@ -77,14 +77,25 @@ int builtin_unset(char *const buf, t_config *config)
 	cur = config->head;
 	splited_env = ft_split_one_cstm(buf, '=');
 	if (splited_env == NULL)
-		panic("Fail: ft_split_one_cstm()");
-	cur = get_env_list(cur, splited_env[0]);
-	if (splited_env[1] == NULL && cur)
+		panic("Fail: splited_env");
+
+	if (!ft_isalpha(*buf))
 	{
-		cur->prev->next = cur->next;
-		cur->next->prev = cur->prev;
-		ft_lstdelone(cur, ft_del);
+		if (flag)
+			ft_fprintf(STDERR_FILENO, "%s: unset: '%s': %s\n", \
+			PROMPT_NAME, buf, ERR_EXPORT);
 	}
+	else
+	{
+		cur = get_env_list(cur, splited_env[0]);
+		if (splited_env[1] == NULL && cur)
+		{
+			cur->prev->next = cur->next;
+			cur->next->prev = cur->prev;
+			ft_lstdelone(cur, ft_del);
+		}
+	}
+	
 	free_split(splited_env);
 	return (0);
 }
@@ -100,15 +111,15 @@ void	builtin_func(char *buf, t_config *config)
 		}
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
-			// if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], config, 1))
-			// 	ft_printf("cannot export %s\n", splited_cmd[1]);
 			if (splited_cmd[2] == NULL)
 				builtin_export(buf, config, 0);
 		}
-		if (ft_strnstr(buf, "unset", 5))
+		if (ft_strnstr(splited_cmd[0], "unset", 5))
 		{
-			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], config))
-				ft_printf("cannot unset %s\n", splited_cmd[1]);
+			// if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], config))
+			// 	ft_printf("cannot unset %s\n", splited_cmd[1]);
+			if (splited_cmd[2] == NULL)
+				builtin_unset(splited_cmd[1], config, 0);
 		}
 		if (ft_strnstr(buf, "exit", 5))
 		{
