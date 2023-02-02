@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 13:32:31 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 13:50:23 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int builtin_export(char *buf, t_config *config, int flag)
 			ft_fprintf(STDERR_FILENO, "%s: export: '%s': %s\n", \
 			PROMPT_NAME, splited_env_by_space[0], ERR_EXPORT);
 	}
-	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
+	else if (set_env_list(list, splited_env[0], splited_env[1]))
 	{
 		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
 	}
@@ -112,7 +112,7 @@ void	builtin_func(char *buf, t_config *config)
 		if (ft_strnstr(splited_cmd[0], "export", 6))
 		{
 			if (splited_cmd[2] == NULL)
-				builtin_export(buf, config, 0);
+				builtin_export(splited_cmd[1], config, 0);
 		}
 		if (ft_strnstr(splited_cmd[0], "unset", 5))
 		{
