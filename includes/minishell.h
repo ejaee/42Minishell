@@ -6,12 +6,14 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/02 12:30:59 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 16:23:09 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+/* color */
 
 # define RED	"\x1b[31m"
 # define GREEN	"\x1b[32m"
@@ -21,13 +23,20 @@
 # define BROWN	"\e[38;5;137m"
 # define RESET	"\x1b[0m"
 
+/* string */
+
 # define PROMPT BROWN"M O N G S H E L L$ "RESET
-# define PROMPT_NAME RED"M O N G S H E L L"RESET
+# define PROMPT_NAME "M O N G S H E L L"
 
 # define ERR_EXIT_MANY_ARGS "exit: too many arguments"
 # define ERR_EXIT_NUMERIC "numeric argument required"
 # define ERR_CD "No such file or directory"
 # define ERR_EXPORT "not a valid identifier"
+
+/* flag */
+
+# define PERMISSION 1
+# define PERMISSION_DENIED 0
 
 #include <fcntl.h>
 #include <signal.h>
@@ -67,20 +76,20 @@ int	g_exit_code;
 size_t	get_argv_count(char *const argv[]);
 int		check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[]);
 int		check_exit_param(char *arg, int *out_exit_code);
-int		builtin_exit(char *const argv[], int flag);
+void	builtin_exit(char *const argv[], int flag);
 
 
 /* builtin_func.c */
 void	builtin_cd(char *buf, t_config *config, int flag);
-int		builtin_export(char *buf, t_config *config, int flag);
-int		builtin_unset(char *const buf, t_config *config, int flag);
+void	builtin_export(char *buf, t_config *config, int flag);
+void	builtin_unset(char *const buf, t_config *config, int flag);
 void	builtin_func(char *buf, t_config *config);
 
 
 /* builtin_func.c */
-int	builtin_echo(char *const argv[]);
-int	builtin_pwd(void);
-int builtin_env(t_config config);
+void	builtin_echo(char *const argv[]);
+void	builtin_pwd(void);
+void	builtin_env(char *buf, t_config config);
 
 
 /* load_config.c */
