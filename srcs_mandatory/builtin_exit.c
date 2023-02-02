@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bulitin_exit.c                                     :+:      :+:    :+:   */
+/*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/01 17:11:12 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/02 16:05:51 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,37 +59,35 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	return (true);
 }
 
-int	builtin_exit(char *const argv[], int flag)
+void	builtin_exit(char *const argv[], int output_flag)
 {
 	size_t			argc;
 
 	argc = get_argv_count(argv);
-
 	if (argc == 1)
 	{
-		if (!flag)
+		if (!output_flag)
 			ft_fprintf(STDOUT_FILENO, "exit\n");
 		exit (0);
 	}
 	if (argc >= 2 && check_exit_param(argv[1], &g_exit_code) == false)
 	{
-		if (!flag)
+		if (!output_flag)
 			ft_fprintf(STDOUT_FILENO, "exit\n");
-		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
+		ft_fprintf(STDERR_FILENO, RED"%s: exit: %s: %s\n"RESET, \
 			PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
 		exit (255);
 	}
 	else if (argc == 2)
 	{
-		if (!flag)
+		if (!output_flag)
 			ft_fprintf(STDOUT_FILENO, "exit\n");
 		exit (g_exit_code);
 	}
 	else if (argc > 2)
 	{
-		if (flag)
-			ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+		if (output_flag)
+			ft_fprintf(STDERR_FILENO, RED"%s: %s\n"RESET, PROMPT_NAME, ERR_EXIT_MANY_ARGS);
 		g_exit_code = 1;
 	}
-	return (0);
 }

@@ -106,7 +106,10 @@ void runcmd(struct cmd *cmd, t_config config)
 		if (ecmd->argv[0] == 0)
 			exit(1);
 		if (ft_strnstr(ecmd->argv[0], "echo", 5))
-			result = builtin_echo(ecmd->argv);
+		{
+			builtin_echo(ecmd->argv);
+			result = 0;
+		}
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
 		{
 			builtin_cd(ecmd->argv[1], &config, PERMISSION);
@@ -133,11 +136,14 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = 0;
 		}
 		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			result = builtin_exit(ecmd->argv, PERMISSION);
+		{
+			builtin_exit(ecmd->argv, PERMISSION);
+			result = 0;
+		}
 		else
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
-			ft_printf("exec %s failed\n", ecmd->argv[0]);
+			ft_printf(RED"exec %s failed\n"RESET, ecmd->argv[0]);
 	}
 	else if (cmd->type == REDIR)
 	{
