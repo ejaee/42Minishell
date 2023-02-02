@@ -109,28 +109,31 @@ void runcmd(struct cmd *cmd, t_config config)
 			result = builtin_echo(ecmd->argv);
 		if (ft_strnstr(ecmd->argv[0], "cd", 3))
 		{
-			builtin_cd(ecmd->argv[1], &config, 1);
+			builtin_cd(ecmd->argv[1], &config, PERMISSION);
 			result = 0;
 		}
 		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
-			result = builtin_pwd();
+		{
+			builtin_pwd();
+			result = 0;
+		}
 		else if (ft_strnstr(ecmd->argv[0], "export", 7))
 		{
-			builtin_export(ecmd->argv[1], &config, 1);
+			builtin_export(ecmd->argv[1], &config, PERMISSION);
 			result = 0;
 		}
-			
 		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
 		{
-			builtin_unset(ecmd->argv[1], &config, 1);
+			builtin_unset(ecmd->argv[1], &config, PERMISSION);
 			result = 0;
 		}
-			
 		else if (ft_strnstr(ecmd->argv[0], "env", 4))
-			result = builtin_env(config);
+		{
+			builtin_env(ecmd->argv[1], config);
+			result = 0;
+		}
 		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			result = builtin_exit(ecmd->argv, 1);
-
+			result = builtin_exit(ecmd->argv, PERMISSION);
 		else
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
