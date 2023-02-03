@@ -6,11 +6,13 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 16:05:51 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 15:02:14 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+extern int g_exit_code;
 
 size_t	get_argv_count(char *const argv[])
 {
