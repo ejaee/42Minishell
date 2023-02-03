@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 18:51:46 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 13:47:50 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	check_env_for_echo(char *str, t_config *config)
 	t_list	*cur;
 	t_env	*env;
 	char	**env_key;
-	char	key[100];
+	char	key[128];
 	int		idx_count;
 	
 	env_key = ft_split(str, '$');
@@ -65,17 +65,26 @@ void	builtin_echo(char *const argv[], t_config *config)
 {
 	int	idx;
 	int	jdx;
+	int	option_flag;
 	int	moving_jdx;
 
 	idx = 0;
+	option_flag = 0;
+	if (ft_strnstr(argv[1], "-n", 3))
+	{
+		++idx;
+		option_flag = 1;
+	}
+		
 	while (argv[++idx])
 	{
 		jdx = -1;
 
+		if (idx > 1 + option_flag)
+			ft_putchar_fd(' ', STDOUT_FILENO);
 		while (argv[idx][++jdx]) // asdf$$$PWD??asdf$sdf
 		{
-			if (idx > 1)
-				ft_putchar_fd(' ', STDOUT_FILENO);
+			
 			if (argv[idx][jdx] == '$')
 			{
 				moving_jdx = 0;
@@ -91,7 +100,8 @@ void	builtin_echo(char *const argv[], t_config *config)
 				ft_putchar_fd(argv[idx][jdx], STDOUT_FILENO);
 		}
 	}
-	ft_putchar_fd('\n', STDOUT_FILENO);
+	if (!option_flag)
+		ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
 void	builtin_pwd(void)
