@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:38:52 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/01 18:41:52 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 15:26:48 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ void	sig_ctrl_c(int signal)
 	int	pid;
 
 	pid = waitpid(-1, NULL, WNOHANG);
-	g_exit_code = 1;
-
 	if (signal == SIGINT)
 	{
 		if (pid == -1)
