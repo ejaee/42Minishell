@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 21:58:10 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 22:10:35 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,12 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 void	set_fail_exit_code(char *buf, int output_flag)
 {
 	if (output_flag)
+	{
 		ft_fprintf(STDERR_FILENO, RED"%s: export: `%s': %s\n"RESET, \
 		PROMPT_NAME, buf, ERR_EXPORT);
+		exit(1);
+	}
 	g_exit_code = 1;
-	exit(1);
 }
 
 void	builtin_export(char *buf, t_config *config, int output_flag)

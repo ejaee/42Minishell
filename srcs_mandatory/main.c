@@ -16,13 +16,22 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
 
+	status = 0;
 	set_son_signal();
 	if (cmd == 0)
 		exit(0);
 	result = -1;
+
+// printf("\nc type ::%d::\n", cmd->type);
+
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
+		
+	// ft_fprintf(2, "\nargv[0] ::%s::\n", ecmd->argv[0]);
+	// ft_fprintf(2, "\nargv[1] ::%s::\n", ecmd->argv[1]);
+	// ft_fprintf(2, "\nec type ::%d::\n", ecmd->type);
+		
 		if (ecmd->argv[0] == 0)
 			exit(1);
 		if (ft_strnstr(ecmd->argv[0], "echo", 5))
@@ -63,7 +72,10 @@ void runcmd(struct cmd *cmd, t_config config)
 		else
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
+		{
 			ft_printf(RED"exec %s failed\n"RESET, ecmd->argv[0]);
+			status = 127 * 256;
+		}
 	}
 	else if (cmd->type == REDIR)
 	{
@@ -100,7 +112,9 @@ void runcmd(struct cmd *cmd, t_config config)
 		close(p[0]);
 		close(p[1]);
 		wait(&status);
+		ft_fprintf(2, "11cmd-PIPE status:%d\n", status);
 		wait(&status);
+		ft_fprintf(2, "22cmd-PIPE status:%d\n", status);
 	}
 	else if (cmd->type == BACK)
 	{
@@ -110,7 +124,7 @@ void runcmd(struct cmd *cmd, t_config config)
 	}
 	else
 		panic("runcmd");
-	exit(0);
+	exit(status / 256);
 }
 
 void	check_buf(char **buf)
@@ -173,7 +187,8 @@ int main(int argc, char **argv, char **envp)
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
-	printf(":::%d:::\n", status / 256);
+// printf(BLUE"status / 256 = :%d:\n\n"RESET, status / 256);
+		g_exit_code = status / 256;
 		free(buf);
 	}
 	exit(0);
