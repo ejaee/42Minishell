@@ -6,11 +6,13 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 15:26:23 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 19:25:50 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+extern int g_exit_code;
 
 void	builtin_pwd(void)
 {
@@ -22,6 +24,7 @@ void	builtin_pwd(void)
 	ft_putstr_fd(buf, STDOUT_FILENO);
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	free(buf);
+	g_exit_code = 0;
 }
 
 void	builtin_env(char *buf, t_config config)
@@ -30,17 +33,24 @@ void	builtin_env(char *buf, t_config config)
 	t_env *env;
 	
 	if (buf)
+	{
 		ft_fprintf(STDERR_FILENO, RED"env: %s: %s\n"RESET, \
 			buf, ERR_CD);
-	list = config.head->next;
-	while (list->next)
+		g_exit_code = 127;
+	}
+	else
 	{
-		env = list->content;
-		ft_putstr_fd(env->key, STDOUT_FILENO);
-		ft_putstr_fd("=", STDOUT_FILENO);
-		if (env->value != NULL)
-			ft_putstr_fd(env->value, STDOUT_FILENO);
-		ft_putstr_fd("\n", STDOUT_FILENO);
-		list = list->next;
+		list = config.head->next;
+		while (list->next)
+		{
+			env = list->content;
+			ft_putstr_fd(env->key, STDOUT_FILENO);
+			ft_putstr_fd("=", STDOUT_FILENO);
+			if (env->value != NULL)
+				ft_putstr_fd(env->value, STDOUT_FILENO);
+			ft_putstr_fd("\n", STDOUT_FILENO);
+			list = list->next;
+		}
+		g_exit_code = 0;
 	}
 }

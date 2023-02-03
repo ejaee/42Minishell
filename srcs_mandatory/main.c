@@ -45,7 +45,7 @@ struct backcmd
 };
 
 int	g_exit_code = 0;
-
+ 
 // int fork1(void); // Fork but panics on failure.
 struct cmd *parsecmd(char *);
 
@@ -74,7 +74,6 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 		{
 			if (cur_env->value != NULL)
 				free(cur_env->value);
-			
 			if (new_value == NULL)
 				cur_env->value = NULL;	
 			else
@@ -247,7 +246,6 @@ int main(int argc, char **argv, char **envp)
 	load_config(&config, envp);
 	while (1)
 	{
-
 		set_signal();
 		buf = readline(PROMPT);
 		check_buf(&buf);
