@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/03 15:27:47 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 19:04:36 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ typedef struct s_config
 	t_list	*head;
 	t_list	*tail;
 }	t_config;
+
+/* builtin_cd.c */
+void	builtin_cd(char *buf, t_config *config, int output_flag);
+
 
 /* builtin_echo.c */
 int		count_env_key_length(char *str);

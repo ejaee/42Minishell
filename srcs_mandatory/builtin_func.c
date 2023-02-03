@@ -6,36 +6,20 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/02 15:49:29 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 19:22:36 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_cd(char *buf, t_config *config, int output_flag)
-{
-	char	*pwd_buf;
-	char 	key[MAXPATHLEN];
+extern int g_exit_code;
 
-	pwd_buf = ft_calloc(1, MAXPATHLEN);
-	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-		ft_printf("fail: getcwd()\n");
-	if (!output_flag)
-		buf += 3;
-	if (chdir(buf))
-	{
-		if (output_flag)
-			ft_fprintf(STDERR_FILENO, RED"%s: cd: %s: %s\n"RESET, \
-			PROMPT_NAME, buf, ERR_CD);
-		return ;
-	}
-	key[0] = '\0';
-	ft_strcat(key, "OLDPWD=");
-	builtin_export(ft_strcat(key, pwd_buf), config, 0);
-	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-		ft_printf("fail: getcwd()\n");
-	set_env_list(config->head, "PWD", pwd_buf);
-	free(pwd_buf);
+void	set_fail_exit_code(char *buf, int output_flag)
+{
+	if (output_flag)
+		ft_fprintf(STDERR_FILENO, RED"%s: export: `%s': %s\n"RESET, \
+		PROMPT_NAME, buf, ERR_EXPORT);
+	g_exit_code = 1;
 }
 
 void	builtin_export(char *buf, t_config *config, int output_flag)
@@ -51,11 +35,10 @@ void	builtin_export(char *buf, t_config *config, int output_flag)
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
 	if (splited_env == NULL)
 		panic("Fail: splited_env");
+	g_exit_code = 0;
 	if (!ft_isalpha(splited_env_by_pipe[0][0]))
 	{
-		if (output_flag)
-			ft_fprintf(STDERR_FILENO, RED"%s: export: `%s': %s\n"RESET, \
-			PROMPT_NAME, splited_env_by_space[0], ERR_EXPORT);
+		set_fail_exit_code(splited_env_by_space[0], output_flag);
 	}
 	else if (set_env_list(list, splited_env[0], splited_env[1]))
 	{
@@ -69,17 +52,16 @@ void	builtin_export(char *buf, t_config *config, int output_flag)
 void	builtin_unset(char *buf, t_config *config, int output_flag)
 {
 	t_list	*cur;
-	char **splited_env;
+	char	**splited_env;
 
 	cur = config->head;
 	splited_env = ft_split_one_cstm(buf, '=');
 	if (splited_env == NULL)
 		panic("Fail: splited_env");
+	g_exit_code = 0;
 	if (!ft_isalpha(*buf))
 	{
-		if (output_flag)
-			ft_fprintf(STDERR_FILENO, RED"%s: unset: `%s': %s\n"RESET, \
-			PROMPT_NAME, buf, ERR_EXPORT);
+		set_fail_exit_code(buf, output_flag);
 	}
 	else
 	{
