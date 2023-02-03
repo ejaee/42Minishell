@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/02 17:40:35 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 14:56:39 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,6 @@ typedef struct s_config
 	t_list	*head;
 	t_list	*tail;
 }	t_config;
-
-int	g_exit_code;
-
 
 /* builtin_exit.c */
 size_t	get_argv_count(char *const argv[]);

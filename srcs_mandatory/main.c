@@ -44,6 +44,8 @@ struct backcmd
 	struct cmd *cmd;
 };
 
+int	g_exit_code = 0;
+
 // int fork1(void); // Fork but panics on failure.
 struct cmd *parsecmd(char *);
 
@@ -193,8 +195,6 @@ void runcmd(struct cmd *cmd, t_config config)
 	exit(0);
 }
 
-extern int	g_exit_code;
-
 void	check_buf(char **buf)
 {
 	if (*buf == NULL)
@@ -247,6 +247,7 @@ int main(int argc, char **argv, char **envp)
 	load_config(&config, envp);
 	while (1)
 	{
+
 		set_signal();
 		buf = readline(PROMPT);
 		check_buf(&buf);
