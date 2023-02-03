@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/03 14:56:39 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 15:27:47 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,14 @@ typedef struct s_config
 	t_list	*tail;
 }	t_config;
 
+/* builtin_echo.c */
+int		count_env_key_length(char *str);
+int		check_env_echo(char *str, t_config *config);
+int		check_opt_flag(char *str, int *idx);
+void	print_env_echo(char *str, int *jdx, t_config *config);
+void	builtin_echo(char *const argv[], t_config *config);
+
+
 /* builtin_exit.c */
 size_t	get_argv_count(char *const argv[]);
 int		check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[]);
@@ -84,7 +92,6 @@ void	builtin_func(char *buf, t_config *config);
 
 
 /* builtin_func.c */
-void	builtin_echo(char *const argv[], t_config *config);
 void	builtin_pwd(void);
 void	builtin_env(char *buf, t_config config);
 
