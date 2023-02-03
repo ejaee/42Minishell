@@ -1,91 +1,10 @@
 // Shell.
 #include "minishell.h"
 
-// Parsed command representation
-#define EXEC 1
-#define REDIR 2
-#define PIPE 3
-#define BACK 5
-
-#define MAXARGS 10
-
-struct cmd
-{
-	int type;
-};
-
-struct execcmd
-{
-	int type;
-	char *argv[MAXARGS];
-	char *eargv[MAXARGS];
-};
-
-struct redircmd
-{
-	int type;
-	struct cmd *cmd;
-	char *file;
-	char *efile;
-	int mode;
-	int fd;
-};
-
-struct pipecmd
-{
-	int type;
-	struct cmd *left;
-	struct cmd *right;
-};
-
-struct backcmd
-{
-	int type;
-	struct cmd *cmd;
-};
-
 int	g_exit_code = 0;
  
 // int fork1(void); // Fork but panics on failure.
 struct cmd *parsecmd(char *);
-
-t_list	*get_env_list(t_list *env_list, char *env_key)
-{
-	t_env *cur_env;
-	
-	while (env_list)
-	{
-		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
-			return (env_list);
-		env_list = env_list->next;
-	}
-	return NULL;
-}
-
-int	set_env_list(t_list *env_list, char *env_key, char *new_value)
-{
-	t_env *cur_env;
-	
-	while (env_list)
-	{
-		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
-		{
-			if (cur_env->value != NULL)
-				free(cur_env->value);
-			if (new_value == NULL)
-				cur_env->value = NULL;	
-			else
-				cur_env->value = ft_strdup(new_value);
-			cur_env = NULL;
-			return (0);
-		}
-		env_list = env_list->next;
-	}
-	cur_env = NULL;
-	return (1);
-}
 
 void runcmd(struct cmd *cmd, t_config config)
 {
@@ -254,6 +173,7 @@ int main(int argc, char **argv, char **envp)
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
+	printf(":::%d:::\n", status / 256);
 		free(buf);
 	}
 	exit(0);
