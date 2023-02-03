@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 19:22:36 by ejachoi          ###   ########.fr       */
+/*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
+/*   Updated: 2023/02/03 21:57:29 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,66 +14,45 @@
 
 extern int g_exit_code;
 
-void	set_fail_exit_code(char *buf, int output_flag)
+void	builtin_pwd(void)
 {
-	if (output_flag)
-		ft_fprintf(STDERR_FILENO, RED"%s: export: `%s': %s\n"RESET, \
-		PROMPT_NAME, buf, ERR_EXPORT);
-	g_exit_code = 1;
+	char	*buf;
+
+	buf = ft_calloc(1, MAXPATHLEN);
+	if (getcwd(buf, MAXPATHLEN) == NULL)
+		ft_printf("fail: getcwd()\n");
+	ft_putstr_fd(buf, STDOUT_FILENO);
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	free(buf);
+	g_exit_code = 0;
 }
 
-void	builtin_export(char *buf, t_config *config, int output_flag)
+void	builtin_env(char *buf, t_config config)
 {
 	t_list *list;
-	char **splited_env_by_pipe;
-	char **splited_env_by_space;
-	char **splited_env;
-
-	list = config->head;
-	splited_env_by_pipe = ft_split(buf, '|');
-	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
-	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
-	if (splited_env == NULL)
-		panic("Fail: splited_env");
-	g_exit_code = 0;
-	if (!ft_isalpha(splited_env_by_pipe[0][0]))
+	t_env *env;
+	
+	if (buf)
 	{
-		set_fail_exit_code(splited_env_by_space[0], output_flag);
-	}
-	else if (set_env_list(list, splited_env[0], splited_env[1]))
-	{
-		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
-	}
-	free_split(splited_env_by_pipe);
-	free_split(splited_env_by_space);
-	free_split(splited_env);
-}
-
-void	builtin_unset(char *buf, t_config *config, int output_flag)
-{
-	t_list	*cur;
-	char	**splited_env;
-
-	cur = config->head;
-	splited_env = ft_split_one_cstm(buf, '=');
-	if (splited_env == NULL)
-		panic("Fail: splited_env");
-	g_exit_code = 0;
-	if (!ft_isalpha(*buf))
-	{
-		set_fail_exit_code(buf, output_flag);
+		ft_fprintf(STDERR_FILENO, RED"env: %s: %s\n"RESET, \
+			buf, ERR_CD);
+		exit(127);
 	}
 	else
 	{
-		cur = get_env_list(cur, splited_env[0]);
-		if (splited_env[1] == NULL && cur)
+		list = config.head->next;
+		while (list->next)
 		{
-			cur->prev->next = cur->next;
-			cur->next->prev = cur->prev;
-			ft_lstdelone(cur, ft_del);
+			env = list->content;
+			ft_putstr_fd(env->key, STDOUT_FILENO);
+			ft_putstr_fd("=", STDOUT_FILENO);
+			if (env->value != NULL)
+				ft_putstr_fd(env->value, STDOUT_FILENO);
+			ft_putstr_fd("\n", STDOUT_FILENO);
+			list = list->next;
 		}
+		g_exit_code = 0;
 	}
-	free_split(splited_env);
 }
 
 void	builtin_func(char *buf, t_config *config)
