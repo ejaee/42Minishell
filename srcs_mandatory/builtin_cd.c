@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 19:17:23 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 23:12:39 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,12 @@ void	set_fail_cd(char *buf, int env_flag, int output_flag)
 	if (!env_flag)
 		{
 			if (output_flag)
+			{
 				ft_fprintf(STDERR_FILENO, RED"%s: cd: %s: %s\n"RESET, \
 			PROMPT_NAME, buf, ERR_CD);
+				exit (1);
+				g_exit_code = 1;
+			}
 			g_exit_code = 1;
 		}
 	else

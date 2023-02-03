@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 18:56:53 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/03 23:42:46 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,13 @@ int	check_exit_param(char *arg, int *out_exit_code)
 
 void	builtin_exit(char *const argv[], int output_flag)
 {
+	int	kdx = -1;
+	while (argv[++kdx])
+	{
+		printf(RED"%d\n  ||%s||\n"RESET, kdx, argv[kdx]);
+	}
+
+
 	size_t			argc;
 
 	argc = get_argv_count(argv);
@@ -89,7 +96,10 @@ void	builtin_exit(char *const argv[], int output_flag)
 	else if (argc > 2)
 	{
 		if (output_flag)
+		{
 			ft_fprintf(STDERR_FILENO, RED"%s: %s\n"RESET, PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+			exit(1);
+		}
 		g_exit_code = 1;
 	}
 }
