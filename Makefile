@@ -6,7 +6,7 @@
 #    By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/03 15:29:43 by ejachoi          ###   ########.fr        #
+#    Updated: 2023/02/03 19:03:51 by ejachoi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,17 +18,16 @@ INCLUDES_DIR = ./includes
 MANDATORY_DIR = ./srcs_mandatory
 
 MANDATORY_SRCS = \
-
 load_config.c \
 main.c \
 new_env.c \
 builtin_func.c \
 builtin_func2.c \
 builtin_echo.c \
+builtin_cd.c \
 builtin_exit.c \
 signal.c \
 utils.c \
-
 
 OBJS_DIR = ./objs
 
