@@ -131,6 +131,12 @@ void	show_shell_logo(void)
 	// show_logo_2();
 }
 
+// static void	load_history(t_history	*history)
+// {
+// 	history->history = ft_strdup("    ");
+// 	history->idx = 1;
+// }
+
 int main(int argc, char **argv, char **envp)
 {
 	char		*buf;
@@ -145,6 +151,9 @@ int main(int argc, char **argv, char **envp)
 	{
 		set_signal();
 		buf = readline(PROMPT);
+
+		add_history(buf);
+
 		check_buf(&buf);
 		if (!ft_strchr(buf, '|'))
 			builtin_func(buf, NULL, &config);
