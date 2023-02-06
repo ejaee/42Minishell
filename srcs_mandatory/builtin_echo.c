@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 15:25:58 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 15:26:28 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/06 21:41:55 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	print_env_echo(char *str, int *jdx, t_config *config)
 		ft_putchar_fd(*(str + *jdx), STDOUT_FILENO);
 }
 
-void	builtin_echo(char *const argv[], t_config *config)
+int	builtin_echo(char *const argv[], t_config *config)
 {
 	int	idx;
 	int	jdx;
@@ -102,4 +102,5 @@ void	builtin_echo(char *const argv[], t_config *config)
 	}
 	if (!opt_flag)
 		ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
 }

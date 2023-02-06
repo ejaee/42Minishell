@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 23:42:46 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/06 21:56:36 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,8 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	return (true);
 }
 
-void	builtin_exit(char *const argv[], int output_flag)
+int	builtin_exit(char *const argv[], int output_flag)
 {
-	int	kdx = -1;
-	while (argv[++kdx])
-	{
-		printf(RED"%d\n  ||%s||\n"RESET, kdx, argv[kdx]);
-	}
-
-
 	size_t			argc;
 
 	argc = get_argv_count(argv);
@@ -102,4 +95,5 @@ void	builtin_exit(char *const argv[], int output_flag)
 		}
 		g_exit_code = 1;
 	}
+	return (0);
 }

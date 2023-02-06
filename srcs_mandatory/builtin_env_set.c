@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env_set.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 22:10:35 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/06 21:49:27 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	set_fail_exit_code(char *buf, int output_flag)
 	g_exit_code = 1;
 }
 
-void	builtin_export(char *buf, t_config *config, int output_flag)
+int	builtin_export(char *buf, t_config *config, int output_flag)
 {
 	t_list *list;
 	char **splited_env_by_pipe;
@@ -88,9 +88,10 @@ void	builtin_export(char *buf, t_config *config, int output_flag)
 	free_split(splited_env_by_pipe);
 	free_split(splited_env_by_space);
 	free_split(splited_env);
+	return (0);
 }
 
-void	builtin_unset(char *buf, t_config *config, int output_flag)
+int	builtin_unset(char *buf, t_config *config, int output_flag)
 {
 	t_list	*cur;
 	char	**splited_env;
@@ -115,4 +116,5 @@ void	builtin_unset(char *buf, t_config *config, int output_flag)
 		}
 	}
 	free_split(splited_env);
+	return (0);
 }
