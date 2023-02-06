@@ -247,6 +247,16 @@ struct cmd *backcmd(struct cmd *subcmd)
 char whitespace[] = " \t\r\n\v";
 char symbols[] = "<|>&()";
 
+// 공백을 지나가고
+// | ( ) & 의 경우 한칸 넘기고
+// > 인 경우 넘기고
+// >> 인 경우 ret = '+' 주고 넘기고
+// < 인 경우 ret = 'h' 주고 넘기고
+// 나머지는 ret = 'a' 주고 공백 쭉 민다
+// 매개변수 1 는 다음 토큰 대상을 가리키고(공백을 지났음)
+// 3, 4 는 토큰의 처음과 끝을 가리킨다
+
+// 3. **out_q : 값을 가져오고 싶을 때 0이 아닌 값을 준다
 int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 {
 	char *str;
@@ -300,6 +310,7 @@ int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 
 // 공백을 넘긴다
 // 현재 가리키는 문자부터 끝까지 toks 이 있는지 확인한다
+// 있으면 1 없으면 0을 리턴한다
 int skip_space_check_toks(char **out_ps, char *str_end, char *toks)
 {
 	char *str;
@@ -391,6 +402,7 @@ struct cmd *parseblock(char **out_str_prt, char *str_end)
 
 	if (!skip_space_check_toks(out_str_prt, str_end, "("))
 		panic("parseblock");
+	// 괄호 ( 를 넘기는 역할
 	gettoken(out_str_prt, str_end, 0, 0);
 	cmd = parseline(out_str_prt, str_end);
 	if (!skip_space_check_toks(out_str_prt, str_end, ")"))
