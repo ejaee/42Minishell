@@ -2,7 +2,7 @@
 #include "minishell.h"
 
 int	g_exit_code = 0;
- 
+
 // int fork1(void); // Fork but panics on failure.
 struct cmd *parsecmd(char *);
 
@@ -16,60 +16,24 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
 
+// printf("\n----------------------\n");		
+// printf(">>>>>> enter son process <<<<<<\n");		
 	status = 0;
 	set_son_signal();
 	if (cmd == 0)
 		exit(0);
 	result = -1;
-
 // printf("\nc type ::%d::\n", cmd->type);
-
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
-		
 	// ft_fprintf(2, "\nargv[0] ::%s::\n", ecmd->argv[0]);
 	// ft_fprintf(2, "\nargv[1] ::%s::\n", ecmd->argv[1]);
 	// ft_fprintf(2, "\nec type ::%d::\n", ecmd->type);
-		
 		if (ecmd->argv[0] == 0)
 			exit(1);
-		if (ft_strnstr(ecmd->argv[0], "echo", 5))
-		{
-			builtin_echo(ecmd->argv, &config);
-			result = 0;
-		}
-		if (ft_strnstr(ecmd->argv[0], "cd", 3))
-		{
-			builtin_cd(ecmd->argv[1], &config, PERMISSION);
-			result = 0;
-		}
-		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
-		{
-			builtin_pwd();
-			result = 0;
-		}
-		else if (ft_strnstr(ecmd->argv[0], "export", 7))
-		{
-			builtin_export(ecmd->argv[1], &config, PERMISSION);
-			result = 0;
-		}
-		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
-		{
-			builtin_unset(ecmd->argv[1], &config, PERMISSION);
-			result = 0;
-		}
-		else if (ft_strnstr(ecmd->argv[0], "env", 4))
-		{
-			builtin_env(ecmd->argv[1], config);
-			result = 0;
-		}
-		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-		{
-			builtin_exit(ecmd->argv, PERMISSION);
-			result = 0;
-		}
-		else
+		result = builtin_func(ecmd->argv[0], ecmd->argv, &config);
+		if (result == -1)
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
 		{
@@ -183,7 +147,7 @@ int main(int argc, char **argv, char **envp)
 		buf = readline(PROMPT);
 		check_buf(&buf);
 		if (!ft_strchr(buf, '|'))
-			builtin_func(buf, &config);
+			builtin_func(buf, NULL, &config);
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_func.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 21:57:29 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/06 21:49:06 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 extern int g_exit_code;
 
-void	builtin_pwd(void)
+int	builtin_pwd(void)
 {
 	char	*buf;
 
@@ -25,9 +25,10 @@ void	builtin_pwd(void)
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	free(buf);
 	g_exit_code = 0;
+	return (0);
 }
 
-void	builtin_env(char *buf, t_config config)
+int	builtin_env(char *buf, t_config config)
 {
 	t_list *list;
 	t_env *env;
@@ -53,30 +54,63 @@ void	builtin_env(char *buf, t_config config)
 		}
 		g_exit_code = 0;
 	}
+	return (0);
 }
 
-void	builtin_func(char *buf, t_config *config)
+int	builtin_func(char *buf, char **argv, t_config *config)
 {
-	char **splited_cmd;
+	char	**splited_cmd;
+	int		output_flag;
+	int		result;
 	
-	splited_cmd = ft_split(buf, ' ');
-	if (ft_strnstr(splited_cmd[0], "cd", 2))
+	result = -1;
+	if (argv) // fork
 	{
-		builtin_cd(buf, config, PERMISSION_DENIED);
+		splited_cmd = argv;
+		output_flag = PERMISSION;
 	}
-	if (ft_strnstr(splited_cmd[0], "export", 6))
+	else
+	{
+		splited_cmd = ft_split(buf, ' ');
+		output_flag = PERMISSION_DENIED;
+	}
+	if (ft_strnstr(splited_cmd[0], "cd", 3))
+	{
+		if (argv)
+			buf = splited_cmd[1];
+		result = builtin_cd(buf, config, output_flag);
+	}
+	if (ft_strnstr(splited_cmd[0], "export", 7))
 	{
 		if (splited_cmd[2] == NULL)
-			builtin_export(splited_cmd[1], config, PERMISSION_DENIED);
+			result = builtin_export(splited_cmd[1], config, output_flag);
 	}
-	if (ft_strnstr(splited_cmd[0], "unset", 5))
+	if (ft_strnstr(splited_cmd[0], "unset", 6))
 	{
 		if (splited_cmd[2] == NULL)
-			builtin_unset(splited_cmd[1], config, PERMISSION_DENIED);
+			result = builtin_unset(splited_cmd[1], config, output_flag);
 	}
 	if (ft_strnstr(buf, "exit", 5))
 	{
-		builtin_exit(splited_cmd, PERMISSION_DENIED);
+		result = builtin_exit(splited_cmd, output_flag);
 	}
-	free_split(splited_cmd);
+
+	if (argv && ft_strnstr(splited_cmd[0], "echo", 5))
+	{
+		result = builtin_echo(splited_cmd, config);
+	}
+
+	if (argv && ft_strnstr(splited_cmd[0], "env", 4))
+	{
+		result = builtin_env(splited_cmd[1], *config);
+	}
+
+	if (argv && ft_strnstr(splited_cmd[0], "pwd", 4))
+	{
+		result = builtin_pwd();
+	}
+
+	if (!argv)
+		free_split(splited_cmd);
+	return (result);
 }

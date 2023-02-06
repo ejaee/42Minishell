@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/03 22:00:08 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/06 22:06:05 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,24 +114,24 @@ typedef struct s_config
 }	t_config;
 
 /* builtin_cd.c */
-void	builtin_cd(char *buf, t_config *config, int output_flag);
+int		builtin_cd(char *buf, t_config *config, int output_flag);
 
 /* builtin_echo.c */
-void	builtin_echo(char *const argv[], t_config *config);
+int		builtin_echo(char *const argv[], t_config *config);
 
 /* builtin_env_set.c */
 t_list	*get_env_list(t_list *env_list, char *env_key);
 int		set_env_list(t_list *env_list, char *env_key, char *new_value);
-void	builtin_export(char *buf, t_config *config, int flag);
-void	builtin_unset(char *const buf, t_config *config, int flag);
+int		builtin_export(char *buf, t_config *config, int flag);
+int		builtin_unset(char *const buf, t_config *config, int flag);
 
 /* builtin_exit.c */
-void	builtin_exit(char *const argv[], int flag);
+int		builtin_exit(char *const argv[], int flag);
 
 /* builtin_func.c */
-void	builtin_pwd(void);
-void	builtin_env(char *buf, t_config config);
-void	builtin_func(char *buf, t_config *config);
+int		builtin_pwd(void);
+int		builtin_env(char *buf, t_config config);
+int		builtin_func(char *buf, char **argv, t_config *config);
 
 /* load_config.c */
 void	load_config(t_config *config, char **envp);

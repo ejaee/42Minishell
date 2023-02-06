@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 23:12:39 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/06 21:38:08 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	set_fail_cd(char *buf, int env_flag, int output_flag)
 		g_exit_code = 0;
 }
 
-void	builtin_cd(char *buf, t_config *config, int output_flag)
+int	builtin_cd(char *buf, t_config *config, int output_flag)
 {
 	char	*pwd_buf;
 	char 	key[MAXPATHLEN];
@@ -66,7 +66,7 @@ void	builtin_cd(char *buf, t_config *config, int output_flag)
 	if (chdir(buf))
 	{
 		set_fail_cd(buf, env_flag, output_flag);
-		return ;
+		return (0);
 	}
 	g_exit_code = 0;
 	key[0] = '\0';
@@ -76,4 +76,5 @@ void	builtin_cd(char *buf, t_config *config, int output_flag)
 		ft_printf("fail: getcwd()\n");
 	set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
+	return (0);
 }
