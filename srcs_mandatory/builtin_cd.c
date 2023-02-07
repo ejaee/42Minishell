@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/07 14:56:29 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:10:23 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,26 @@ char	*set_buf(char *buf, int output_flag, t_config *config, int *env_flag)
 {
 	t_list	*cur;
 	t_env	*env;
-	int		end_idx;
-	
-	end_idx = ft_strlen(buf) - 1;
+
 	if (!output_flag)
 	{
 		buf += 3;
 		while (*buf && ft_strchr(WHITE_SPACE, *buf))
 			buf++;
 	}
-	if ((*buf == '"' && buf[end_idx] == '"') || \
-		(*buf == '\'' && buf[end_idx] == '\''))
+	if (ft_strchr(buf, '\'') || ft_strchr(buf, '"'))
 	{
-		buf += 1;
-		buf[ft_strlen(buf) - 1] = '\0';
+		if (!parse_quote(buf))
+		{
+			if (!output_flag)
+				ft_printf(RED"fail: Wrong input(quote)\n"RESET);
+			buf = ".";
+		}
+		else
+		{
+			buf += 1;
+			buf[ft_strlen(buf) -1] = '\0';
+		}
 	}
 	if (*buf == '$')
 	{
