@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+         #
+#    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/08 21:24:48 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/01 15:26:55 by ejachoi          ###   ########.fr        #
+#    Updated: 2023/02/07 22:19:42 by choiejae         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,12 +27,13 @@ SOURCES_MANDATORY = \
 			ft_memchr.c      ft_striteri.c       ft_toupper.c \
 			ft_memcmp.c      ft_strjoin.c \
 			ft_memcpy.c      ft_strlcat.c \
-			ft_free_split.c	 ft_strcat.c\
-			\
+			ft_free_split.c	 \
+			ft_strcat.c\
 			ft_split_one_cstm.c \
 			ft_atolld.c \
 			ft_strnumlen.c \
 			ft_d_lstadd_back.c \
+			
 
 SOURCES_BONUS = \
 			ft_d_lstadd_back.c  \
