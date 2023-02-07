@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:38:52 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 15:26:48 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/08 07:56:47 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	set_son_signal()
+void	set_son_signal(void)
 {
 	signal(SIGQUIT, SIG_DFL);
 }
@@ -39,7 +39,7 @@ void	sig_ctrl_c(int signal)
 	}
 }
 
-void	set_signal()
+void	set_signal(void)
 {
 	signal(SIGINT, sig_ctrl_c);
 	signal(SIGQUIT, SIG_IGN);

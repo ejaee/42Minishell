@@ -1,9 +1,19 @@
-// Shell.
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
+/*   Updated: 2023/02/08 08:43:32 by choiejae         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	g_exit_code = 0;
 
-// int fork1(void); // Fork but panics on failure.
 struct cmd *parsecmd(char *);
 
 void runcmd(struct cmd *cmd, t_config config)
@@ -16,8 +26,6 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
 
-// printf("\n----------------------\n");		
-// printf(">>>>>> enter son process <<<<<<\n");		
 	status = 0;
 	set_son_signal();
 	if (cmd == 0)
@@ -100,31 +108,6 @@ void	check_buf(char **buf)
 	{
 		**buf ='\n';
 	}
-}
-void	show_logo_1(void)
-{
-	ft_printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                         %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗               ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	ft_printf("%s║          ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║               ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	ft_printf("%s║          ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗         ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝         ║%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                         %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
-	ft_printf("\n");
-}
-
-void	show_shell_logo(void)
-{
-	show_logo_1();
-	// show_logo_2();
 }
 
 int main(int argc, char **argv, char **envp)

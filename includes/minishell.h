@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/07 22:15:39 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 07:51:15 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,9 @@ t_env	*new_env(const char	*env);
 
 /* parse_quote */
 int	parse_quote(char *buf);
+
+/* show_shell_logo */
+void	show_shell_logo(void);
 
 /* signals.c */
 void	set_son_signal();

@@ -6,20 +6,20 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/07 23:16:16 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 08:39:46 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 char	*set_by_process(char *buf, int output_flag)
 {
 	char	*res;
 
 	res = buf;
-	if (!output_flag)
+	if (output_flag == PERMISSION_DENIED)
 	{
 		res += 3;
 		while (res && ft_strchr(WHITE_SPACE, *res))
@@ -76,16 +76,16 @@ char	*set_buf(char *buf, int output_flag, t_config *config, int *env_flag)
 void	set_fail_cd(char *buf, int env_flag, int output_flag)
 {
 	if (!env_flag)
+	{
+		if (output_flag)
 		{
-			if (output_flag)
-			{
-				ft_fprintf(STDERR_FILENO, RED"%s: cd: %s: %s\n"RESET, \
-			PROMPT_NAME, buf, ERR_CD);
-				exit (1);
-				g_exit_code = 1;
-			}
+			ft_fprintf(STDERR_FILENO, RED"%s: cd: %s: %s\n"RESET, \
+		PROMPT_NAME, buf, ERR_CD);
+			exit (1);
 			g_exit_code = 1;
 		}
+			g_exit_code = 1;
+	}
 	else
 		g_exit_code = 0;
 }
@@ -93,7 +93,7 @@ void	set_fail_cd(char *buf, int env_flag, int output_flag)
 int	builtin_cd(char *buf, t_config *config, int output_flag)
 {
 	char	*pwd_buf;
-	char 	key[MAXPATHLEN];
+	char	key[MAXPATHLEN];
 	int		env_flag;
 
 	pwd_buf = ft_calloc(1, MAXPATHLEN);

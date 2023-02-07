@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 15:25:58 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/06 21:41:55 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 08:42:35 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ extern int	g_exit_code;
 
 int	count_env_key_length(char *str)
 {
-	int count;
+	int	count;
 
 	count = 0;
 	while (*str)
@@ -34,7 +34,7 @@ int	check_env_echo(char *str, t_config *config)
 	char	**env_key;
 	char	key[128];
 	int		idx_count;
-	
+
 	env_key = ft_split(str, '$');
 	if (env_key[0][0] == '?')
 	{
@@ -52,7 +52,7 @@ int	check_env_echo(char *str, t_config *config)
 		ft_printf("%s%s%s", GREEN, env->value, RESET);
 	}
 	ft_free_split(&env_key);
-	return idx_count;
+	return (idx_count);
 }
 
 int	check_opt_flag(char *str, int *idx)
@@ -67,7 +67,7 @@ int	check_opt_flag(char *str, int *idx)
 
 void	print_env_echo(char *str, int *jdx, t_config *config)
 {
-	int moving_jdx;
+	int	moving_jdx;
 
 	moving_jdx = 0;
 	if (*(str + (*jdx + 1)) && *(str + (*jdx + 1)) != '$')

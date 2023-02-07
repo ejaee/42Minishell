@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   show_logo.c                                        :+:      :+:    :+:   */
+/*   show_shell_logo.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 21:05:09 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/03 21:05:26 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/08 08:06:37 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,45 @@
 
 void	show_logo_1(void)
 {
-	ft_printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                         %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗               ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	ft_printf("%s║          ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║               ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	ft_printf("%s║          ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗         ║%s\n", BROWN, WHITE);
-	ft_printf("%s║          ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝         ║%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s║                                                                         %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	ft_printf("%s║                                                                                                      ║%s\n", BROWN, WHITE);
-	ft_printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
+	ft_printf("%s╔═══════════════════════════════════════════════════════════════════════════\
+═══════════════════════════╗%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                           \
+                           ║%s\n", BROWN, WHITE);
+	ft_printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                        \
+                                 %s║\n", BROWN, RED, BROWN, YELLOW, BROWN);
+	ft_printf("%s║                                                                           \
+                           ║%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                           \
+                           ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗\
+██╗      ██╗               ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔════\
+═╝██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	ft_printf("%s║          ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  \
+██║      ██║               ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝\
+  ██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+}
+
+void	show_logo_2(void)
+{
+	ft_printf("%s║          ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗\
+████████╗████████╗         ║%s\n", BROWN, WHITE);
+	ft_printf("%s║          ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝\
+╚═══════╝╚═══════╝         ║%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                           \
+                           ║%s\n", BROWN, WHITE);
+	ft_printf("%s║                                                                         %s\
+.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
+	ft_printf("%s║                                                                           \
+                           ║%s\n", BROWN, WHITE);
+	ft_printf("%s╚═══════════════════════════════════════════════════════════════════════════\
+═══════════════════════════╝%s\n", BROWN, WHITE);
 	ft_printf("\n");
 }
 
 void	show_shell_logo(void)
 {
 	show_logo_1();
-	// show_logo_2();
+	show_logo_2();
 }
