@@ -6,7 +6,7 @@
 #    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/07 16:11:10 by choiejae         ###   ########.fr        #
+#    Updated: 2023/02/07 22:21:34 by choiejae         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -117,7 +117,7 @@ fclean:
 re:
 	make fclean
 	make all
-	
+
 .PHONY: debug
 debug: $(NAME)
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:16:54 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/01 18:44:14 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/07 22:31:17 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,6 @@ void	ft_del(void *content)
 
 void panic(char *s)
 {
-	ft_printf("%s\n", s);
+	ft_fprintf(2, "fail: %s\n", s);
 	exit(1);
 }
