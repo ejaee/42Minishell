@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/06 21:38:08 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 14:56:29 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,21 @@ char	*set_buf(char *buf, int output_flag, t_config *config, int *env_flag)
 {
 	t_list	*cur;
 	t_env	*env;
+	int		end_idx;
 	
+	end_idx = ft_strlen(buf) - 1;
 	if (!output_flag)
+	{
 		buf += 3;
+		while (*buf && ft_strchr(WHITE_SPACE, *buf))
+			buf++;
+	}
+	if ((*buf == '"' && buf[end_idx] == '"') || \
+		(*buf == '\'' && buf[end_idx] == '\''))
+	{
+		buf += 1;
+		buf[ft_strlen(buf) - 1] = '\0';
+	}
 	if (*buf == '$')
 	{
 		cur = get_env_list(config->head, buf + 1);

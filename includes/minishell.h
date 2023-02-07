@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/06 22:06:05 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 14:54:57 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ struct backcmd
 # define ERR_CD "No such file or directory"
 # define ERR_EXPORT "not a valid identifier"
 
+# define WHITE_SPACE " \t\r\n\v"
+
 /* flag */
 
 # define PERMISSION 1
@@ -135,6 +137,9 @@ int		builtin_func(char *buf, char **argv, t_config *config);
 
 /* load_config.c */
 void	load_config(t_config *config, char **envp);
+
+/* main.c */
+int skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 
 /* new_env */
 t_env	*new_env(const char	*env);
