@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/07 14:54:57 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:10:04 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,9 @@ int skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 
 /* new_env */
 t_env	*new_env(const char	*env);
+
+/* parse_quote */
+int	parse_quote(char *buf);
 
 /* signals.c */
 void	set_son_signal();

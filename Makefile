@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+         #
+#    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/03 21:11:28 by ejachoi          ###   ########.fr        #
+#    Updated: 2023/02/07 16:11:10 by choiejae         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ builtin_cd.c \
 builtin_exit.c \
 signal.c \
 utils.c \
+parse_quote.c\
 
 OBJS_DIR = ./objs
 
