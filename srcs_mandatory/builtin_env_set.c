@@ -6,18 +6,18 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/07 22:10:26 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 08:41:01 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 t_list	*get_env_list(t_list *env_list, char *env_key)
 {
-	t_env *cur_env;
-	
+	t_env	*cur_env;
+
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
@@ -25,13 +25,13 @@ t_list	*get_env_list(t_list *env_list, char *env_key)
 			return (env_list);
 		env_list = env_list->next;
 	}
-	return NULL;
+	return (NULL);
 }
 
 int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 {
-	t_env *cur_env;
-	
+	t_env	*cur_env;
+
 	while (env_list)
 	{
 		cur_env = (t_env *)env_list->content;
@@ -40,7 +40,7 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 			if (cur_env->value != NULL)
 				free(cur_env->value);
 			if (new_value == NULL)
-				cur_env->value = NULL;	
+				cur_env->value = NULL;
 			else
 				cur_env->value = ft_strdup(new_value);
 			cur_env = NULL;

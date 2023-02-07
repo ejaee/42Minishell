@@ -6,13 +6,13 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/06 21:56:36 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 08:12:00 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 size_t	get_argv_count(char *const argv[])
 {
@@ -42,9 +42,9 @@ int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 int	check_exit_param(char *arg, int *out_exit_code)
 {
 	const char	*lld_minmax_str[2];
-	size_t	lld_max_len;
 	long long	lld_arg;
-	size_t	arg_len;
+	size_t		lld_max_len;
+	size_t		arg_len;
 
 	lld_minmax_str[0] = "-9223372036854775808";
 	lld_minmax_str[1] = "9223372036854775807";
@@ -90,7 +90,8 @@ int	builtin_exit(char *const argv[], int output_flag)
 	{
 		if (output_flag)
 		{
-			ft_fprintf(STDERR_FILENO, RED"%s: %s\n"RESET, PROMPT_NAME, ERR_EXIT_MANY_ARGS);
+			ft_fprintf(STDERR_FILENO, RED"%s: %s\n"RESET, \
+			PROMPT_NAME, ERR_EXIT_MANY_ARGS);
 			exit(1);
 		}
 		g_exit_code = 1;

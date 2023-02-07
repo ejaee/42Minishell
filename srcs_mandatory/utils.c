@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:16:54 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/07 22:31:17 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 08:13:12 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 
 void	free_split(char **str)
 {
-	int idx;
+	int	idx;
 
 	idx = -1;
-	while(str[++idx])
+	while (str[++idx])
 		free(str[idx]);
 	free(str);
 }
 
 void	ft_del(void *content)
 {
-	t_env *env;
+	t_env	*env;
 
 	env = (t_env *)content;
 	free(env->key);
@@ -32,7 +32,7 @@ void	ft_del(void *content)
 	free(content);
 }
 
-void panic(char *s)
+void	panic(char *s)
 {
 	ft_fprintf(2, "fail: %s\n", s);
 	exit(1);
