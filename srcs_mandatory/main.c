@@ -23,17 +23,13 @@ void runcmd(struct cmd *cmd, t_config config)
 	if (cmd == 0)
 		exit(0);
 	result = -1;
-// printf("\nc type ::%d::\n", cmd->type);
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
-	// ft_fprintf(2, "\nargv[0] ::%s::\n", ecmd->argv[0]);
-	// ft_fprintf(2, "\nargv[1] ::%s::\n", ecmd->argv[1]);
-	// ft_fprintf(2, "\nec type ::%d::\n", ecmd->type);
 		if (ecmd->argv[0] == 0)
 			exit(1);
 		result = builtin_func(ecmd->argv[0], ecmd->argv, &config);
-		if (result == -1)
+		if (result)
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
 		{
@@ -131,12 +127,6 @@ void	show_shell_logo(void)
 	// show_logo_2();
 }
 
-// static void	load_history(t_history	*history)
-// {
-// 	history->history = ft_strdup("    ");
-// 	history->idx = 1;
-// }
-
 int main(int argc, char **argv, char **envp)
 {
 	char		*buf;
@@ -160,7 +150,6 @@ int main(int argc, char **argv, char **envp)
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
-// printf(BLUE"status / 256 = :%d:\n\n"RESET, status / 256);
 		g_exit_code = status / 256;
 		free(buf);
 	}
@@ -398,10 +387,8 @@ struct cmd *parseexec(char **out_str_ptr, char *str_end)
 	ret = init_execcmd();
 	cmd = (struct execcmd *)ret;
 
-	// issue 1
 	argc = 0;
 	ret = parseredirs(ret, out_str_ptr, str_end);
-	// issue 2
 	while (!skip_space_check_toks(out_str_ptr, str_end, "|)&"))
 	{
 		if ((tok = gettoken(out_str_ptr, str_end, &q, &eq)) == 0)
