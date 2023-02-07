@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/07 16:10:23 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 23:16:16 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,54 @@
 
 extern int g_exit_code;
 
+char	*set_by_process(char *buf, int output_flag)
+{
+	char	*res;
+
+	res = buf;
+	if (!output_flag)
+	{
+		res += 3;
+		while (res && ft_strchr(WHITE_SPACE, *res))
+			res++;
+	}
+	return (res);
+}
+
+char	*set_quote(char *buf, int output_flag)
+{
+	char	*res;
+	char	*tmp;
+
+	res = set_by_process(buf, output_flag);
+	if (ft_strchr(res, '\'') || ft_strchr(res, '"'))
+	{
+		if (!parse_quote(res))
+		{
+			if (!output_flag)
+				ft_printf(RED"fail: Wrong input(quote)\n"RESET);
+			res = ".";
+		}
+		else
+		{
+			res += 1;
+			tmp = ft_strchr(res, '"');
+			*tmp = '\0';
+		}
+	}
+	return (res);
+}
+
 char	*set_buf(char *buf, int output_flag, t_config *config, int *env_flag)
 {
 	t_list	*cur;
 	t_env	*env;
+	char	*res;
 
-	if (!output_flag)
+	res = set_quote(buf, output_flag);
+	if (*res == '$')
 	{
-		buf += 3;
-		while (*buf && ft_strchr(WHITE_SPACE, *buf))
-			buf++;
-	}
-	if (ft_strchr(buf, '\'') || ft_strchr(buf, '"'))
-	{
-		if (!parse_quote(buf))
-		{
-			if (!output_flag)
-				ft_printf(RED"fail: Wrong input(quote)\n"RESET);
-			buf = ".";
-		}
-		else
-		{
-			buf += 1;
-			buf[ft_strlen(buf) -1] = '\0';
-		}
-	}
-	if (*buf == '$')
-	{
-		cur = get_env_list(config->head, buf + 1);
+		cur = get_env_list(config->head, res + 1);
 		if (cur)
 		{
 			env = (t_env *)cur->content;
@@ -50,7 +70,7 @@ char	*set_buf(char *buf, int output_flag, t_config *config, int *env_flag)
 		else
 			*env_flag = 1;
 	}
-	return (buf);
+	return (res);
 }
 
 void	set_fail_cd(char *buf, int env_flag, int output_flag)
@@ -78,7 +98,7 @@ int	builtin_cd(char *buf, t_config *config, int output_flag)
 
 	pwd_buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-		ft_printf("fail: getcwd()\n");
+		ft_fprintf(2, "fail: getcwd()\n");
 	env_flag = 0;
 	buf = set_buf(buf, output_flag, config, &env_flag);
 	if (chdir(buf))
@@ -91,7 +111,7 @@ int	builtin_cd(char *buf, t_config *config, int output_flag)
 	ft_strcat(key, "OLDPWD=");
 	builtin_export(ft_strcat(key, pwd_buf), config, 0);
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-		ft_printf("fail: getcwd()\n");
+		ft_fprintf(2, "fail: getcwd()\n");
 	set_env_list(config->head, "PWD", pwd_buf);
 	free(pwd_buf);
 	return (0);

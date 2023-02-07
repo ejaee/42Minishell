@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/07 22:15:50 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 22:23:30 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	builtin_pwd(void)
 
 	buf = ft_calloc(1, MAXPATHLEN);
 	if (getcwd(buf, MAXPATHLEN) == NULL)
-		ft_printf("fail: getcwd()\n");
+		ft_fprintf(2, "fail: getcwd()\n");
 	ft_putstr_fd(buf, STDOUT_FILENO);
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	free(buf);
