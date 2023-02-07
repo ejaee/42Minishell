@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/06 21:49:27 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 22:10:26 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,17 @@ void	set_fail_exit_code(char *buf, int output_flag)
 
 int	builtin_export(char *buf, t_config *config, int output_flag)
 {
-	t_list *list;
-	char **splited_env_by_pipe;
-	char **splited_env_by_space;
-	char **splited_env;
+	t_list	*list;
+	char	**splited_env_by_pipe;
+	char	**splited_env_by_space;
+	char	**splited_env;
 
 	list = config->head;
+	if (!buf)
+	{
+		printf("enter here\n");
+		builtin_env(buf, *config, 1);
+	}
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
@@ -78,13 +83,9 @@ int	builtin_export(char *buf, t_config *config, int output_flag)
 		panic("Fail: splited_env");
 	g_exit_code = 0;
 	if (!ft_isalpha(splited_env_by_pipe[0][0]))
-	{
 		set_fail_exit_code(splited_env_by_space[0], output_flag);
-	}
 	else if (set_env_list(list, splited_env[0], splited_env[1]))
-	{
 		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
-	}
 	free_split(splited_env_by_pipe);
 	free_split(splited_env_by_space);
 	free_split(splited_env);

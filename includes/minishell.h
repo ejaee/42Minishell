@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/07 16:10:04 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 22:15:39 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ struct backcmd
 # define BLUE	"\x1b[34m"
 # define WHITE	"\x1b[0m"
 # define BROWN	"\e[38;5;137m"
+# define CYAN	"\x1b[36m"
 # define RESET	"\x1b[0m"
 
 /* string */
@@ -132,7 +133,7 @@ int		builtin_exit(char *const argv[], int flag);
 
 /* builtin_func.c */
 int		builtin_pwd(void);
-int		builtin_env(char *buf, t_config config);
+int		builtin_env(char *buf, t_config config, int export_flag);
 int		builtin_func(char *buf, char **argv, t_config *config);
 
 /* load_config.c */
