@@ -230,8 +230,6 @@ struct cmd *backcmd(struct cmd *subcmd)
 // PAGEBREAK!
 //  Parsing
 
-char whitespace[] = " \t\r\n\v";
-char symbols[] = "<|>&()";
 
 // 공백을 지나가고
 // | ( ) & 의 경우 한칸 넘기고
@@ -247,6 +245,8 @@ int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 {
 	char *str;
 	int ret;
+	char whitespace[] = " \t\r\n\v";
+	char symbols[] = "<|>&()";
 
 	str = *out_str_ptr;
 	while (str < str_end && strchr(whitespace, *str))
@@ -260,6 +260,7 @@ int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 		str++;
 	else if (*str == '>')
 	{
+		ret = '>';
 		str++;
 		if (*str == '>')
 		{
@@ -269,6 +270,7 @@ int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 	}
 	else if (*str == '<')
 	{
+		ret = '<';
 		str++;
 		if (*str == '<')
 		{
@@ -300,6 +302,8 @@ int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 int skip_space_check_toks(char **out_ps, char *str_end, char *toks)
 {
 	char *str;
+	char whitespace[] = " \t\r\n\v";
+	char symbols[] = "<|>&()";
 
 	str = *out_ps;
 	while (str < str_end && strchr(whitespace, *str))
@@ -371,10 +375,10 @@ struct cmd *parseredirs(struct cmd *cmd, char **str_ptr, char *str_end)
 		if (tok == '<')
 			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 		else if (tok == '>')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
+			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
 		// >>
 		else if (tok == '+')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
+			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND, 1);
 		// <<
 		else if (tok == 'h')
 			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
