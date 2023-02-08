@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 08:43:32 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 10:17:17 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,42 @@ void runcmd(struct cmd *cmd, t_config config)
 	exit(status / 256);
 }
 
+int	check_validate_quote(char **buf)
+{
+	char	**splited_buf_by_space;
+	int		idx;
+	int		jdx;
+	splited_buf_by_space = ft_split(*buf, ' ');
+	idx = -1;
+	while (splited_buf_by_space[++idx])
+	{
+		if (ft_strchr(splited_buf_by_space[idx], '\'') || \
+			ft_strchr(splited_buf_by_space[idx], '"'))
+		{
+			if (!parse_quote(splited_buf_by_space[idx]))
+			{
+				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
+				return (1);
+			}
+		}
+	}
+	idx = -1;
+	while ((*buf)[++idx])
+	{
+		if ((*buf)[idx] == '\'' || (*buf)[idx] == '"')
+		{
+			jdx = idx - 1;
+			while ((*buf)[++jdx])
+				(*buf)[jdx] = (*buf)[jdx + 1];
+		}
+	}
+	free_split(splited_buf_by_space);
+	return (0);
+}
+
 void	check_buf(char **buf)
 {
+	int	idx;
 	if (*buf == NULL)
 	{
 		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
@@ -104,6 +138,13 @@ void	check_buf(char **buf)
 		ft_putstr_fd(RED"exit\n"RESET, 1);
 		exit(0);
 	}
+	if (ft_strchr(*buf, '/') || ft_strchr(*buf, '"'))
+		if (check_validate_quote(buf))
+		{
+			idx = -1;
+			while ((*buf)[++idx])
+				(*buf)[idx] = '\0';
+		}
 	if (**buf == '\0')
 	{
 		**buf ='\n';
@@ -126,7 +167,6 @@ int main(int argc, char **argv, char **envp)
 		buf = readline(PROMPT);
 
 		add_history(buf);
-
 		check_buf(&buf);
 		if (!ft_strchr(buf, '|'))
 			builtin_func(buf, NULL, &config);

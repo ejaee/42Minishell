@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:39:46 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 10:16:49 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*set_quote(char *buf, int output_flag)
 		if (!parse_quote(res))
 		{
 			if (!output_flag)
-				ft_printf(RED"fail: Wrong input(quote)\n"RESET);
+				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
 			res = ".";
 		}
 		else
