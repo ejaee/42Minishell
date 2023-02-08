@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 10:17:17 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 11:11:14 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ int	check_validate_quote(char **buf)
 			jdx = idx - 1;
 			while ((*buf)[++jdx])
 				(*buf)[jdx] = (*buf)[jdx + 1];
+			idx--;
 		}
 	}
 	free_split(splited_buf_by_space);
