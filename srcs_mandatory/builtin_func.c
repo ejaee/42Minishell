@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 10:17:33 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 11:24:31 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	builtin_func(char *buf, char **argv, t_config *config)
 	result = -1;
 	splited_cmd = set_buf_by_process(&buf, argv, &output_flag);
 	if (ft_strnstr(splited_cmd[0], "cd", 3))
-		result = builtin_cd(buf, config, output_flag);
+		result = builtin_cd(splited_cmd[1], config, output_flag);
 	if (ft_strnstr(splited_cmd[0], "export", 7))
 		if (splited_cmd[2] == NULL)
 			result = builtin_export(splited_cmd[1], config, output_flag);
