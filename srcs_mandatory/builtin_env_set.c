@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:41:01 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 08:50:14 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,7 @@ int	builtin_export(char *buf, t_config *config, int output_flag)
 
 	list = config->head;
 	if (!buf)
-	{
-		printf("enter here\n");
 		builtin_env(buf, *config, 1);
-	}
 	splited_env_by_pipe = ft_split(buf, '|');
 	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
 	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');

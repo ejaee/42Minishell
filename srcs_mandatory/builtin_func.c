@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:40:17 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 10:17:33 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	builtin_func(char *buf, char **argv, t_config *config)
 	if (ft_strnstr(splited_cmd[0], "unset", 6))
 		if (splited_cmd[2] == NULL)
 			result = builtin_unset(splited_cmd[1], config, output_flag);
-	if (ft_strnstr(buf, "exit", 5))
+	if (ft_strnstr(splited_cmd[0], "exit", 5))
 		result = builtin_exit(splited_cmd, output_flag);
 	if (argv && ft_strnstr(splited_cmd[0], "echo", 5))
 		result = builtin_echo(splited_cmd, config);

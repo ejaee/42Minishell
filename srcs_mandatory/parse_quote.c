@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 16:09:16 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 08:12:50 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 09:16:15 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ char	find_end_quote(char *buf)
 
 // buf에서 quote가 있으면 해당 함수 호출
 // buf에서 quote 앞뒤를 확인
-// 맞으면 0 틀리면 1을 반환
+// 맞으면 1 틀리면 0을 반환
 int	parse_quote(char *buf)
 {
 	char	beginning_quote;
