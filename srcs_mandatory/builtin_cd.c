@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 11:26:45 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 12:00:54 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,15 @@
 
 extern int	g_exit_code;
 
-char	*set_quote(char *buf, int output_flag)
-{
-	char	*res;
-	char	*tmp;
-
-	res = buf;
-	if (ft_strchr(res, '\'') || ft_strchr(res, '"'))
-	{
-		if (!parse_quote(res))
-		{
-			if (!output_flag)
-				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
-			res = ".";
-		}
-		else
-		{
-			res += 1;
-			tmp = ft_strchr(res, '"');
-			*tmp = '\0';
-		}
-	}
-	return (res);
-}
-
-char	*set_buf(char *buf, int output_flag, t_config *config, int *env_flag)
+char	*set_buf(char *buf, t_config *config, int *env_flag)
 {
 	t_list	*cur;
 	t_env	*env;
 	char	*res;
 
-	res = set_quote(buf, output_flag);
+	res = buf;
+	if (!res)
+		res = ".";
 	if (*res == '$')
 	{
 		cur = get_env_list(config->head, res + 1);
@@ -86,7 +64,7 @@ int	builtin_cd(char *buf, t_config *config, int output_flag)
 	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
 		ft_fprintf(2, "fail: getcwd()\n");
 	env_flag = 0;
-	buf = set_buf(buf, output_flag, config, &env_flag);
+	buf = set_buf(buf, config, &env_flag);
 	if (chdir(buf))
 	{
 		set_fail_cd(buf, env_flag, output_flag);
