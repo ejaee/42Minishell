@@ -1,28 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_env.c                                          :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/24 01:49:55 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/08 08:42:25 by choiejae         ###   ########.fr       */
+/*   Created: 2023/02/01 18:16:54 by ejachoi           #+#    #+#             */
+/*   Updated: 2023/02/08 08:13:12 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_env	*new_env(const char	*env)
+void	free_split(char **str)
 {
-	t_env	*new_env;
-	char	**splited_env;
+	int	idx;
 
-	new_env = ft_calloc(1, sizeof(t_env));
-	splited_env = ft_split_one_cstm(env, '=');
-	if (new_env == NULL || splited_env == NULL)
-		panic("Fail: new_env()");
-	new_env->key = splited_env[0];
-	new_env->value = splited_env[1];
-	free(splited_env);
-	return (new_env);
+	idx = -1;
+	while (str[++idx])
+		free(str[idx]);
+	free(str);
+}
+
+void	ft_del(void *content)
+{
+	t_env	*env;
+
+	env = (t_env *)content;
+	free(env->key);
+	free(env->value);
+	free(content);
+}
+
+void	panic(char *s)
+{
+	ft_fprintf(2, "fail: %s\n", s);
+	exit(1);
 }

@@ -1,343 +1,20 @@
-// Shell.
-#include <fcntl.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/_types/_pid_t.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <limits.h>
-#include <stdbool.h>
-#include "libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
+/*   Updated: 2023/02/08 12:02:14 by choiejae         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-#include "ft_printf.h"
 
-// Parsed command representation
-#define EXEC 1
-#define REDIR 2
-#define PIPE 3
-#define BACK 5
+int	g_exit_code = 0;
 
-#define MAXARGS 10
-
-struct cmd
-{
-	int type;
-};
-
-struct execcmd
-{
-	int type;
-	char *argv[MAXARGS];
-	char *eargv[MAXARGS];
-};
-
-struct redircmd
-{
-	int type;
-	struct cmd *cmd;
-	char *file;
-	char *efile;
-	int mode;
-	int fd;
-};
-
-struct pipecmd
-{
-	int type;
-	struct cmd *left;
-	struct cmd *right;
-};
-
-struct backcmd
-{
-	int type;
-	struct cmd *cmd;
-};
-
-// int fork1(void); // Fork but panics on failure.
-void panic(char *);
 struct cmd *parsecmd(char *);
-
-char *ft_gets(char *buf, int max)
-{
-	int i, cc;
-	char c;
-
-	for (i = 0; i + 1 < max;)
-	{
-		cc = read(0, &c, 1);
-		if (cc < 1)
-			break;
-		buf[i++] = c;
-		if (c == '\n' || c == '\r')
-			break;
-	}
-	buf[i] = '\0';
-	return buf;
-}
-
-#include <sys/param.h>
-
-t_list	*get_env_list(t_list *env_list, char *env_key)
-{
-	t_env *cur_env;
-	
-	while (env_list)
-	{
-		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
-			return (env_list);
-		env_list = env_list->next;
-	}
-	return NULL;
-}
-
-int	set_env_list(t_list *env_list, char *env_key, char *new_value)
-{
-	t_env *cur_env;
-	
-	while (env_list)
-	{
-		cur_env = (t_env *)env_list->content;
-		if (!ft_strncmp(cur_env->key, env_key, ft_strlen(env_key) + 1))
-		{
-			if (cur_env->value != NULL)
-				free(cur_env->value);
-			
-			cur_env->value = ft_strdup(new_value);
-			cur_env = NULL;
-			// printf(RED"check result ||%s||\n"RESET, cur_env->value);
-			return (0);
-		}
-		env_list = env_list->next;
-	}
-	cur_env = NULL;
-	return (1);
-}
-
-int	builtin_echo(char *const argv[])
-{
-	int	idx;
-
-	idx = 0;
-	while (argv[++idx])
-	{
-		if (idx > 1)
-			ft_putchar_fd(' ', STDOUT_FILENO);
-		ft_putstr_fd(argv[idx], STDOUT_FILENO);
-	}
-	ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
-}
-
-int builtin_cd(char *const buf, t_config *config)
-{
-	char	*pwd_buf;
-
-	pwd_buf = ft_calloc(1, MAXPATHLEN);
-	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-	{
-		printf("check error\n");
-		return (1);
-	}
-	
-	set_env_list(config->head, "OLDPWD", pwd_buf);
-    
-	if (chdir(buf+3))
-	{
-		printf("error check\n");
-		return (1);
-	}
-	
-	if (getcwd(pwd_buf, MAXPATHLEN) == NULL)
-	{
-		printf("check error\n");
-		return (1);
-	}
-	
-	set_env_list(config->head, "PWD", pwd_buf);
-	free(pwd_buf);
-	return (0);
-}
-
-void	free_split(char **str)
-{
-	int idx;
-
-	idx = -1;
-	while(str[++idx])
-		free(str[idx]);
-	free(str);
-}
-
-int builtin_export(char *buf, t_config *config)
-{
-	t_list *list;
-	char **splited_env_by_pipe;
-	char **splited_env_by_space;
-	char **splited_env;
-
-	list = config->head;
-	splited_env_by_pipe = ft_split(buf, '|');
-	splited_env_by_space = ft_split(splited_env_by_pipe[0], ' ');
-	splited_env = ft_split_one_cstm(splited_env_by_space[0], '=');
-	if (splited_env == NULL)
-		panic("Fail: splited_env");
-	if (splited_env[1] != NULL && set_env_list(list, splited_env[0], splited_env[1]))
-		ft_d_lstadd_back(&list, ft_lstnew(new_env(splited_env_by_space[0])));
-	free_split(splited_env_by_pipe);
-	free_split(splited_env_by_space);
-	free_split(splited_env);
-	return (0);
-}
-
-void	ft_del(void *content)
-{
-	t_env *env;
-
-	env = (t_env *)content;
-	free(env->key);
-	free(env->value);
-	free(content);
-}
-
-int builtin_unset(char *const buf, t_config *config)
-{
-	t_list	*cur;
-	char **splited_env;
-
-	cur = config->head;
-	splited_env = ft_split_one_cstm(buf, '=');
-	if (splited_env == NULL)
-		panic("Fail: ft_split_one_cstm()");
-	cur = get_env_list(cur, splited_env[0]);
-	if (splited_env[1] == NULL && cur)
-	{
-		cur->prev->next = cur->next;
-		cur->next->prev = cur->prev;
-		ft_lstdelone(cur, ft_del);
-	}
-	free_split(splited_env);
-	return (0);
-}
-
-int	builtin_pwd(void)
-{
-	char	*buf;
-
-	buf = ft_calloc(1, MAXPATHLEN);
-	if (getcwd(buf, MAXPATHLEN) == NULL)
-	{
-		printf("check error\n");
-		return (1);
-	}
-	ft_putstr_fd(buf, STDOUT_FILENO);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	free(buf);
-	return (0);
-}
-
-int builtin_env(t_config config)
-{
-	t_list *list;
-	t_env *env;
-
-	list = config.head->next;
-	while (list->next)
-	{
-		env = list->content;
-		ft_putstr_fd(env->key, STDOUT_FILENO);
-		ft_putstr_fd("=", STDOUT_FILENO);
-		ft_putstr_fd(env->value, STDOUT_FILENO);
-		ft_putstr_fd("\n", STDOUT_FILENO);
-		list = list->next;
-	}
-	return (0);
-}
-
-size_t	get_argv_count(char *const argv[])
-{
-	size_t	len;
-
-	len = 0;
-	while (argv[len])
-		len++;
-	return (len);
-}
-
-int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
-{
-	const char	*lld_str;
-
-	if (lld_max_len > ft_strlen(arg))
-		return (true);
-	if (arg[0] == '-')
-		lld_str = lld_minmax_str[0];
-	else
-		lld_str = lld_minmax_str[1];
-	if (ft_strncmp(lld_str, arg, lld_max_len) < 0)
-		return (false);
-	return (true);
-}
-
-int	check_exit_param(char *arg, int *out_exit_code)
-{
-	const char	*lld_minmax_str[2];
-	size_t	lld_max_len;
-	long long	lld_arg;
-	size_t	arg_len;
-
-	lld_minmax_str[0] = "-9223372036854775808";
-	lld_minmax_str[1] = "9223372036854775807";
-	arg_len = ft_strnumlen(arg);
-	lld_max_len = ft_strlen(lld_minmax_str[0]);
-	if (arg_len == 0 || arg_len > lld_max_len)
-		return (false);
-	if (arg[0] != '-')
-		lld_max_len--;
-	if (check_lld_range(arg, lld_max_len, lld_minmax_str) == false)
-		return (false);
-	lld_arg = ft_atolld(arg);
-	*out_exit_code = lld_arg % 256;
-	return (true);
-}
-
-int	builtin_exit(char *const argv[])
-{
-	size_t			argc;
-
-	argc = get_argv_count(argv);
-	if (argc == 1)
-	{
-		ft_fprintf(STDOUT_FILENO, "exit\n");
-		exit (0);
-	}
-	if (argc > 2 && check_exit_param(argv[1], &g_exit_code) == false)
-	{
-		ft_fprintf(STDOUT_FILENO, "exit\n");
-		ft_fprintf(STDERR_FILENO, "%s: exit: %s: %s\n", \
-					PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
-		g_exit_code = 255;
-	}
-	else if (argc > 2)
-	{
-		ft_fprintf(STDERR_FILENO, "%s: %s\n", PROMPT_NAME, ERR_EXIT_MANY_ARGS);
-		return (0);
-	}
-	exit (g_exit_code);
-}
-
-void	set_son_signal()
-{
-	signal(SIGQUIT, SIG_DFL);
-}
 
 void runcmd(struct cmd *cmd, t_config config)
 {
@@ -349,6 +26,7 @@ void runcmd(struct cmd *cmd, t_config config)
 	struct pipecmd *pcmd;
 	struct redircmd *rcmd;
 
+	status = 0;
 	set_son_signal();
 	if (cmd == 0)
 		exit(0);
@@ -358,25 +36,14 @@ void runcmd(struct cmd *cmd, t_config config)
 		ecmd = (struct execcmd *)cmd;
 		if (ecmd->argv[0] == 0)
 			exit(1);
-		if (ft_strnstr(ecmd->argv[0], "echo", 5))
-			result = builtin_echo(ecmd->argv);
-		if (ft_strnstr(ecmd->argv[0], "cd", 3))
-			result = 0;
-		else if (ft_strnstr(ecmd->argv[0], "pwd", 4))
-			result = builtin_pwd();
-		else if (ft_strnstr(ecmd->argv[0], "export", 7))
-			result = 0;
-		else if (ft_strnstr(ecmd->argv[0], "unset", 6))
-			result = 0;
-		else if (ft_strnstr(ecmd->argv[0], "env", 4))
-			result = builtin_env(config);
-		else if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			builtin_exit(ecmd->argv);
-
-		else
+		result = builtin_func(ecmd->argv[0], ecmd->argv, &config);
+		if (result)
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
-			printf("exec %s failed\n", ecmd->argv[0]);
+		{
+			ft_printf(RED"exec %s failed\n"RESET, ecmd->argv[0]);
+			status = 127 * 256;
+		}
 	}
 	else if (cmd->type == REDIR)
 	{
@@ -384,7 +51,7 @@ void runcmd(struct cmd *cmd, t_config config)
 		close(rcmd->fd);
 		if (open(rcmd->file, rcmd->mode) < 0)
 		{
-			printf("open %s failed\n", rcmd->file);
+			ft_printf("open %s failed\n", rcmd->file);
 			exit(1);
 		}
 		runcmd(rcmd->cmd, config);
@@ -413,7 +80,9 @@ void runcmd(struct cmd *cmd, t_config config)
 		close(p[0]);
 		close(p[1]);
 		wait(&status);
+		ft_fprintf(2, "11cmd-PIPE status:%d\n", status);
 		wait(&status);
+		ft_fprintf(2, "22cmd-PIPE status:%d\n", status);
 	}
 	else if (cmd->type == BACK)
 	{
@@ -423,63 +92,46 @@ void runcmd(struct cmd *cmd, t_config config)
 	}
 	else
 		panic("runcmd");
-	exit(0);
+	exit(status / 256);
 }
 
-// 2. 히어독 추가
-// 3. 시그널 처리 (ctrl-C, ctrl-D, ctrl-\)
-// 4. 빌트인 함수 만들기
-//		4-7. exit
-// 5. exit() 코드($?)
-// 6. add_history();
-// 7. parsing 에서 argc[] 이해
-// 8. $
-// 9. quoting " '
-
-size_t	get_envp_count(char **system_envp)
+int	check_validate_quote(char **buf)
 {
-	size_t	len;
-
-	len = 0;
-	while (system_envp[len])
-		len++;
-	return (len);
-}
-
-extern int	g_exit_code;
-
-void	sig_ctrl_c(int signal)
-{
-	int	pid;
-
-	pid = waitpid(-1, NULL, WNOHANG);
-	g_exit_code = 1;
-
-	if (signal == SIGINT)
+	char	**splited_buf_by_space;
+	int		idx;
+	int		jdx;
+	splited_buf_by_space = ft_split(*buf, ' ');
+	idx = -1;
+	while (splited_buf_by_space[++idx])
 	{
-		if (pid == -1)
+		if (ft_strchr(splited_buf_by_space[idx], '\'') || \
+			ft_strchr(splited_buf_by_space[idx], '"'))
 		{
-			if (rl_on_new_line() == -1)
-				exit(1);
-			rl_replace_line("", 1);
-			ft_putstr_fd("\n", STDOUT_FILENO);
-			rl_redisplay();
-		}
-		else
-		{
-			ft_putstr_fd("\n", STDOUT_FILENO);
+			if (!parse_quote(splited_buf_by_space[idx]))
+			{
+				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
+				return (1);
+			}
 		}
 	}
-}
-
-void	set_signal()
-{
-	signal(SIGINT, sig_ctrl_c);
-	signal(SIGQUIT, SIG_IGN);
+	idx = -1;
+	while ((*buf)[++idx])
+	{
+		if ((*buf)[idx] == '\'' || (*buf)[idx] == '"')
+		{
+			jdx = idx - 1;
+			while ((*buf)[++jdx])
+				(*buf)[jdx] = (*buf)[jdx + 1];
+			idx--;
+		}
+	}
+	free_split(splited_buf_by_space);
+	return (0);
 }
 
 void	check_buf(char **buf)
 {
+	int	idx;
 	if (*buf == NULL)
 	{
 		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
@@ -487,60 +139,24 @@ void	check_buf(char **buf)
 		ft_putstr_fd(RED"exit\n"RESET, 1);
 		exit(0);
 	}
+	if (ft_strchr(*buf, '\'') || ft_strchr(*buf, '"'))
+		if (check_validate_quote(buf))
+		{
+			idx = -1;
+			while ((*buf)[++idx])
+				(*buf)[idx] = '\0';
+		}
 	if (**buf == '\0')
 	{
-		**buf ='a';
-	}
-}
-void	show_logo_1(void)
-{
-	printf("%s╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║   Welcome to 42 minishell project. %sLEE %s& %sGUN                                                             %s║%s\n", BROWN, RED, BROWN, YELLOW, BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║            ██╗   ██╗████████╗██╗   ██╗████████╗  ████████╗██╗   ██╗████████╗██╗      ██╗                 ║%s\n", BROWN, WHITE);
-	printf("%s║            %s███╗ ███║██╔═══██║███╗  ██║██╔═════╝  ██╔═════╝██║   ██║██╔═════╝██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║            ██╔██╗██║██║   ██║██╔██╗██║██║ ████╗  ████████╗████████║██████╗  ██║      ██║                 ║%s\n", BROWN, WHITE);
-	printf("%s║            %s██║╚═╝██║██║   ██║██║╚═███║██║ ╚═██║  ╚═════██║██╔═══██║██╔═══╝  ██║      ██║                 %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║            ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗████████╗████████╗           ║%s\n", BROWN, WHITE);
-	printf("%s║            ╚═╝   ╚═╝╚═══════╝╚═╝   ╚═╝╚═══════╝  ╚═══════╝╚═╝   ╚═╝╚═══════╝╚═══════╝╚═══════╝           ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s║                                                                             %s.created by ejachoi & ilhna  %s║%s\n", BROWN, WHITE, BROWN, WHITE);
-	printf("%s║                                                                                                          ║%s\n", BROWN, WHITE);
-	printf("%s╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝%s\n", BROWN, WHITE);
-	printf("\n");
-}
-
-void	show_shell_logo(void)
-{
-	show_logo_1();
-	// show_logo_2();
-}
-
-void	check_run_exit_parent(struct cmd *cmd)
-{
-	struct execcmd	*ecmd;
-
-	if (cmd == 0)
-		exit(0);
-
-	if (cmd->type == EXEC)
-	{
-		ecmd = (struct execcmd *)cmd;
-		if (ecmd->argv[0] == 0)
-			exit(1);
-		if (ft_strnstr(ecmd->argv[0], "exit", 5))
-			builtin_exit(ecmd->argv);
+		**buf ='\n';
 	}
 }
 
 int main(int argc, char **argv, char **envp)
 {
-	char	*buf;
+	char		*buf;
 	int			status;
 	t_config	config;
-	char **splited_cmd;
 
 	(void)argc;
 	(void)argv;
@@ -550,39 +166,18 @@ int main(int argc, char **argv, char **envp)
 	{
 		set_signal();
 		buf = readline(PROMPT);
-		check_buf(&buf);
-		splited_cmd = ft_split(buf, ' ');
-		if (ft_strnstr(splited_cmd[0], "cd", 2))
-		{
-			if (builtin_cd(buf, &config))
-				printf("cannot cd %s\n", buf+3);
-		}
-		if (ft_strnstr(splited_cmd[0], "export", 6))
-		{
-			if (splited_cmd[2] == NULL && builtin_export(splited_cmd[1], &config))
-				printf("cannot export %s\n", splited_cmd[1]);
-		}
-		if (ft_strnstr(buf, "unset", 5))
-		{
-			if (splited_cmd[2] == NULL && builtin_unset(splited_cmd[1], &config))
-				printf("cannot unset %s\n", splited_cmd[1]);
-		}
-		// system("leaks minishell");/////////////////////////////////////////////
-		free_split(splited_cmd);
-		check_run_exit_parent(parsecmd(buf));
 
+		add_history(buf);
+		check_buf(&buf);
+		if (!ft_strchr(buf, '|'))
+			builtin_func(buf, NULL, &config);
 		if (fork() == 0)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
+		g_exit_code = status / 256;
 		free(buf);
 	}
 	exit(0);
-}
-
-void panic(char *s)
-{
-	printf("%s\n", s);
-	exit(1);
 }
 
 struct cmd *init_execcmd(void)
@@ -638,6 +233,16 @@ struct cmd *backcmd(struct cmd *subcmd)
 char whitespace[] = " \t\r\n\v";
 char symbols[] = "<|>&()";
 
+// 공백을 지나가고
+// | ( ) & 의 경우 한칸 넘기고
+// > 인 경우 넘기고
+// >> 인 경우 ret = '+' 주고 넘기고
+// < 인 경우 ret = 'h' 주고 넘기고
+// 나머지는 ret = 'a' 주고 공백 쭉 민다
+// 매개변수 1 는 다음 토큰 대상을 가리키고(공백을 지났음)
+// 3, 4 는 토큰의 처음과 끝을 가리킨다
+
+// 3. **out_q : 값을 가져오고 싶을 때 0이 아닌 값을 준다
 int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 {
 	char *str;
@@ -691,6 +296,7 @@ int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 
 // 공백을 넘긴다
 // 현재 가리키는 문자부터 끝까지 toks 이 있는지 확인한다
+// 있으면 1 없으면 0을 리턴한다
 int skip_space_check_toks(char **out_ps, char *str_end, char *toks)
 {
 	char *str;
@@ -711,14 +317,13 @@ struct cmd *parsecmd(char *str)
 {
 	char *str_end;
 	struct cmd *cmd;
-
 	// str_end = str + ft_strlen(str);
 	str_end = str + strlen(str);
 	cmd = parseline(&str, str_end);
 	skip_space_check_toks(&str, str_end, "");
 	if (str != str_end)
 	{
-		printf("leftovers: %s\n", str);
+		ft_printf("leftovers: %s\n", str);
 		panic("syntax");
 	}
 	nulterminate(cmd);
@@ -783,6 +388,7 @@ struct cmd *parseblock(char **out_str_prt, char *str_end)
 
 	if (!skip_space_check_toks(out_str_prt, str_end, "("))
 		panic("parseblock");
+	// 괄호 ( 를 넘기는 역할
 	gettoken(out_str_prt, str_end, 0, 0);
 	cmd = parseline(out_str_prt, str_end);
 	if (!skip_space_check_toks(out_str_prt, str_end, ")"))
@@ -805,10 +411,8 @@ struct cmd *parseexec(char **out_str_ptr, char *str_end)
 	ret = init_execcmd();
 	cmd = (struct execcmd *)ret;
 
-	// issue 1
 	argc = 0;
 	ret = parseredirs(ret, out_str_ptr, str_end);
-	// issue 2
 	while (!skip_space_check_toks(out_str_ptr, str_end, "|)&"))
 	{
 		if ((tok = gettoken(out_str_ptr, str_end, &q, &eq)) == 0)
