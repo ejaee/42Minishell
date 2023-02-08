@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 14:44:01 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 16:06:40 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,6 @@ int main(int argc, char **argv, char **envp)
 	{
 		set_signal();
 		buf = readline(PROMPT);
-
 		add_history(buf);
 		check_buf(&buf);
 		if (!ft_strchr(buf, '|'))
