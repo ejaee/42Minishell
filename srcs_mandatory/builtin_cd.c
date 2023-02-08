@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 10:16:49 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 11:26:45 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,12 @@
 
 extern int	g_exit_code;
 
-char	*set_by_process(char *buf, int output_flag)
-{
-	char	*res;
-
-	res = buf;
-	if (output_flag == PERMISSION_DENIED)
-	{
-		res += 3;
-		while (res && ft_strchr(WHITE_SPACE, *res))
-			res++;
-	}
-	return (res);
-}
-
 char	*set_quote(char *buf, int output_flag)
 {
 	char	*res;
 	char	*tmp;
 
-	res = set_by_process(buf, output_flag);
+	res = buf;
 	if (ft_strchr(res, '\'') || ft_strchr(res, '"'))
 	{
 		if (!parse_quote(res))
