@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 15:25:58 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:42:35 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 22:54:27 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,13 @@ int	check_opt_flag(char *str, int *idx)
 	return (0);
 }
 
-void	print_env_echo(char *str, int *jdx, t_config *config)
+void	print_env_echo(char *str, int *jdx, t_config *config, int idx)
 {
 	int	moving_jdx;
 
 	moving_jdx = 0;
-	if (*(str + (*jdx + 1)) && *(str + (*jdx + 1)) != '$')
+	if (*(str + (*jdx + 1)) && *(str + (*jdx + 1)) != '$' && \
+		config->quote_list[idx] != '\'')
 	{
 		moving_jdx = check_env_echo(str + (*jdx + 1), config);
 		*jdx += moving_jdx;
@@ -95,7 +96,7 @@ int	builtin_echo(char *const argv[], t_config *config)
 		while (argv[idx][++jdx])
 		{
 			if (argv[idx][jdx] == '$')
-				print_env_echo(argv[idx], &jdx, config);
+				print_env_echo(argv[idx], &jdx, config, idx);
 			else
 				ft_putchar_fd(argv[idx][jdx], STDOUT_FILENO);
 		}

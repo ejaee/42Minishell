@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 16:06:40 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 22:53:41 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,11 @@ void runcmd(struct cmd *cmd, t_config config)
 	exit(status / 256);
 }
 
-int	check_validate_quote(char **buf)
+int	check_quote(char **buf)
 {
 	char	**splited_buf_by_space;
 	int		idx;
-	int		jdx;
+
 	splited_buf_by_space = ft_split(*buf, ' ');
 	idx = -1;
 	while (splited_buf_by_space[++idx])
@@ -110,26 +110,62 @@ int	check_validate_quote(char **buf)
 			if (!parse_quote(splited_buf_by_space[idx]))
 			{
 				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
+				free_split(splited_buf_by_space);
 				return (1);
 			}
-		}
-	}
-	idx = -1;
-	while ((*buf)[++idx])
-	{
-		if ((*buf)[idx] == '\'' || (*buf)[idx] == '"')
-		{
-			jdx = idx - 1;
-			while ((*buf)[++jdx])
-				(*buf)[jdx] = (*buf)[jdx + 1];
-			idx--;
 		}
 	}
 	free_split(splited_buf_by_space);
 	return (0);
 }
 
-void	check_buf(char **buf)
+int	check_quote_and_set(char **buf, t_config *config)
+{
+	int		idx;
+	int		jdx;
+	int		env_idx;
+	char	symbol;
+
+	if (check_quote(buf))
+		return (1);
+	idx = 0;
+	env_idx = -1;
+	while ((*buf)[idx])
+	{
+		while ((*buf)[idx] && ft_strchr(WHITE_SPACE, (*buf)[idx]))
+			idx++;
+		while ((*buf)[idx] && !ft_strchr(WHITE_SPACE, (*buf)[idx]))
+		{
+			symbol = '\0';
+			if ((*buf)[idx] == '\'' || (*buf)[idx] == '"')
+			{
+				symbol = (*buf)[idx];
+				break ;
+			}
+			idx++;
+		}
+		config->quote_list[++env_idx] = symbol;
+		while ((*buf)[idx] && !ft_strchr(WHITE_SPACE, (*buf)[idx]))
+		{
+			if ((*buf)[idx] == symbol)
+			{
+				jdx = idx - 1;
+				while ((*buf)[++jdx])
+					(*buf)[jdx] = (*buf)[jdx + 1];
+			}
+			else
+				idx++;
+		}
+	}
+	while (config->quote_list[++env_idx])
+		config->quote_list[env_idx] = '\0';
+	idx = -1;
+	while (config->quote_list[++idx])
+		printf(RED"idx %d -> ||%c||\n"RESET, idx, config->quote_list[idx]);
+	return (0);
+}
+
+void	check_buf(char **buf, t_config *config)
 {
 	int	idx;
 	if (*buf == NULL)
@@ -140,18 +176,36 @@ void	check_buf(char **buf)
 		exit(0);
 	}
 	if (ft_strchr(*buf, '\'') || ft_strchr(*buf, '"'))
-		if (check_validate_quote(buf))
+		if (check_quote_and_set(buf, config))
 		{
 			idx = -1;
 			while ((*buf)[++idx])
 				(*buf)[idx] = '\0';
 		}
 	if (**buf == '\0')
-	{
 		**buf ='\n';
-	}
 }
 
+int	parse_validate_command(char *buf)
+{
+	char	**splited_by_space;
+	int		idx;
+
+	splited_by_space = ft_split(buf, ' ');
+	idx = -1;
+	while (splited_by_space[0][++idx])
+	{
+		if (!ft_isalpha(*buf))
+		{
+			ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
+		PROMPT_NAME, splited_by_space[0], ERR_CMD);
+			g_exit_code = 127;
+			return (0);
+		}
+	}
+	free_split(splited_by_space);
+	return (1);
+}
 int main(int argc, char **argv, char **envp)
 {
 	char		*buf;
@@ -167,13 +221,16 @@ int main(int argc, char **argv, char **envp)
 		set_signal();
 		buf = readline(PROMPT);
 		add_history(buf);
-		check_buf(&buf);
-		if (!ft_strchr(buf, '|'))
-			builtin_func(buf, NULL, &config);
-		if (fork() == 0)
-			runcmd(parsecmd(buf), config);
-		wait(&status);
-		g_exit_code = status / 256;
+		check_buf(&buf, &config);
+		if (parse_validate_command(buf))
+		{
+			if (!ft_strchr(buf, '|'))
+				builtin_func(buf, NULL, &config);
+			if (fork() == 0)
+				runcmd(parsecmd(buf), config);
+			wait(&status);
+			g_exit_code = status / 256;
+		}
 		free(buf);
 	}
 	exit(0);

@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/08 07:51:15 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/08 21:39:07 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ struct backcmd
 # define ERR_EXIT_MANY_ARGS "exit: too many arguments"
 # define ERR_EXIT_NUMERIC "numeric argument required"
 # define ERR_CD "No such file or directory"
+# define ERR_CMD "command not found"
 # define ERR_EXPORT "not a valid identifier"
 
 # define WHITE_SPACE " \t\r\n\v"
@@ -114,6 +115,7 @@ typedef struct s_config
 {
 	t_list	*head;
 	t_list	*tail;
+	char	quote_list[MAXARGS];
 }	t_config;
 
 /* builtin_cd.c */
