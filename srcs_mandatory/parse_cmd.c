@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:37:10 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 19:05:02 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 23:08:57 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 int	save_parse_info(char **out_str_ptr, char *str_end, \
-	struct execcmd **cmd, int *argc)
+	t_execcmd **cmd, int *argc)
 {
 	int		tok;
 	char	*q;
@@ -32,14 +32,14 @@ int	save_parse_info(char **out_str_ptr, char *str_end, \
 	return (0);
 }
 
-struct cmd	*parse_exec(char **out_str_ptr, char *str_end)
+t_cmd	*parse_exec(char **out_str_ptr, char *str_end)
 {
-	int				argc;
-	struct cmd		*ret;
-	struct execcmd	*cmd;
+	int			argc;
+	t_cmd		*ret;
+	t_execcmd	*cmd;
 
 	ret = init_execcmd();
-	cmd = (struct execcmd *)ret;
+	cmd = (t_execcmd *)ret;
 	argc = 0;
 	ret = parse_redirs(ret, out_str_ptr, str_end);
 	while (!skip_space_check_toks(out_str_ptr, str_end, "|&"))
@@ -53,7 +53,7 @@ struct cmd	*parse_exec(char **out_str_ptr, char *str_end)
 	return (ret);
 }
 
-struct cmd	*parse_redirs(struct cmd *cmd, char **str_ptr, char *str_end)
+t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end)
 {
 	int		tok;
 	char	*q;
@@ -76,9 +76,9 @@ struct cmd	*parse_redirs(struct cmd *cmd, char **str_ptr, char *str_end)
 	return (cmd);
 }
 
-struct cmd	*parse_pipe(char **out_str_ptr, char *str_end)
+t_cmd	*parse_pipe(char **out_str_ptr, char *str_end)
 {
-	struct cmd	*cmd;
+	t_cmd	*cmd;
 
 	cmd = parse_exec(out_str_ptr, str_end);
 	if (skip_space_check_toks(out_str_ptr, str_end, "|"))
@@ -89,10 +89,10 @@ struct cmd	*parse_pipe(char **out_str_ptr, char *str_end)
 	return (cmd);
 }
 
-struct cmd	*parse_cmd(char *str)
+t_cmd	*parse_cmd(char *str)
 {
-	char		*str_end;
-	struct cmd	*cmd;
+	char	*str_end;
+	t_cmd	*cmd;
 
 	str_end = str + ft_strlen(str);
 	cmd = parse_pipe(&str, str_end);

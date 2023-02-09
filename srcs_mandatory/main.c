@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/09 19:06:29 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 23:17:54 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int	main(int argc, char **argv, char **envp)
  * 3, 4 는 토큰의 처음과 끝을 가리킨다
  * 3. **out_q : 값을 가져오고 싶을 때 0이 아닌 값을 준다
  */
-
 void	set_redir(char **str, int *ret)
 {
 	if (**str == '>')
@@ -116,29 +115,29 @@ int	get_token(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
 	return (ret);
 }
 
-struct cmd	*nulterminate(struct cmd *cmd)
+t_cmd	*nulterminate(t_cmd *cmd)
 {
-	int				i;
-	struct execcmd	*ecmd;
-	struct pipecmd	*pcmd;
-	struct redircmd	*rcmd;
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+	int			i;
 
 	if (cmd->type == EXEC)
 	{
-		ecmd = (struct execcmd *)cmd;
+		ecmd = (t_execcmd *)cmd;
 		i = -1;
 		while (ecmd->argv[++i])
 			*ecmd->eargv[i] = 0;
 	}
 	else if (cmd->type == REDIR)
 	{
-		rcmd = (struct redircmd *)cmd;
+		rcmd = (t_redircmd *)cmd;
 		nulterminate(rcmd->cmd);
 		*rcmd->efile = 0;
 	}
 	else if (cmd->type == PIPE)
 	{
-		pcmd = (struct pipecmd *)cmd;
+		pcmd = (t_pipecmd *)cmd;
 		nulterminate(pcmd->left);
 		nulterminate(pcmd->right);
 	}

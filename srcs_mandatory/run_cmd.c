@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:19:41 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 17:22:06 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 23:14:10 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	runcmd_exec(struct execcmd *ecmd, t_config *config, int *status)
+void	runcmd_exec(t_execcmd *ecmd, t_config *config, int *status)
 {
 	int	result;
 
@@ -28,12 +28,11 @@ int	runcmd_exec(struct execcmd *ecmd, t_config *config, int *status)
 	PROMPT_NAME, ecmd->argv[0], ERR_CMD);
 		*status = 127 * 256;
 	}
-	return (result);
 }
 
-void	runcmd_redir(struct redircmd *rcmd, t_config *config)
+void	runcmd_redir(t_redircmd *rcmd, t_config *config)
 {
-	rcmd = (struct redircmd *)rcmd;
+	rcmd = (t_redircmd *)rcmd;
 	close(rcmd->fd);
 	if (open(rcmd->file, rcmd->mode) < 0)
 	{
@@ -43,7 +42,7 @@ void	runcmd_redir(struct redircmd *rcmd, t_config *config)
 	runcmd(rcmd->cmd, *config);
 }
 
-void	runcmd_pipe(struct pipecmd *pcmd, t_config *config, int *status)
+void	runcmd_pipe(t_pipecmd *pcmd, t_config *config, int *status)
 {
 	int	p[2];
 
@@ -71,22 +70,20 @@ void	runcmd_pipe(struct pipecmd *pcmd, t_config *config, int *status)
 	wait(status);
 }
 
-void	runcmd(struct cmd *cmd, t_config config)
+void	runcmd(t_cmd *cmd, t_config config)
 {
 	int	status;
-	int	result;
 
 	status = 0;
 	set_son_signal();
 	if (cmd == 0)
 		exit(0);
-	result = -1;
 	if (cmd->type == EXEC)
-		result = runcmd_exec((struct execcmd *)cmd, &config, &status);
+		runcmd_exec((t_execcmd *)cmd, &config, &status);
 	else if (cmd->type == REDIR)
-		runcmd_redir((struct redircmd *)cmd, &config);
+		runcmd_redir((t_redircmd *)cmd, &config);
 	else if (cmd->type == PIPE)
-		runcmd_pipe((struct pipecmd *)cmd, &config, &status);
+		runcmd_pipe((t_pipecmd *)cmd, &config, &status);
 	else
 		panic("runcmd");
 	exit(status / 256);

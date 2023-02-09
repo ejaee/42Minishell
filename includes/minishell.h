@@ -3,87 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/09 19:05:07 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 23:20:19 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-
-/* Parsed command representation */
-# define EXEC 1
-# define REDIR 2
-# define PIPE 3
-
-# define MAXARGS 10
-
-struct	cmd
-{
-	int	type;
-};
-
-struct execcmd
-{
-	int		type;
-	char	*argv[MAXARGS];
-	char	*eargv[MAXARGS];
-};
-
-struct redircmd
-{
-	int			type;
-	struct cmd	*cmd;
-	char		*file;
-	char		*efile;
-	int			mode;
-	int			fd;
-};
-
-struct pipecmd
-{
-	int			type;
-	struct cmd	*left;
-	struct cmd	*right;
-};
-
-// struct backcmd
-// {
-// 	int			type;
-// 	struct cmd	*cmd;
-// };
-
-/* color */
-
-# define RED	"\x1b[31m"
-# define GREEN	"\x1b[32m"
-# define YELLOW	"\x1b[33m"
-# define BLUE	"\x1b[34m"
-# define WHITE	"\x1b[0m"
-# define BROWN	"\e[38;5;137m"
-# define CYAN	"\x1b[36m"
-# define RESET	"\x1b[0m"
-
-/* string */
-
-# define PROMPT BROWN"M O N G S H E L L$ "RESET
-# define PROMPT_NAME "M O N G S H E L L"
-
-# define ERR_EXIT_MANY_ARGS "exit: too many arguments"
-# define ERR_EXIT_NUMERIC "numeric argument required"
-# define ERR_CD "No such file or directory"
-# define ERR_CMD "command not found"
-# define ERR_EXPORT "not a valid identifier"
-
-# define WHITE_SPACE " \t\r\n\v"
-# define SYMBOLS "<|>&()"
-
-/* flag */
-
-# define PERMISSION 1
-# define PERMISSION_DENIED 0
 
 # include <fcntl.h>
 # include <signal.h>
@@ -104,18 +32,90 @@ struct pipecmd
 # include "libft.h"
 # include "ft_printf.h"
 
+/* Parsed command representation */
+# define EXEC 1
+# define REDIR 2
+# define PIPE 3
+
+# define MAXARGS 10
+
+typedef struct s_cmd
+{
+	int	type;
+}				t_cmd;
+
+typedef struct s_execcmd
+{
+	int		type;
+	char	*argv[MAXARGS];
+	char	*eargv[MAXARGS];
+}				t_execcmd;
+
+typedef struct s_redircmd
+{
+	int		type;
+	t_cmd	*cmd;
+	char	*file;
+	char	*efile;
+	int		mode;
+	int		fd;
+}				t_redircmd;
+
+typedef struct s_pipecmd
+{
+	int		type;
+	t_cmd	*left;
+	t_cmd	*right;
+}				t_pipecmd;
+
+// struct backcmd
+// {
+// 	int			type;
+// 	struct cmd	*cmd;
+// };
+
+/* color */
+
+# define RED	"\x1b[31m"
+# define GREEN	"\x1b[32m"
+# define YELLOW	"\x1b[33m"
+# define BLUE	"\x1b[34m"
+# define WHITE	"\x1b[0m"
+# define BROWN	"\e[38;5;137m"
+# define CYAN	"\x1b[36m"
+# define RESET	"\x1b[0m"
+
+/* string */
+
+# define PROMPT "M O N G S H E L L$ "
+# define PROMPT_NAME "M O N G S H E L L"
+
+# define ERR_EXIT_MANY_ARGS "exit: too many arguments"
+# define ERR_EXIT_NUMERIC "numeric argument required"
+# define ERR_CD "No such file or directory"
+# define ERR_CMD "command not found"
+# define ERR_EXPORT "not a valid identifier"
+
+# define WHITE_SPACE " \t\r\n\v"
+# define SYMBOLS "<|>&()"
+
+/* flag */
+
+# define PERMISSION 1
+# define PERMISSION_DENIED 0
+
 typedef struct s_env
 {
 	char	*key;
 	char	*value;
-}	t_env;
+}				t_env;
 
 typedef struct s_config
 {
 	t_list	*head;
 	t_list	*tail;
 	char	quote_list[MAXARGS];
-}	t_config;
+}				t_config;
 
 /* builtin_cd.c */
 int		builtin_cd(char *buf, t_config *config, int output_flag);
@@ -141,38 +141,38 @@ int		builtin_func(char *buf, char **argv, t_config *config);
 void	load_config(t_config *config, char **envp);
 
 /* main.c */
-int skip_space_check_toks(char **out_ps, char *str_end, char *toks);
+int		skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 
 /* new_env */
 t_env	*new_env(const char	*env);
 
 /* generate)cmd */
-struct cmd *init_execcmd(void);
-struct cmd *redircmd(struct cmd *subcmd, char *file, char *efile, int mode);
-struct cmd *pipecmd(struct cmd *left, struct cmd *right);
+t_cmd	*init_execcmd(void);
+t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode);
+t_cmd	*pipecmd(t_cmd *left, t_cmd *right);
 
 /* parse_cmd */
-struct cmd *parse_exec(char **out_str_ptr, char *str_end);
-struct cmd *parse_redirs(struct cmd *cmd, char **str_ptr, char *str_end);
-struct cmd *parse_pipe(char **out_str_ptr, char *str_end);
-struct cmd *parse_cmd(char *str);
+t_cmd	*parse_exec(char **out_str_ptr, char *str_end);
+t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end);
+t_cmd	*parse_pipe(char **out_str_ptr, char *str_end);
+t_cmd	*parse_cmd(char *str);
 
 /* parse_quote */
-int	parse_quote(char *buf);
+int		parse_quote(char *buf);
 
 /* runcmd */
-int		runcmd_exec(struct execcmd *ecmd, t_config *config, int *status);
-void	runcmd_redir(struct redircmd *rcmd, t_config *config);
-void	runcmd_pipe(struct pipecmd *pcmd, t_config *config, int *status);
-void	runcmd(struct cmd *cmd, t_config config);
+void	runcmd_exec(t_execcmd *ecmd, t_config *config, int *status);
+void	runcmd_redir(t_redircmd *rcmd, t_config *config);
+void	runcmd_pipe(t_pipecmd *pcmd, t_config *config, int *status);
+void	runcmd(t_cmd *cmd, t_config config);
 
 /* show_shell_logo */
 void	show_shell_logo(void);
 
 /* signals.c */
-void	set_son_signal();
+void	set_son_signal(void);
 void	sig_ctrl_c(int signal);
-void	set_signal();
+void	set_signal(void);
 
 /* utils.c */
 void	free_split(char **str);
@@ -181,12 +181,13 @@ void	panic(char *s);
 int		skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 
 /* check_buf */
-int	check_quote_and_set(char **buf, t_config *config);
-int	check_buf(char **buf, t_config *config);
+int		check_quote_and_set(char **buf, t_config *config);
+int		check_buf(char **buf, t_config *config);
 
 /* main */
-int	parse_validate_command(char *buf);
-struct cmd *nulterminate(struct cmd *cmd);
-int	get_token(char **out_str_ptr, char *str_end, char **out_q, char **out_eq);
+int		parse_validate_command(char *buf);
+t_cmd	*nulterminate(t_cmd *cmd);
+int		get_token(char **out_str_ptr, char *str_end, \
+	char **out_q, char **out_eq);
 
 #endif
