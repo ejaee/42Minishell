@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_fprintf.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 12:02:39 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 14:08:18 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/09 22:49:57 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_fprintf(int fd, const char *args, ...)
 static int	do_print(char *str, va_list *ap, int type_flag, int fd)
 {
 	t_vars	vars;
-	int	rtn_len;
+	int		rtn_len;
 
 	vars.len = 0;
 	vars.idx = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atolld.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/07 10:45:12 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/26 15:55:42 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/09 22:48:14 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 long long	ft_atolld(const char *str)
 {
 	long long	res;
-	int	sign;
+	int			sign;
 
 	res = 0;
 	sign = 1;
