@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
 /*   Updated: 2023/02/10 03:02:41 by ilhna            ###   ########.fr       */
+
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +159,7 @@ int main(int argc, char **argv, char **envp)
 	int			status;
 	t_config	config;
 	t_list		*hd_head;
+
 
 	(void)argc;
 	(void)argv;
