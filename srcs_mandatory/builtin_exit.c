@@ -6,7 +6,7 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:12:00 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/09 23:29:34 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,27 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	return (true);
 }
 
-int	builtin_exit(char *const argv[], int output_flag)
+void	argc_one_or_two(size_t argc, int output_flag)
 {
-	size_t			argc;
-
-	argc = get_argv_count(argv);
 	if (argc == 1)
 	{
 		if (!output_flag)
 			ft_fprintf(STDOUT_FILENO, "exit\n");
 		exit (0);
 	}
+	else if (argc == 2)
+	{
+		if (!output_flag)
+			ft_fprintf(STDOUT_FILENO, "exit\n");
+		exit (g_exit_code);
+	}
+}
+
+int	builtin_exit(char *const argv[], int output_flag)
+{
+	size_t	argc;
+
+	argc = get_argv_count(argv);
 	if (argc >= 2 && check_exit_param(argv[1], &g_exit_code) == false)
 	{
 		if (!output_flag)
@@ -80,12 +90,8 @@ int	builtin_exit(char *const argv[], int output_flag)
 			PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
 		exit (255);
 	}
-	else if (argc == 2)
-	{
-		if (!output_flag)
-			ft_fprintf(STDOUT_FILENO, "exit\n");
-		exit (g_exit_code);
-	}
+	if (argc == 1 || argc == 2)
+		argc_one_or_two(argc, output_flag);
 	else if (argc > 2)
 	{
 		if (output_flag)
