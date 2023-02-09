@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/09 13:52:18 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 14:11:32 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void runcmd(struct cmd *cmd, t_config config)
 	{
 		ecmd = (struct execcmd *)cmd;
 
-printf("argv[0] : ||%s||\n", ecmd->argv[0]);
-printf("argv[1] : ||%s||\n", ecmd->argv[1]);
+// printf("argv[0] : ||%s||\n", ecmd->argv[0]);
+// printf("argv[1] : ||%s||\n", ecmd->argv[1]);
 
 		if (ecmd->argv[0] == 0)
 			exit(1);
@@ -45,10 +45,14 @@ printf("argv[1] : ||%s||\n", ecmd->argv[1]);
 			execv(ecmd->argv[0], ecmd->argv);
 		if (result)
 		{
-			ft_printf(RED"exec %s failed\n"RESET, ecmd->argv[0]);
+			ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
+		PROMPT_NAME, ecmd->argv[0], ERR_CMD);
 			status = 127 * 256;
 		}
 	}
+
+
+
 	else if (cmd->type == REDIR)
 	{
 		rcmd = (struct redircmd *)cmd;
@@ -115,6 +119,7 @@ int	check_quote(char **buf)
 			{
 				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
 				free_split(splited_buf_by_space);
+				g_exit_code = 1;
 				return (1);
 			}
 		}
@@ -164,14 +169,13 @@ int	check_quote_and_set(char **buf, t_config *config)
 	while (config->quote_list[++env_idx])
 		config->quote_list[env_idx] = '\0';
 	idx = -1;
-	while (config->quote_list[++idx])
-		printf(RED"idx %d -> ||%c||\n"RESET, idx, config->quote_list[idx]);
+	// while (config->quote_list[++idx])
+	// 	printf(RED"idx %d -> ||%c||\n"RESET, idx, config->quote_list[idx]);
 	return (0);
 }
 
-void	check_buf(char **buf, t_config *config)
+int	check_buf(char **buf, t_config *config)
 {
-	int	idx;
 	if (*buf == NULL)
 	{
 		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
@@ -181,13 +185,10 @@ void	check_buf(char **buf, t_config *config)
 	}
 	if (ft_strchr(*buf, '\'') || ft_strchr(*buf, '"'))
 		if (check_quote_and_set(buf, config))
-		{
-			idx = -1;
-			while ((*buf)[++idx])
-				(*buf)[idx] = '\0';
-		}
+			return (0);
 	if (**buf == '\0')
 		**buf ='\n';
+	return (1);
 }
 
 int	parse_validate_command(char *buf)
@@ -197,9 +198,13 @@ int	parse_validate_command(char *buf)
 
 	splited_by_space = ft_split(buf, ' ');
 	idx = -1;
+
+
+printf("cmd : ::%s::\n", splited_by_space[0]);
 	while (splited_by_space[0][++idx])
 	{
-		if (!ft_isalpha(*buf))
+		if ( \
+		!ft_isalpha(*buf))
 		{
 			ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
 		PROMPT_NAME, splited_by_space[0], ERR_CMD);
@@ -225,15 +230,14 @@ int main(int argc, char **argv, char **envp)
 		set_signal();
 		buf = readline(PROMPT);
 		add_history(buf);
-		check_buf(&buf, &config);
-		if (parse_validate_command(buf))
+		if (check_buf(&buf, &config) && parse_validate_command(buf))
 		{
 			if (!ft_strchr(buf, '|'))
-// printf(">>>>> process parents : %d<<<<<\n", getpid());
+printf(">>>>> process parents : %d<<<<<\n", getpid());
 				builtin_func(buf, NULL, &config);
 			if (fork() == 0)
 			{
-				// printf(">>>>> process : son %d<<<<<\n", getpid());
+				printf(">>>>> process : son %d<<<<<\n", getpid());
 				runcmd(parsecmd(buf), config);
 			}
 			wait(&status);
