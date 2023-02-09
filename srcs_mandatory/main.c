@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 22:53:41 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/09 13:52:18 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ void runcmd(struct cmd *cmd, t_config config)
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
+
+printf("argv[0] : ||%s||\n", ecmd->argv[0]);
+printf("argv[1] : ||%s||\n", ecmd->argv[1]);
+
 		if (ecmd->argv[0] == 0)
 			exit(1);
 		result = builtin_func(ecmd->argv[0], ecmd->argv, &config);
@@ -225,9 +229,13 @@ int main(int argc, char **argv, char **envp)
 		if (parse_validate_command(buf))
 		{
 			if (!ft_strchr(buf, '|'))
+// printf(">>>>> process parents : %d<<<<<\n", getpid());
 				builtin_func(buf, NULL, &config);
 			if (fork() == 0)
+			{
+				// printf(">>>>> process : son %d<<<<<\n", getpid());
 				runcmd(parsecmd(buf), config);
+			}
 			wait(&status);
 			g_exit_code = status / 256;
 		}
