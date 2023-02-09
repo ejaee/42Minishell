@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 13:52:15 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 14:59:33 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,12 @@ int	builtin_env(char *buf, t_config config, int export_flag)
 
 char	**set_buf_by_process(char **buf, char **argv, int *output_flag)
 {
-	// process son
 	if (argv)
 	{
 		*output_flag = PERMISSION;
 		*buf = argv[1];
 		return (argv);
 	}
-	// process parents
 	else
 	{
 		*output_flag = PERMISSION_DENIED;
@@ -91,11 +89,6 @@ int	builtin_func(char *buf, char **argv, t_config *config)
 
 	result = -1;
 	splited_cmd = set_buf_by_process(&buf, argv, &output_flag);
-
-// printf(GREEN">>>>>>  enter builtin : %d<<<<<<\n"RESET, getpid());
-// printf("argv[0] : ||%s||\n", splited_cmd[0]);
-// printf("argv[1] : ||%s||\n", splited_cmd[1]);
-
 	if (ft_strnstr("cd", splited_cmd[0], 3))
 		result = builtin_cd(splited_cmd[1], config, output_flag);
 	if (ft_strnstr("export", splited_cmd[0], 7))

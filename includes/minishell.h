@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/08 21:39:07 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/09 19:05:07 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 # define MINISHELL_H
 
 /* Parsed command representation */
-
 # define EXEC 1
 # define REDIR 2
 # define PIPE 3
-# define BACK 5
 
 # define MAXARGS 10
 
@@ -51,11 +49,11 @@ struct pipecmd
 	struct cmd	*right;
 };
 
-struct backcmd
-{
-	int			type;
-	struct cmd	*cmd;
-};
+// struct backcmd
+// {
+// 	int			type;
+// 	struct cmd	*cmd;
+// };
 
 /* color */
 
@@ -80,6 +78,7 @@ struct backcmd
 # define ERR_EXPORT "not a valid identifier"
 
 # define WHITE_SPACE " \t\r\n\v"
+# define SYMBOLS "<|>&()"
 
 /* flag */
 
@@ -147,8 +146,25 @@ int skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 /* new_env */
 t_env	*new_env(const char	*env);
 
+/* generate)cmd */
+struct cmd *init_execcmd(void);
+struct cmd *redircmd(struct cmd *subcmd, char *file, char *efile, int mode);
+struct cmd *pipecmd(struct cmd *left, struct cmd *right);
+
+/* parse_cmd */
+struct cmd *parse_exec(char **out_str_ptr, char *str_end);
+struct cmd *parse_redirs(struct cmd *cmd, char **str_ptr, char *str_end);
+struct cmd *parse_pipe(char **out_str_ptr, char *str_end);
+struct cmd *parse_cmd(char *str);
+
 /* parse_quote */
 int	parse_quote(char *buf);
+
+/* runcmd */
+int		runcmd_exec(struct execcmd *ecmd, t_config *config, int *status);
+void	runcmd_redir(struct redircmd *rcmd, t_config *config);
+void	runcmd_pipe(struct pipecmd *pcmd, t_config *config, int *status);
+void	runcmd(struct cmd *cmd, t_config config);
 
 /* show_shell_logo */
 void	show_shell_logo(void);
@@ -162,5 +178,15 @@ void	set_signal();
 void	free_split(char **str);
 void	ft_del(void *content);
 void	panic(char *s);
+int		skip_space_check_toks(char **out_ps, char *str_end, char *toks);
+
+/* check_buf */
+int	check_quote_and_set(char **buf, t_config *config);
+int	check_buf(char **buf, t_config *config);
+
+/* main */
+int	parse_validate_command(char *buf);
+struct cmd *nulterminate(struct cmd *cmd);
+int	get_token(char **out_str_ptr, char *str_end, char **out_q, char **out_eq);
 
 #endif

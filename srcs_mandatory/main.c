@@ -6,7 +6,7 @@
 /*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/09 14:11:32 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 19:06:29 by ejachoi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,208 +14,7 @@
 
 int	g_exit_code = 0;
 
-struct cmd *parsecmd(char *);
-
-void runcmd(struct cmd *cmd, t_config config)
-{
-	int status;
-	int	result;
-	int p[2];
-	struct backcmd *bcmd;
-	struct execcmd *ecmd;
-	struct pipecmd *pcmd;
-	struct redircmd *rcmd;
-
-	status = 0;
-	set_son_signal();
-	if (cmd == 0)
-		exit(0);
-	result = -1;
-	if (cmd->type == EXEC)
-	{
-		ecmd = (struct execcmd *)cmd;
-
-// printf("argv[0] : ||%s||\n", ecmd->argv[0]);
-// printf("argv[1] : ||%s||\n", ecmd->argv[1]);
-
-		if (ecmd->argv[0] == 0)
-			exit(1);
-		result = builtin_func(ecmd->argv[0], ecmd->argv, &config);
-		if (result)
-			execv(ecmd->argv[0], ecmd->argv);
-		if (result)
-		{
-			ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
-		PROMPT_NAME, ecmd->argv[0], ERR_CMD);
-			status = 127 * 256;
-		}
-	}
-
-
-
-	else if (cmd->type == REDIR)
-	{
-		rcmd = (struct redircmd *)cmd;
-		close(rcmd->fd);
-		if (open(rcmd->file, rcmd->mode) < 0)
-		{
-			ft_printf("open %s failed\n", rcmd->file);
-			exit(1);
-		}
-		runcmd(rcmd->cmd, config);
-	}
-	else if (cmd->type == PIPE)
-	{
-		pcmd = (struct pipecmd *)cmd;
-		if (pipe(p) < 0)
-			panic("pipe");
-		if (fork() == 0)
-		{
-			close(1);
-			dup(p[1]);
-			close(p[0]);
-			close(p[1]);
-			runcmd(pcmd->left, config);
-		}
-		if (fork() == 0)
-		{
-			close(0);
-			dup(p[0]);
-			close(p[0]);
-			close(p[1]);
-			runcmd(pcmd->right, config);
-		}
-		close(p[0]);
-		close(p[1]);
-		wait(&status);
-		ft_fprintf(2, "11cmd-PIPE status:%d\n", status);
-		wait(&status);
-		ft_fprintf(2, "22cmd-PIPE status:%d\n", status);
-	}
-	else if (cmd->type == BACK)
-	{
-		bcmd = (struct backcmd *)cmd;
-		if (fork() == 0)
-			runcmd(bcmd->cmd, config);
-	}
-	else
-		panic("runcmd");
-	exit(status / 256);
-}
-
-int	check_quote(char **buf)
-{
-	char	**splited_buf_by_space;
-	int		idx;
-
-	splited_buf_by_space = ft_split(*buf, ' ');
-	idx = -1;
-	while (splited_buf_by_space[++idx])
-	{
-		if (ft_strchr(splited_buf_by_space[idx], '\'') || \
-			ft_strchr(splited_buf_by_space[idx], '"'))
-		{
-			if (!parse_quote(splited_buf_by_space[idx]))
-			{
-				ft_fprintf(2, RED"fail: Wrong input(quote)\n"RESET);
-				free_split(splited_buf_by_space);
-				g_exit_code = 1;
-				return (1);
-			}
-		}
-	}
-	free_split(splited_buf_by_space);
-	return (0);
-}
-
-int	check_quote_and_set(char **buf, t_config *config)
-{
-	int		idx;
-	int		jdx;
-	int		env_idx;
-	char	symbol;
-
-	if (check_quote(buf))
-		return (1);
-	idx = 0;
-	env_idx = -1;
-	while ((*buf)[idx])
-	{
-		while ((*buf)[idx] && ft_strchr(WHITE_SPACE, (*buf)[idx]))
-			idx++;
-		while ((*buf)[idx] && !ft_strchr(WHITE_SPACE, (*buf)[idx]))
-		{
-			symbol = '\0';
-			if ((*buf)[idx] == '\'' || (*buf)[idx] == '"')
-			{
-				symbol = (*buf)[idx];
-				break ;
-			}
-			idx++;
-		}
-		config->quote_list[++env_idx] = symbol;
-		while ((*buf)[idx] && !ft_strchr(WHITE_SPACE, (*buf)[idx]))
-		{
-			if ((*buf)[idx] == symbol)
-			{
-				jdx = idx - 1;
-				while ((*buf)[++jdx])
-					(*buf)[jdx] = (*buf)[jdx + 1];
-			}
-			else
-				idx++;
-		}
-	}
-	while (config->quote_list[++env_idx])
-		config->quote_list[env_idx] = '\0';
-	idx = -1;
-	// while (config->quote_list[++idx])
-	// 	printf(RED"idx %d -> ||%c||\n"RESET, idx, config->quote_list[idx]);
-	return (0);
-}
-
-int	check_buf(char **buf, t_config *config)
-{
-	if (*buf == NULL)
-	{
-		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
-		ft_putstr_fd("\033[19C", STDOUT_FILENO);
-		ft_putstr_fd(RED"exit\n"RESET, 1);
-		exit(0);
-	}
-	if (ft_strchr(*buf, '\'') || ft_strchr(*buf, '"'))
-		if (check_quote_and_set(buf, config))
-			return (0);
-	if (**buf == '\0')
-		**buf ='\n';
-	return (1);
-}
-
-int	parse_validate_command(char *buf)
-{
-	char	**splited_by_space;
-	int		idx;
-
-	splited_by_space = ft_split(buf, ' ');
-	idx = -1;
-
-
-printf("cmd : ::%s::\n", splited_by_space[0]);
-	while (splited_by_space[0][++idx])
-	{
-		if ( \
-		!ft_isalpha(*buf))
-		{
-			ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
-		PROMPT_NAME, splited_by_space[0], ERR_CMD);
-			g_exit_code = 127;
-			return (0);
-		}
-	}
-	free_split(splited_by_space);
-	return (1);
-}
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	char		*buf;
 	int			status;
@@ -230,16 +29,12 @@ int main(int argc, char **argv, char **envp)
 		set_signal();
 		buf = readline(PROMPT);
 		add_history(buf);
-		if (check_buf(&buf, &config) && parse_validate_command(buf))
+		if (check_buf(&buf, &config))
 		{
 			if (!ft_strchr(buf, '|'))
-printf(">>>>> process parents : %d<<<<<\n", getpid());
 				builtin_func(buf, NULL, &config);
 			if (fork() == 0)
-			{
-				printf(">>>>> process : son %d<<<<<\n", getpid());
-				runcmd(parsecmd(buf), config);
-			}
+				runcmd(parse_cmd(buf), config);
 			wait(&status);
 			g_exit_code = status / 256;
 		}
@@ -248,273 +43,91 @@ printf(">>>>> process parents : %d<<<<<\n", getpid());
 	exit(0);
 }
 
-struct cmd *init_execcmd(void)
+/**
+ * 공백을 지나가고
+ * | & 의 경우 한칸 넘기고
+ * > 인 경우 넘기고
+ * >> 인 경우 ret = '+' 주고 넘기고
+ * < 인 경우 ret = 'h' 주고 넘기고
+ * 나머지는 ret = 'a' 주고 공백 쭉 민다
+ * 매개변수 1 는 다음 토큰 대상을 가리키고(공백을 지났음)
+ * 3, 4 는 토큰의 처음과 끝을 가리킨다
+ * 3. **out_q : 값을 가져오고 싶을 때 0이 아닌 값을 준다
+ */
+
+void	set_redir(char **str, int *ret)
 {
-	struct execcmd *cmd;
-
-	cmd = malloc(sizeof(*cmd));
-	memset(cmd, 0, sizeof(*cmd));
-	cmd->type = EXEC;
-	return (struct cmd *)cmd;
-}
-
-struct cmd *redircmd(struct cmd *subcmd, char *file, char *efile, int mode, int fd)
-{
-	struct redircmd *cmd;
-
-	cmd = malloc(sizeof(*cmd));
-	memset(cmd, 0, sizeof(*cmd));
-	cmd->type = REDIR;
-	cmd->cmd = subcmd;
-	cmd->file = file;
-	cmd->efile = efile;
-	cmd->mode = mode;
-	cmd->fd = fd;
-	return (struct cmd *)cmd;
-}
-
-struct cmd *pipecmd(struct cmd *left, struct cmd *right)
-{
-	struct pipecmd *cmd;
-
-	cmd = malloc(sizeof(*cmd));
-	memset(cmd, 0, sizeof(*cmd));
-	cmd->type = PIPE;
-	cmd->left = left;
-	cmd->right = right;
-	return (struct cmd *)cmd;
-}
-
-struct cmd *backcmd(struct cmd *subcmd)
-{
-	struct backcmd *cmd;
-
-	cmd = malloc(sizeof(*cmd));
-	memset(cmd, 0, sizeof(*cmd));
-	cmd->type = BACK;
-	cmd->cmd = subcmd;
-	return (struct cmd *)cmd;
-}
-// PAGEBREAK!
-//  Parsing
-
-char whitespace[] = " \t\r\n\v";
-char symbols[] = "<|>&()";
-
-// 공백을 지나가고
-// | ( ) & 의 경우 한칸 넘기고
-// > 인 경우 넘기고
-// >> 인 경우 ret = '+' 주고 넘기고
-// < 인 경우 ret = 'h' 주고 넘기고
-// 나머지는 ret = 'a' 주고 공백 쭉 민다
-// 매개변수 1 는 다음 토큰 대상을 가리키고(공백을 지났음)
-// 3, 4 는 토큰의 처음과 끝을 가리킨다
-
-// 3. **out_q : 값을 가져오고 싶을 때 0이 아닌 값을 준다
-int gettoken(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
-{
-	char *str;
-	int ret;
-
-	str = *out_str_ptr;
-	while (str < str_end && strchr(whitespace, *str))
-		str++;
-	// 포인터가 가리키고 있는 시점에서 가장 가까운 text, sym
-	if (out_q)
-		*out_q = str;
-	ret = *str;
-	if (*str == '|' || *str == '(' || *str == ')' || \
-		*str == '&')
-		str++;
-	else if (*str == '>')
+	if (**str == '>')
 	{
-		str++;
-		if (*str == '>')
+		(*str)++;
+		if (**str == '>')
 		{
-			ret = '+';
-			str++;
+			(*str)++;
+			*ret = '+';
 		}
 	}
-	else if (*str == '<')
+	else if (**str == '<')
 	{
-		str++;
-		if (*str == '<')
+		(*str)++;
+		if (**str == '<')
 		{
-			ret = 'h';
-			str++;
+			(*str)++;
+			*ret = 'h';
 		}
 	}
-	else if (*str != 0)
+}
+
+int	set_token(char **str, char *str_end)
+{
+	int	ret;
+
+	ret = **str;
+	if (**str == '|' || **str == '(' || **str == ')' || \
+		**str == '&')
+		(*str)++;
+	else if (**str == '>' || **str == '<')
+		set_redir(str, &ret);
+	else if (**str != 0)
 	{
 		ret = 'a';
-		// text를 공백이나 sym 이 올 때까지 밀어버린다
-		while (str < str_end && !strchr(whitespace, *str) && !strchr(symbols, *str))
-			str++;
+		while ((*str) < str_end && !strchr(WHITE_SPACE, **str) && \
+			!strchr(SYMBOLS, **str))
+			(*str)++;
 	}
-	
-	// sym 일 경우에는 sym이 끝난 바로 다음, text 일 경우에는 공백 또는 sym 또는 끝
+	return (ret);
+}
+
+int	get_token(char **out_str_ptr, char *str_end, char **out_q, char **out_eq)
+{
+	char	*str;
+	int		ret;
+
+	str = *out_str_ptr;
+	while (str < str_end && strchr(WHITE_SPACE, *str))
+		str++;
+	if (out_q)
+		*out_q = str;
+	ret = set_token(&str, str_end);
 	if (out_eq)
 		*out_eq = str;
-
-	while (str < str_end && strchr(whitespace, *str))
+	while (str < str_end && strchr(WHITE_SPACE, *str))
 		str++;
 	*out_str_ptr = str;
-	return ret;
+	return (ret);
 }
 
-// 공백을 넘긴다
-// 현재 가리키는 문자부터 끝까지 toks 이 있는지 확인한다
-// 있으면 1 없으면 0을 리턴한다
-int skip_space_check_toks(char **out_ps, char *str_end, char *toks)
+struct cmd	*nulterminate(struct cmd *cmd)
 {
-	char *str;
-
-	str = *out_ps;
-	while (str < str_end && strchr(whitespace, *str))
-		str++;
-	*out_ps = str;
-	return *str && strchr(toks, *str);
-}
-
-struct cmd *parseline(char **, char *);
-struct cmd *parsepipe(char **, char *);
-struct cmd *parseexec(char **, char *);
-struct cmd *nulterminate(struct cmd *);
-
-struct cmd *parsecmd(char *str)
-{
-	char *str_end;
-	struct cmd *cmd;
-	// str_end = str + ft_strlen(str);
-	str_end = str + strlen(str);
-	cmd = parseline(&str, str_end);
-	skip_space_check_toks(&str, str_end, "");
-	if (str != str_end)
-	{
-		ft_printf("leftovers: %s\n", str);
-		panic("syntax");
-	}
-	nulterminate(cmd);
-	return cmd;
-}
-
-struct cmd *parseline(char **str_ptr, char *str_end)
-{
-	struct cmd *cmd;
-
-	cmd = parsepipe(str_ptr, str_end);
-	while (skip_space_check_toks(str_ptr, str_end, "&"))
-	{
-		gettoken(str_ptr, str_end, 0, 0);
-		cmd = backcmd(cmd);
-	}
-	return cmd;
-}
-
-struct cmd *parsepipe(char **out_str_ptr, char *str_end)
-{
-	struct cmd *cmd;
-
-	cmd = parseexec(out_str_ptr, str_end);
-	if (skip_space_check_toks(out_str_ptr, str_end, "|"))
-	{
-		gettoken(out_str_ptr, str_end, 0, 0);
-		cmd = pipecmd(cmd, parsepipe(out_str_ptr, str_end));
-	}
-	return cmd;
-}
-
-struct cmd *parseredirs(struct cmd *cmd, char **str_ptr, char *str_end)
-{
-	int		tok;
-	char	*q;
-	char	*eq;
-
-	while (skip_space_check_toks(str_ptr, str_end, "<>"))
-	{
-		// sym 인지, >> 인지, text 인지를 tok 에 저장
-		tok = gettoken(str_ptr, str_end, 0, 0);
-		if (gettoken(str_ptr, str_end, &q, &eq) != 'a')
-			panic("missing file for redirection");
-		if (tok == '<')
-			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
-		else if (tok == '>')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
-		// >>
-		else if (tok == '+')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
-		// <<
-		else if (tok == 'h')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
-	}
-	return cmd;
-}
-
-struct cmd *parseblock(char **out_str_prt, char *str_end)
-{
-	struct cmd *cmd;
-
-	if (!skip_space_check_toks(out_str_prt, str_end, "("))
-		panic("parseblock");
-	// 괄호 ( 를 넘기는 역할
-	gettoken(out_str_prt, str_end, 0, 0);
-	cmd = parseline(out_str_prt, str_end);
-	if (!skip_space_check_toks(out_str_prt, str_end, ")"))
-		panic("syntax - missing )");
-	gettoken(out_str_prt, str_end, 0, 0);
-	cmd = parseredirs(cmd, out_str_prt, str_end);
-	return cmd;
-}
-
-struct cmd *parseexec(char **out_str_ptr, char *str_end)
-{
-	char *q, *eq;
-	int tok, argc;
-	struct execcmd *cmd;
-	struct cmd *ret;
-
-	if (skip_space_check_toks(out_str_ptr, str_end, "("))
-		return parseblock(out_str_ptr, str_end);
-
-	ret = init_execcmd();
-	cmd = (struct execcmd *)ret;
-
-	argc = 0;
-	ret = parseredirs(ret, out_str_ptr, str_end);
-	while (!skip_space_check_toks(out_str_ptr, str_end, "|)&"))
-	{
-		if ((tok = gettoken(out_str_ptr, str_end, &q, &eq)) == 0)
-			break;
-		if (tok != 'a')
-			panic("syntax");
-		cmd->argv[argc] = q;
-		cmd->eargv[argc] = eq;
-		argc++;
-		if (argc >= MAXARGS)
-			panic("too many args");
-		ret = parseredirs(ret, out_str_ptr, str_end);
-	}
-	cmd->argv[argc] = 0;
-	cmd->eargv[argc] = 0;
-	return ret;
-}
-
-// NUL-terminate all the counted strings.
-struct cmd *nulterminate(struct cmd *cmd)
-{
-	int i;
-	struct backcmd *bcmd;
-	struct execcmd *ecmd;
-	struct pipecmd *pcmd;
-	struct redircmd *rcmd;
-
-	if (cmd == 0)
-		return 0;
+	int				i;
+	struct execcmd	*ecmd;
+	struct pipecmd	*pcmd;
+	struct redircmd	*rcmd;
 
 	if (cmd->type == EXEC)
 	{
 		ecmd = (struct execcmd *)cmd;
-		for (i = 0; ecmd->argv[i]; i++)
+		i = -1;
+		while (ecmd->argv[++i])
 			*ecmd->eargv[i] = 0;
 	}
 	else if (cmd->type == REDIR)
@@ -529,10 +142,5 @@ struct cmd *nulterminate(struct cmd *cmd)
 		nulterminate(pcmd->left);
 		nulterminate(pcmd->right);
 	}
-	else if (cmd->type == BACK)
-	{
-		bcmd = (struct backcmd *)cmd;
-		nulterminate(bcmd->cmd);
-	}
-	return cmd;
+	return (cmd);
 }
