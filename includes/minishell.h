@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/08 07:51:15 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 03:07:46 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,14 @@ struct backcmd
 # define PERMISSION 1
 # define PERMISSION_DENIED 0
 
+# define ERR_PIPE "Failed to pipe()"
+# define ERR_FORK "Failed to fork()"
+# define ERR_OPEN "Failed to open()"
+# define ERR_CLOSE "Failed to close()"
+# define ERR_DUP2 "Failed to dup2()"
+# define ERR_WAITPID "Failed to waitpid()"
+# define ERR_MALLOC "Failed to malloc()"
+
 # include <fcntl.h>
 # include <signal.h>
 # include <stddef.h>
@@ -115,6 +123,29 @@ typedef struct s_config
 	t_list	*head;
 	t_list	*tail;
 }	t_config;
+
+typedef struct s_idxs
+{
+	int	begin;
+	int	end;
+}	t_idxs;
+
+typedef struct s_hdoc_info
+{
+	char	*file;
+	int		file_w_space;
+	char	*limiter;
+	t_idxs	idxs;
+}	t_hd_info;
+
+typedef struct s_add_node_vars
+{
+	int			hd_flag;
+	int			file_num;
+	const char	*buf_begin;
+	t_idxs		idxs;
+}	t_add_node_vars;
+
 
 /* builtin_cd.c */
 int		builtin_cd(char *buf, t_config *config, int output_flag);
@@ -160,5 +191,10 @@ void	set_signal();
 void	free_split(char **str);
 void	ft_del(void *content);
 void	panic(char *s);
+
+void	remove_heredoc(t_list *hd_head);
+int		add_all_hdoc_node(const char *buf, t_list **out_hd_head);
+void	make_hdoc_file(t_list *hd_head);
+char	*check_heredoc(char *buf, t_list **hd_head);
 
 #endif

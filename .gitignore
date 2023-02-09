@@ -8,3 +8,5 @@ minishell
 -std*
 objs
 minishell
+lib*
+.DS_Store

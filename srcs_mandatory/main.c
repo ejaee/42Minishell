@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/08 14:44:01 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 03:02:41 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,17 +157,19 @@ int main(int argc, char **argv, char **envp)
 	char		*buf;
 	int			status;
 	t_config	config;
+	t_list		*hd_head;
 
 	(void)argc;
 	(void)argv;
+	hd_head = NULL;
 	show_shell_logo();
 	load_config(&config, envp);
 	while (1)
 	{
 		set_signal();
 		buf = readline(PROMPT);
-
 		add_history(buf);
+		buf = check_heredoc(buf, &hd_head);
 		check_buf(&buf);
 		if (!ft_strchr(buf, '|'))
 			builtin_func(buf, NULL, &config);
@@ -175,6 +177,7 @@ int main(int argc, char **argv, char **envp)
 			runcmd(parsecmd(buf), config);
 		wait(&status);
 		g_exit_code = status / 256;
+		remove_heredoc(hd_head);
 		free(buf);
 	}
 	exit(0);

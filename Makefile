@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+         #
+#    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/08 07:53:24 by choiejae         ###   ########.fr        #
+#    Updated: 2023/02/10 03:05:20 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,10 @@ signal.c \
 utils.c \
 parse_quote.c\
 show_shell_logo.c\
+check_heredoc.c \
+remove_heredoc.c \
+add_all_hdoc_node.c \
+make_hdoc_file.c \
 
 OBJS_DIR = ./objs
 
