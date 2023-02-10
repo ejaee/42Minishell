@@ -21,6 +21,7 @@ static t_hd_info	*new_hdoc_info(const char *limiter, int lim_len, \
 {
 	char		*tmp_file;
 	t_hd_info	*new_hd_info;
+	char		*tmp_num;
 
 	new_hd_info = (t_hd_info *)malloc(sizeof(t_hd_info));
 	if (new_hd_info == NULL)
@@ -29,7 +30,10 @@ static t_hd_info	*new_hdoc_info(const char *limiter, int lim_len, \
 	if (new_hd_info->limiter == NULL)
 		return (NULL);
 	ft_strlcpy(new_hd_info->limiter, limiter, lim_len + 1);
-	tmp_file = ft_strjoin(".", ft_itoa(file_num));
+	tmp_num = ft_itoa(file_num);
+	tmp_file = ft_strjoin(".", tmp_num);
+	free(tmp_num);
+	tmp_num = NULL;
 	new_hd_info->file = ft_strjoin(tmp_file, ".heredoc");
 	free(tmp_file);
 	tmp_file = NULL;

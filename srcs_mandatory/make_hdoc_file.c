@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 18:53:03 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/09 18:58:40 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 17:03:06 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ void	make_hdoc_file(t_list *hd_head)
 	pid_t		pid;
 	int			status;
 
+	if (hd_head == NULL)
+		return ;
 	hd_curr = hd_head;
 	while (hd_curr)
 	{

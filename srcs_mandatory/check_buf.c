@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 16:01:43 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:25:38 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 17:00:29 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,6 @@ int	check_buf(char **buf, t_config *config)
 {
 	if (*buf == NULL)
 	{
-		ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
-		ft_putstr_fd("\033[19C", STDOUT_FILENO);
 		ft_putstr_fd(RED"exit\n"RESET, 1);
 		exit(0);
 	}

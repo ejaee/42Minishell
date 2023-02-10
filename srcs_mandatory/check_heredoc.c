@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 18:55:48 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 03:04:16 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 17:25:51 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,9 @@ char	*check_heredoc(char *buf, t_list **hd_head)
 {
 	size_t	hdoc_error;
 
+	*hd_head = NULL;
+	if (buf == NULL)
+		return (NULL);
 	hdoc_error = add_all_hdoc_node(buf, hd_head);
 	make_hdoc_file(*hd_head);
 	if (hdoc_error == true)
