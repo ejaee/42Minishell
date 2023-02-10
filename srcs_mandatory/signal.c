@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:38:52 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 15:13:36 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:47:14 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,6 @@ static void	sig_ctrl_c(int signal)
 			rl_replace_line("", 1);
 			ft_putstr_fd("\n", STDOUT_FILENO);
 			rl_redisplay();
-		}
-		else
-		{
-			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
 	}
 }
