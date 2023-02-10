@@ -3,18 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:12:00 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 14:00:47 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include "ft_printf.h"
+#include "libft.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-size_t	get_argv_count(char *const argv[])
+static size_t	get_argv_count(char *const argv[])
 {
 	size_t	len;
 
@@ -24,7 +27,8 @@ size_t	get_argv_count(char *const argv[])
 	return (len);
 }
 
-int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
+static int	check_lld_range(char *arg, size_t lld_max_len, \
+							const char *lld_minmax_str[])
 {
 	const char	*lld_str;
 
@@ -39,7 +43,7 @@ int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 	return (true);
 }
 
-int	check_exit_param(char *arg, int *out_exit_code)
+static int	check_exit_param(char *arg, int *out_exit_code)
 {
 	const char	*lld_minmax_str[2];
 	long long	lld_arg;
@@ -61,17 +65,27 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	return (true);
 }
 
-int	builtin_exit(char *const argv[], int output_flag)
+static void	argc_one_or_two(size_t argc, int output_flag)
 {
-	size_t			argc;
-
-	argc = get_argv_count(argv);
 	if (argc == 1)
 	{
 		if (!output_flag)
 			ft_fprintf(STDOUT_FILENO, "exit\n");
 		exit (0);
 	}
+	else if (argc == 2)
+	{
+		if (!output_flag)
+			ft_fprintf(STDOUT_FILENO, "exit\n");
+		exit (g_exit_code);
+	}
+}
+
+int	builtin_exit(char *const argv[], int output_flag)
+{
+	size_t	argc;
+
+	argc = get_argv_count(argv);
 	if (argc >= 2 && check_exit_param(argv[1], &g_exit_code) == false)
 	{
 		if (!output_flag)
@@ -80,12 +94,8 @@ int	builtin_exit(char *const argv[], int output_flag)
 			PROMPT_NAME, argv[1], ERR_EXIT_NUMERIC);
 		exit (255);
 	}
-	else if (argc == 2)
-	{
-		if (!output_flag)
-			ft_fprintf(STDOUT_FILENO, "exit\n");
-		exit (g_exit_code);
-	}
+	if (argc == 1 || argc == 2)
+		argc_one_or_two(argc, output_flag);
 	else if (argc > 2)
 	{
 		if (output_flag)

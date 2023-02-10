@@ -3,18 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_func.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 15:37:14 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 15:11:36 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/param.h>
+#include "libft.h"
+#include "ft_printf.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-int	builtin_pwd(void)
+static int	builtin_pwd(void)
 {
 	char	*buf;
 
@@ -26,6 +31,21 @@ int	builtin_pwd(void)
 	free(buf);
 	g_exit_code = 0;
 	return (0);
+}
+
+static char	**set_buf_by_process(char **buf, char **argv, int *output_flag)
+{
+	if (argv)
+	{
+		*output_flag = PERMISSION;
+		*buf = argv[1];
+		return (argv);
+	}
+	else
+	{
+		*output_flag = PERMISSION_DENIED;
+		return (ft_split(*buf, ' '));
+	}
 }
 
 void	print_env(t_list *list, int export_flag)
@@ -66,21 +86,6 @@ int	builtin_env(char *buf, t_config config, int export_flag)
 	return (0);
 }
 
-char	**set_buf_by_process(char **buf, char **argv, int *output_flag)
-{
-	if (argv)
-	{
-		*output_flag = PERMISSION;
-		*buf = argv[1];
-		return (argv);
-	}
-	else
-	{
-		*output_flag = PERMISSION_DENIED;
-		return (ft_split(*buf, ' '));
-	}
-}
-
 int	builtin_func(char *buf, char **argv, t_config *config)
 {
 	char	**splited_cmd;
@@ -89,21 +94,21 @@ int	builtin_func(char *buf, char **argv, t_config *config)
 
 	result = -1;
 	splited_cmd = set_buf_by_process(&buf, argv, &output_flag);
-	if (ft_strnstr(splited_cmd[0], "cd", 3))
+	if (ft_strnstr("cd", splited_cmd[0], 3))
 		result = builtin_cd(splited_cmd[1], config, output_flag);
-	if (ft_strnstr(splited_cmd[0], "export", 7))
+	if (ft_strnstr("export", splited_cmd[0], 7))
 		if (splited_cmd[2] == NULL)
 			result = builtin_export(splited_cmd[1], config, output_flag);
-	if (ft_strnstr(splited_cmd[0], "unset", 6))
+	if (ft_strnstr("unset", splited_cmd[0], 6))
 		if (splited_cmd[2] == NULL)
 			result = builtin_unset(splited_cmd[1], config, output_flag);
-	if (ft_strnstr(splited_cmd[0], "exit", 5))
+	if (ft_strnstr("exit", splited_cmd[0], 5))
 		result = builtin_exit(splited_cmd, output_flag);
-	if (argv && ft_strnstr(splited_cmd[0], "echo", 5))
+	if (argv && ft_strnstr("echo", splited_cmd[0], 5))
 		result = builtin_echo(splited_cmd, config);
-	if (argv && ft_strnstr(splited_cmd[0], "env", 4))
+	if (argv && ft_strnstr("env", splited_cmd[0], 4))
 		result = builtin_env(splited_cmd[1], *config, 0);
-	if (argv && ft_strnstr(splited_cmd[0], "pwd", 4))
+	if (argv && ft_strnstr("pwd", splited_cmd[0], 4))
 		result = builtin_pwd();
 	if (!argv)
 		free_split(splited_cmd);
