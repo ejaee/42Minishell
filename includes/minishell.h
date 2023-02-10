@@ -41,13 +41,20 @@
 # define ERR_CD "No such file or directory"
 # define ERR_CMD "command not found"
 # define ERR_EXPORT "not a valid identifier"
-
+# define ERR_PIPE "Failed to pipe()"
+# define ERR_FORK "Failed to fork()"
+# define ERR_OPEN "Failed to open()"
+# define ERR_CLOSE "Failed to close()"
+# define ERR_DUP2 "Failed to dup2()"
+# define ERR_WAITPID "Failed to waitpid()"
+# define ERR_MALLOC "Failed to malloc()"
 # define WHITE_SPACE " \t\r\n\v"
 # define SYMBOLS "<|>&()"
 
 /* flag */
 # define PERMISSION 1
 # define PERMISSION_DENIED 0
+
 
 typedef struct s_cmd
 {
@@ -90,6 +97,29 @@ typedef struct s_config
 	t_list	*tail;
 	char	quote_list[MAXARGS];
 }				t_config;
+
+typedef struct s_idxs
+{
+	int	begin;
+	int	end;
+}	t_idxs;
+
+typedef struct s_hdoc_info
+{
+	char	*file;
+	int		file_w_space;
+	char	*limiter;
+	t_idxs	idxs;
+}	t_hd_info;
+
+typedef struct s_add_node_vars
+{
+	int			hd_flag;
+	int			file_num;
+	const char	*buf_begin;
+	t_idxs		idxs;
+}	t_add_node_vars;
+
 
 /* builtin_cd.c */
 int		builtin_cd(char *buf, t_config *config, int output_flag);
@@ -157,5 +187,10 @@ int		get_token(char **out_str_ptr, char *str_end, \
 	char **out_q, char **out_eq);
 
 char	**get_envp(t_list *config_head);
+
+void	remove_heredoc(t_list *hd_head);
+int		add_all_hdoc_node(const char *buf, t_list **out_hd_head);
+void	make_hdoc_file(t_list *hd_head);
+char	*check_heredoc(char *buf, t_list **hd_head);
 
 #endif

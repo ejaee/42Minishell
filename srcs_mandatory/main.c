@@ -26,9 +26,11 @@ int	main(int argc, char **argv, char **envp)
 	char		*buf;
 	int			status;
 	t_config	config;
+	t_list		*hd_head;
 
 	(void)argc;
 	(void)argv;
+	hd_head = NULL;
 	show_shell_logo();
 	load_config(&config, envp);
 	while (1)
@@ -36,6 +38,7 @@ int	main(int argc, char **argv, char **envp)
 		set_signal();
 		buf = readline(PROMPT);
 		add_history(buf);
+    buf = check_heredoc(buf, &hd_head);
 		if (check_buf(&buf, &config))
 		{
 			if (!ft_strchr(buf, '|'))
@@ -45,6 +48,7 @@ int	main(int argc, char **argv, char **envp)
 			wait(&status);
 			g_exit_code = status / 256;
 		}
+ 		remove_heredoc(hd_head);
 		free(buf);
 	}
 	exit(0);

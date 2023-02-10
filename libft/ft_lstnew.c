@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/13 14:46:05 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/25 19:44:31 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/07 20:49:07 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ t_list	*ft_lstnew(void *content)
 {
 	t_list	*newnode;
 
+	if (content == (void *)0)
+		return ((void *)0);
 	newnode = (t_list *)malloc(sizeof(t_list));
 	if (newnode == (void *)0)
 		return ((void *)0);

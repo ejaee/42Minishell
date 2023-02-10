@@ -28,6 +28,10 @@ builtin_cd.c \
 builtin_exit.c \
 signal.c \
 utils.c \
+check_heredoc.c \
+remove_heredoc.c \
+add_all_hdoc_node.c \
+make_hdoc_file.c \
 parse_quote.c \
 show_shell_logo.c \
 run_cmd.c \
