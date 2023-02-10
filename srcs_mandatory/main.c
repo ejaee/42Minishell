@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/10 17:05:29 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 18:15:34 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	main(int argc, char **argv, char **envp)
 		buf = readline(PROMPT);
 		add_history(buf);
 		buf = check_heredoc(buf, &hd_head);
-		if (check_buf(&buf, &config))
+		if (check_buf(&buf, &config) && *buf != '\n')
 		{
 			if (!ft_strchr(buf, '|'))
 				builtin_func(buf, NULL, &config);

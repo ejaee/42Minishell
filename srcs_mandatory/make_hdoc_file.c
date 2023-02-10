@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 18:53:03 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 17:03:06 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 18:23:24 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,10 @@ void	make_hdoc_file(t_list *hd_head)
 		if (pid == -1)
 			panic(ERR_FORK);
 		if (pid == 0)
+		{
+			set_son_signal();
 			here_doc(hdoc_info->limiter, hdoc_info->file);
+		}
 		wait(&status);
 		hd_curr = hd_curr->next;
 	}

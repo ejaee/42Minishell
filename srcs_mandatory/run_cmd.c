@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:19:41 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 15:22:35 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 18:26:52 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ void	runcmd(t_cmd *cmd, t_config config)
 	int	status;
 
 	status = 0;
-	set_son_signal();
 	if (cmd == 0)
 		exit(0);
 	if (cmd->type == EXEC)
