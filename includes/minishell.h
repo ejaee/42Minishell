@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 15:17:25 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 16:10:07 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@
 /* flag */
 # define PERMISSION 1
 # define PERMISSION_DENIED 0
-
 
 typedef struct s_cmd
 {
@@ -119,7 +118,6 @@ typedef struct s_add_node_vars
 	const char	*buf_begin;
 	t_idxs		idxs;
 }	t_add_node_vars;
-
 
 /* builtin_cd.c */
 int		builtin_cd(char *buf, t_config *config, int output_flag);
@@ -188,7 +186,7 @@ int		get_token(char **out_str_ptr, char *str_end, \
 
 char	**get_envp(t_list *config_head);
 
-void	remove_heredoc(t_list *hd_head);
+void	remove_heredoc_free_buf(t_list *hd_head, char *buf);
 int		add_all_hdoc_node(const char *buf, t_list **out_hd_head);
 void	make_hdoc_file(t_list *hd_head);
 char	*check_heredoc(char *buf, t_list **hd_head);

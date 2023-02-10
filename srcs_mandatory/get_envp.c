@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 14:28:11 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 15:34:28 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 16:01:12 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static char	*get_env_str(t_env *env_content)
 	equal_null_char = 2;
 	env = (char *)malloc(key_len + val_len + equal_null_char);
 	if (env == NULL)
-		panic("malloc failed\n");// TODO 매크로로 대체 ERR_MALLOC ////////////////////////////////
+		panic(ERR_MALLOC);
 	env = ft_strcat(env, env_content->key);
 	env = ft_strcat(env, "=");
 	env = ft_strcat(env, env_content->value);
@@ -55,8 +55,8 @@ char	**get_envp(t_list *config_head)
 	envp_count = get_envp_count(config_head);
 	envp = ft_calloc(sizeof(char *), envp_count);
 	if (envp == NULL)
-		panic("malloc fail\n"); //TODO ERR_MALLOC로 교체 ////////////////////////////
-	e_idx = 0;
+		panic(ERR_MALLOC);
+			e_idx = 0;
 	while (config_head)
 	{
 		if (e_idx == 0 || e_idx == envp_count + 1)

@@ -6,10 +6,11 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 18:05:49 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/09 18:42:57 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 16:09:28 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/param.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "libft.h"
@@ -63,8 +64,9 @@ static void	remove_hdoc_files(t_list *hd_head)
 	path = NULL;
 }
 
-void	remove_heredoc(t_list *hd_head)
+void	remove_heredoc_free_buf(t_list *hd_head, char *buf)
 {
 	remove_hdoc_files(hd_head);
 	remove_hdoc_list(hd_head);
+	free(buf);
 }
