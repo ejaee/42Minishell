@@ -6,14 +6,13 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:47:41 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 13:27:52 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 13:59:30 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h>
 #include "libft.h"
 #include "minishell.h"
-
 
 void	load_config(t_config *config, char **envp)
 {

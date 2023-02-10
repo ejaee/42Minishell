@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:37:10 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:31:09 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 13:59:48 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ static t_cmd	*parse_exec(char **out_str_ptr, char *str_end)
 	cmd->eargv[argc] = 0;
 	return (ret);
 }
-
 
 static t_cmd	*parse_pipe(char **out_str_ptr, char *str_end)
 {

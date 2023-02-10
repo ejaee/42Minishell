@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:20:24 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 14:00:47 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ static size_t	get_argv_count(char *const argv[])
 	return (len);
 }
 
-static int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
+static int	check_lld_range(char *arg, size_t lld_max_len, \
+							const char *lld_minmax_str[])
 {
 	const char	*lld_str;
 
