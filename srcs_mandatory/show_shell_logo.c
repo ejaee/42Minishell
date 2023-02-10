@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   show_shell_logo.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 21:05:09 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:06:37 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:40:22 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	show_logo_1(void)
+static void	show_logo_1(void)
 {
 	ft_printf("%s╔═══════════════════════════════════════════════════════════════════════════\
 ═══════════════════════════╗%s\n", BROWN, WHITE);
@@ -34,7 +34,7 @@ void	show_logo_1(void)
   ██║      ██║               %s║%s\n", BROWN, WHITE, BROWN, WHITE);
 }
 
-void	show_logo_2(void)
+static void	show_logo_2(void)
 {
 	ft_printf("%s║          ██║   ██║████████║██║  ╚██║████████║  ████████║██║   ██║████████╗\
 ████████╗████████╗         ║%s\n", BROWN, WHITE);

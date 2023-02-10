@@ -3,34 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/09 23:20:19 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:55:21 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <fcntl.h>
-# include <signal.h>
-# include <stddef.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <sys/_types/_pid_t.h>
-# include <sys/stat.h>
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <limits.h>
-# include <stdbool.h>
-# include <sys/param.h>
 # include "libft.h"
-# include "ft_printf.h"
 
 /* Parsed command representation */
 # define EXEC 1
@@ -38,6 +21,33 @@
 # define PIPE 3
 
 # define MAXARGS 10
+
+/* color */
+# define RED	"\x1b[31m"
+# define GREEN	"\x1b[32m"
+# define YELLOW	"\x1b[33m"
+# define BLUE	"\x1b[34m"
+# define WHITE	"\x1b[0m"
+# define BROWN	"\e[38;5;137m"
+# define CYAN	"\x1b[36m"
+# define RESET	"\x1b[0m"
+
+/* string */
+# define PROMPT "M O N G S H E L L$ "
+# define PROMPT_NAME "M O N G S H E L L"
+
+# define ERR_EXIT_MANY_ARGS "exit: too many arguments"
+# define ERR_EXIT_NUMERIC "numeric argument required"
+# define ERR_CD "No such file or directory"
+# define ERR_CMD "command not found"
+# define ERR_EXPORT "not a valid identifier"
+
+# define WHITE_SPACE " \t\r\n\v"
+# define SYMBOLS "<|>&()"
+
+/* flag */
+# define PERMISSION 1
+# define PERMISSION_DENIED 0
 
 typedef struct s_cmd
 {
@@ -68,42 +78,6 @@ typedef struct s_pipecmd
 	t_cmd	*right;
 }				t_pipecmd;
 
-// struct backcmd
-// {
-// 	int			type;
-// 	struct cmd	*cmd;
-// };
-
-/* color */
-
-# define RED	"\x1b[31m"
-# define GREEN	"\x1b[32m"
-# define YELLOW	"\x1b[33m"
-# define BLUE	"\x1b[34m"
-# define WHITE	"\x1b[0m"
-# define BROWN	"\e[38;5;137m"
-# define CYAN	"\x1b[36m"
-# define RESET	"\x1b[0m"
-
-/* string */
-
-# define PROMPT "M O N G S H E L L$ "
-# define PROMPT_NAME "M O N G S H E L L"
-
-# define ERR_EXIT_MANY_ARGS "exit: too many arguments"
-# define ERR_EXIT_NUMERIC "numeric argument required"
-# define ERR_CD "No such file or directory"
-# define ERR_CMD "command not found"
-# define ERR_EXPORT "not a valid identifier"
-
-# define WHITE_SPACE " \t\r\n\v"
-# define SYMBOLS "<|>&()"
-
-/* flag */
-
-# define PERMISSION 1
-# define PERMISSION_DENIED 0
-
 typedef struct s_env
 {
 	char	*key;
@@ -133,7 +107,6 @@ int		builtin_unset(char *const buf, t_config *config, int flag);
 int		builtin_exit(char *const argv[], int flag);
 
 /* builtin_func.c */
-int		builtin_pwd(void);
 int		builtin_env(char *buf, t_config config, int export_flag);
 int		builtin_func(char *buf, char **argv, t_config *config);
 
@@ -152,7 +125,6 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode);
 t_cmd	*pipecmd(t_cmd *left, t_cmd *right);
 
 /* parse_cmd */
-t_cmd	*parse_exec(char **out_str_ptr, char *str_end);
 t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end);
 t_cmd	*parse_pipe(char **out_str_ptr, char *str_end);
 t_cmd	*parse_cmd(char *str);
@@ -161,9 +133,6 @@ t_cmd	*parse_cmd(char *str);
 int		parse_quote(char *buf);
 
 /* runcmd */
-void	runcmd_exec(t_execcmd *ecmd, t_config *config, int *status);
-void	runcmd_redir(t_redircmd *rcmd, t_config *config);
-void	runcmd_pipe(t_pipecmd *pcmd, t_config *config, int *status);
 void	runcmd(t_cmd *cmd, t_config config);
 
 /* show_shell_logo */
@@ -171,7 +140,6 @@ void	show_shell_logo(void);
 
 /* signals.c */
 void	set_son_signal(void);
-void	sig_ctrl_c(int signal);
 void	set_signal(void);
 
 /* utils.c */
@@ -181,12 +149,12 @@ void	panic(char *s);
 int		skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 
 /* check_buf */
-int		check_quote_and_set(char **buf, t_config *config);
 int		check_buf(char **buf, t_config *config);
 
-/* main */
-int		parse_validate_command(char *buf);
+/* nulterminate.c */
 t_cmd	*nulterminate(t_cmd *cmd);
+
+/* get_token.c */
 int		get_token(char **out_str_ptr, char *str_end, \
 	char **out_q, char **out_eq);
 

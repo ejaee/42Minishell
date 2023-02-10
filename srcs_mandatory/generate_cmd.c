@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   generate_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:55:18 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 23:09:14 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:26:47 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include "minishell.h"
 
 t_cmd	*init_execcmd(void)

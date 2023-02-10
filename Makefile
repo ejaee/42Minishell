@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+         #
+#    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/09 16:12:19 by ejachoi          ###   ########.fr        #
+#    Updated: 2023/02/10 13:52:40 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,12 +28,15 @@ builtin_cd.c \
 builtin_exit.c \
 signal.c \
 utils.c \
-parse_quote.c\
-show_shell_logo.c\
-run_cmd.c\
-parse_cmd.c\
-generate_cmd.c\
-check_buf.c\
+parse_quote.c \
+show_shell_logo.c \
+run_cmd.c \
+parse_cmd.c \
+generate_cmd.c \
+check_buf.c \
+get_token.c \
+nulterminate.c \
+
 
 OBJS_DIR = ./objs
 

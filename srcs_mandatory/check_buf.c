@@ -3,18 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   check_buf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 16:01:43 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 16:33:39 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/10 13:25:38 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include "libft.h"
+#include "ft_printf.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-int	check_quote(char **buf)
+static int	check_quote(char **buf)
 {
 	char	**splited_buf_by_space;
 	int		idx;
@@ -39,7 +42,7 @@ int	check_quote(char **buf)
 	return (0);
 }
 
-void	remove_symbol(char **buf, int *idx, char symbol)
+static void	remove_symbol(char **buf, int *idx, char symbol)
 {
 	int		jdx;
 
@@ -53,7 +56,7 @@ void	remove_symbol(char **buf, int *idx, char symbol)
 		(*idx)++;
 }
 
-void	set_quote(char **buf, t_config *config, int idx, int env_idx)
+static void	set_quote(char **buf, t_config *config, int idx, int env_idx)
 {
 	char	symbol;
 
@@ -79,7 +82,7 @@ void	set_quote(char **buf, t_config *config, int idx, int env_idx)
 		config->quote_list[env_idx] = '\0';
 }
 
-int	check_quote_and_set(char **buf, t_config *config)
+static int	check_quote_and_set(char **buf, t_config *config)
 {
 	if (check_quote(buf))
 		return (1);

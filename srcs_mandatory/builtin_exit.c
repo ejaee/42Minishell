@@ -3,18 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 17:06:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 23:29:34 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:20:24 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include "ft_printf.h"
+#include "libft.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-size_t	get_argv_count(char *const argv[])
+static size_t	get_argv_count(char *const argv[])
 {
 	size_t	len;
 
@@ -24,7 +27,7 @@ size_t	get_argv_count(char *const argv[])
 	return (len);
 }
 
-int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
+static int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 {
 	const char	*lld_str;
 
@@ -39,7 +42,7 @@ int	check_lld_range(char *arg, size_t lld_max_len, const char *lld_minmax_str[])
 	return (true);
 }
 
-int	check_exit_param(char *arg, int *out_exit_code)
+static int	check_exit_param(char *arg, int *out_exit_code)
 {
 	const char	*lld_minmax_str[2];
 	long long	lld_arg;
@@ -61,7 +64,7 @@ int	check_exit_param(char *arg, int *out_exit_code)
 	return (true);
 }
 
-void	argc_one_or_two(size_t argc, int output_flag)
+static void	argc_one_or_two(size_t argc, int output_flag)
 {
 	if (argc == 1)
 	{

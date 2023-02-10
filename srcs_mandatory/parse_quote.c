@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parse_quote.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 16:09:16 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/09 15:57:45 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/10 13:34:45 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
-char	*find_beginning_quote(char *buf)
+static char	*find_beginning_quote(char *buf)
 {
 	char	*single_quote;
 	char	*double_quote;
@@ -36,7 +37,7 @@ char	*find_beginning_quote(char *buf)
 	return (0);
 }
 
-char	*find_end_quote(char *buf)
+static char	*find_end_quote(char *buf)
 {
 	char	*r_single_quote;
 	char	*r_double_quote;
@@ -60,7 +61,7 @@ char	*find_end_quote(char *buf)
 	return (0);
 }
 
-int	parse_count_quote(char *buf)
+static int	parse_count_quote(char *buf)
 {
 	int	single_count;
 	int	double_count;
@@ -83,11 +84,6 @@ int	parse_count_quote(char *buf)
 	return (0);
 }
 
-/**
- * buf에서 quote가 있으면 해당 함수 호출
- * buf에서 quote 앞뒤를 확인
- * 맞으면 1 틀리면 0을 반환
- */
 int	parse_quote(char *buf)
 {
 	char	*beginning_quote;

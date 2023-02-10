@@ -3,18 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_func.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 14:59:33 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/10 13:23:51 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include <unistd.h>
+#include "libft.h"
+#include "ft_printf.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-int	builtin_pwd(void)
+static int	builtin_pwd(void)
 {
 	char	*buf;
 
@@ -26,6 +30,21 @@ int	builtin_pwd(void)
 	free(buf);
 	g_exit_code = 0;
 	return (0);
+}
+
+static char	**set_buf_by_process(char **buf, char **argv, int *output_flag)
+{
+	if (argv)
+	{
+		*output_flag = PERMISSION;
+		*buf = argv[1];
+		return (argv);
+	}
+	else
+	{
+		*output_flag = PERMISSION_DENIED;
+		return (ft_split(*buf, ' '));
+	}
 }
 
 void	print_env(t_list *list, int export_flag)
@@ -64,21 +83,6 @@ int	builtin_env(char *buf, t_config config, int export_flag)
 		g_exit_code = 0;
 	}
 	return (0);
-}
-
-char	**set_buf_by_process(char **buf, char **argv, int *output_flag)
-{
-	if (argv)
-	{
-		*output_flag = PERMISSION;
-		*buf = argv[1];
-		return (argv);
-	}
-	else
-	{
-		*output_flag = PERMISSION_DENIED;
-		return (ft_split(*buf, ' '));
-	}
 }
 
 int	builtin_func(char *buf, char **argv, t_config *config)

@@ -3,57 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:37:10 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/09 23:08:57 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:31:09 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include "ft_printf.h"
 #include "minishell.h"
 
-int	save_parse_info(char **out_str_ptr, char *str_end, \
-	t_execcmd **cmd, int *argc)
-{
-	int		tok;
-	char	*q;
-	char	*eq;
-
-	tok = get_token(out_str_ptr, str_end, &q, &eq);
-	if (tok == 0)
-		return (1);
-	if (tok != 'a')
-		panic("syntax");
-	(*cmd)->argv[*argc] = q;
-	(*cmd)->eargv[*argc] = eq;
-	(*argc)++;
-	if (*argc >= MAXARGS)
-		panic(RED"too many args"RESET);
-	return (0);
-}
-
-t_cmd	*parse_exec(char **out_str_ptr, char *str_end)
-{
-	int			argc;
-	t_cmd		*ret;
-	t_execcmd	*cmd;
-
-	ret = init_execcmd();
-	cmd = (t_execcmd *)ret;
-	argc = 0;
-	ret = parse_redirs(ret, out_str_ptr, str_end);
-	while (!skip_space_check_toks(out_str_ptr, str_end, "|&"))
-	{
-		if (save_parse_info(out_str_ptr, str_end, &cmd, &argc))
-			break ;
-		ret = parse_redirs(ret, out_str_ptr, str_end);
-	}
-	cmd->argv[argc] = 0;
-	cmd->eargv[argc] = 0;
-	return (ret);
-}
-
-t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end)
+static t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end)
 {
 	int		tok;
 	char	*q;
@@ -76,7 +39,49 @@ t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end)
 	return (cmd);
 }
 
-t_cmd	*parse_pipe(char **out_str_ptr, char *str_end)
+static int	save_parse_info(char **out_str_ptr, char *str_end, \
+	t_execcmd **cmd, int *argc)
+{
+	int		tok;
+	char	*q;
+	char	*eq;
+
+	tok = get_token(out_str_ptr, str_end, &q, &eq);
+	if (tok == 0)
+		return (1);
+	if (tok != 'a')
+		panic("syntax");
+	(*cmd)->argv[*argc] = q;
+	(*cmd)->eargv[*argc] = eq;
+	(*argc)++;
+	if (*argc >= MAXARGS)
+		panic(RED"too many args"RESET);
+	return (0);
+}
+
+static t_cmd	*parse_exec(char **out_str_ptr, char *str_end)
+{
+	int			argc;
+	t_cmd		*ret;
+	t_execcmd	*cmd;
+
+	ret = init_execcmd();
+	cmd = (t_execcmd *)ret;
+	argc = 0;
+	ret = parse_redirs(ret, out_str_ptr, str_end);
+	while (!skip_space_check_toks(out_str_ptr, str_end, "|&"))
+	{
+		if (save_parse_info(out_str_ptr, str_end, &cmd, &argc))
+			break ;
+		ret = parse_redirs(ret, out_str_ptr, str_end);
+	}
+	cmd->argv[argc] = 0;
+	cmd->eargv[argc] = 0;
+	return (ret);
+}
+
+
+static t_cmd	*parse_pipe(char **out_str_ptr, char *str_end)
 {
 	t_cmd	*cmd;
 
