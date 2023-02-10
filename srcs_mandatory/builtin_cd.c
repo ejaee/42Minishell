@@ -3,18 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 12:00:54 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:09:52 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include "ft_printf.h"
+#include "libft.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-char	*set_buf(char *buf, t_config *config, int *env_flag)
+static char	*set_buf(char *buf, t_config *config, int *env_flag)
 {
 	t_list	*cur;
 	t_env	*env;
@@ -37,7 +40,7 @@ char	*set_buf(char *buf, t_config *config, int *env_flag)
 	return (res);
 }
 
-void	set_fail_cd(char *buf, int env_flag, int output_flag)
+static void	set_fail_cd(char *buf, int env_flag, int output_flag)
 {
 	if (!env_flag)
 	{
