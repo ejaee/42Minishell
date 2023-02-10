@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ejachoi <ejachoi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:47:08 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/01 15:26:47 by ejachoi          ###   ########.fr       */
+/*   Updated: 2023/02/09 22:48:28 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,6 @@ void		ft_free_split(char ***outarr_p);
 char		**ft_split_one_cstm(char const *s, char c);
 long long	ft_atolld(const char *str);
 size_t		ft_strnumlen(const char *s);
-void	ft_d_lstadd_back(t_list **lst, t_list *new);
+void		ft_d_lstadd_back(t_list **lst, t_list *new);
 
 #endif

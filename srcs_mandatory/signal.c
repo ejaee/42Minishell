@@ -6,18 +6,21 @@
 /*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:38:52 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 07:56:47 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 15:47:14 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "libft.h"
+#include "ft_printf.h"
 #include "minishell.h"
 
-void	set_son_signal(void)
-{
-	signal(SIGQUIT, SIG_DFL);
-}
-
-void	sig_ctrl_c(int signal)
+static void	sig_ctrl_c(int signal)
 {
 	int	pid;
 
@@ -32,11 +35,12 @@ void	sig_ctrl_c(int signal)
 			ft_putstr_fd("\n", STDOUT_FILENO);
 			rl_redisplay();
 		}
-		else
-		{
-			ft_putstr_fd("\n", STDOUT_FILENO);
-		}
 	}
+}
+
+void	set_son_signal(void)
+{
+	signal(SIGQUIT, SIG_DFL);
 }
 
 void	set_signal(void)

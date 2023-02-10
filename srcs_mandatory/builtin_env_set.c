@@ -3,16 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env_set.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 16:26:27 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:50:14 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:12:49 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include "ft_printf.h"
+#include "libft.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
+
+static void	set_fail_exit_code(char *buf, int output_flag)
+{
+	if (output_flag)
+	{
+		ft_fprintf(STDERR_FILENO, RED"%s: export: `%s': %s\n"RESET, \
+		PROMPT_NAME, buf, ERR_EXPORT);
+		exit(1);
+	}
+	g_exit_code = 1;
+}
 
 t_list	*get_env_list(t_list *env_list, char *env_key)
 {
@@ -50,17 +64,6 @@ int	set_env_list(t_list *env_list, char *env_key, char *new_value)
 	}
 	cur_env = NULL;
 	return (1);
-}
-
-void	set_fail_exit_code(char *buf, int output_flag)
-{
-	if (output_flag)
-	{
-		ft_fprintf(STDERR_FILENO, RED"%s: export: `%s': %s\n"RESET, \
-		PROMPT_NAME, buf, ERR_EXPORT);
-		exit(1);
-	}
-	g_exit_code = 1;
 }
 
 int	builtin_export(char *buf, t_config *config, int output_flag)

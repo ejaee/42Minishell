@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 13:10:26 by ilhna             #+#    #+#             */
-/*   Updated: 2023/01/30 14:08:34 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/09 22:54:18 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define NULL_STR -6
 # define ADDR_LEN 17
 
-typedef struct	vars
+typedef struct s_vars
 {
 	int	len;
 	int	idx;

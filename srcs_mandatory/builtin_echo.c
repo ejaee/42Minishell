@@ -3,18 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 15:25:58 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/08 08:42:35 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:04:27 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+#include "ft_printf.h"
 #include "minishell.h"
 
 extern int	g_exit_code;
 
-int	count_env_key_length(char *str)
+static int	count_env_key_length(char *str)
 {
 	int	count;
 
@@ -27,7 +29,7 @@ int	count_env_key_length(char *str)
 	return (count);
 }
 
-int	check_env_echo(char *str, t_config *config)
+static int	check_env_echo(char *str, t_config *config)
 {
 	t_list	*cur;
 	t_env	*env;
@@ -55,7 +57,7 @@ int	check_env_echo(char *str, t_config *config)
 	return (idx_count);
 }
 
-int	check_opt_flag(char *str, int *idx)
+static int	check_opt_flag(char *str, int *idx)
 {
 	if (ft_strnstr(str, "-n", 3))
 	{
@@ -65,12 +67,13 @@ int	check_opt_flag(char *str, int *idx)
 	return (0);
 }
 
-void	print_env_echo(char *str, int *jdx, t_config *config)
+static void	print_env_echo(char *str, int *jdx, t_config *config, int idx)
 {
 	int	moving_jdx;
 
 	moving_jdx = 0;
-	if (*(str + (*jdx + 1)) && *(str + (*jdx + 1)) != '$')
+	if (*(str + (*jdx + 1)) && *(str + (*jdx + 1)) != '$' && \
+		config->quote_list[idx] != '\'')
 	{
 		moving_jdx = check_env_echo(str + (*jdx + 1), config);
 		*jdx += moving_jdx;
@@ -95,7 +98,7 @@ int	builtin_echo(char *const argv[], t_config *config)
 		while (argv[idx][++jdx])
 		{
 			if (argv[idx][jdx] == '$')
-				print_env_echo(argv[idx], &jdx, config);
+				print_env_echo(argv[idx], &jdx, config, idx);
 			else
 				ft_putchar_fd(argv[idx][jdx], STDOUT_FILENO);
 		}

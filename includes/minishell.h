@@ -6,60 +6,23 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 03:07:46 by ilhna            ###   ########.fr       */
-
+/*   Updated: 2023/02/10 15:17:25 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-/* Parsed command representation */
+# include "libft.h"
 
+/* Parsed command representation */
 # define EXEC 1
 # define REDIR 2
 # define PIPE 3
-# define BACK 5
 
 # define MAXARGS 10
 
-struct	cmd
-{
-	int	type;
-};
-
-struct execcmd
-{
-	int		type;
-	char	*argv[MAXARGS];
-	char	*eargv[MAXARGS];
-};
-
-struct redircmd
-{
-	int			type;
-	struct cmd	*cmd;
-	char		*file;
-	char		*efile;
-	int			mode;
-	int			fd;
-};
-
-struct pipecmd
-{
-	int			type;
-	struct cmd	*left;
-	struct cmd	*right;
-};
-
-struct backcmd
-{
-	int			type;
-	struct cmd	*cmd;
-};
-
 /* color */
-
 # define RED	"\x1b[31m"
 # define GREEN	"\x1b[32m"
 # define YELLOW	"\x1b[33m"
@@ -70,22 +33,14 @@ struct backcmd
 # define RESET	"\x1b[0m"
 
 /* string */
-
-# define PROMPT BROWN"M O N G S H E L L$ "RESET
+# define PROMPT "M O N G S H E L L$ "
 # define PROMPT_NAME "M O N G S H E L L"
 
 # define ERR_EXIT_MANY_ARGS "exit: too many arguments"
 # define ERR_EXIT_NUMERIC "numeric argument required"
 # define ERR_CD "No such file or directory"
+# define ERR_CMD "command not found"
 # define ERR_EXPORT "not a valid identifier"
-
-# define WHITE_SPACE " \t\r\n\v"
-
-/* flag */
-
-# define PERMISSION 1
-# define PERMISSION_DENIED 0
-
 # define ERR_PIPE "Failed to pipe()"
 # define ERR_FORK "Failed to fork()"
 # define ERR_OPEN "Failed to open()"
@@ -93,37 +48,55 @@ struct backcmd
 # define ERR_DUP2 "Failed to dup2()"
 # define ERR_WAITPID "Failed to waitpid()"
 # define ERR_MALLOC "Failed to malloc()"
+# define WHITE_SPACE " \t\r\n\v"
+# define SYMBOLS "<|>&()"
 
-# include <fcntl.h>
-# include <signal.h>
-# include <stddef.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <sys/_types/_pid_t.h>
-# include <sys/stat.h>
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <limits.h>
-# include <stdbool.h>
-# include <sys/param.h>
-# include "libft.h"
-# include "ft_printf.h"
+/* flag */
+# define PERMISSION 1
+# define PERMISSION_DENIED 0
+
+
+typedef struct s_cmd
+{
+	int	type;
+}				t_cmd;
+
+typedef struct s_execcmd
+{
+	int		type;
+	char	*argv[MAXARGS];
+	char	*eargv[MAXARGS];
+}				t_execcmd;
+
+typedef struct s_redircmd
+{
+	int		type;
+	t_cmd	*cmd;
+	char	*file;
+	char	*efile;
+	int		mode;
+	int		fd;
+}				t_redircmd;
+
+typedef struct s_pipecmd
+{
+	int		type;
+	t_cmd	*left;
+	t_cmd	*right;
+}				t_pipecmd;
 
 typedef struct s_env
 {
 	char	*key;
 	char	*value;
-}	t_env;
+}				t_env;
 
 typedef struct s_config
 {
 	t_list	*head;
 	t_list	*tail;
-}	t_config;
+	char	quote_list[MAXARGS];
+}				t_config;
 
 typedef struct s_idxs
 {
@@ -164,7 +137,6 @@ int		builtin_unset(char *const buf, t_config *config, int flag);
 int		builtin_exit(char *const argv[], int flag);
 
 /* builtin_func.c */
-int		builtin_pwd(void);
 int		builtin_env(char *buf, t_config config, int export_flag);
 int		builtin_func(char *buf, char **argv, t_config *config);
 
@@ -172,26 +144,49 @@ int		builtin_func(char *buf, char **argv, t_config *config);
 void	load_config(t_config *config, char **envp);
 
 /* main.c */
-int skip_space_check_toks(char **out_ps, char *str_end, char *toks);
+int		skip_space_check_toks(char **out_ps, char *str_end, char *toks);
 
 /* new_env */
 t_env	*new_env(const char	*env);
 
+/* generate)cmd */
+t_cmd	*init_execcmd(void);
+t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode);
+t_cmd	*pipecmd(t_cmd *left, t_cmd *right);
+
+/* parse_cmd */
+t_cmd	*parse_cmd(char *str);
+
 /* parse_quote */
-int	parse_quote(char *buf);
+int		parse_quote(char *buf);
+
+/* runcmd */
+void	runcmd(t_cmd *cmd, t_config config);
 
 /* show_shell_logo */
 void	show_shell_logo(void);
 
 /* signals.c */
-void	set_son_signal();
-void	sig_ctrl_c(int signal);
-void	set_signal();
+void	set_son_signal(void);
+void	set_signal(void);
 
 /* utils.c */
 void	free_split(char **str);
 void	ft_del(void *content);
 void	panic(char *s);
+int		skip_space_check_toks(char **out_ps, char *str_end, char *toks);
+
+/* check_buf */
+int		check_buf(char **buf, t_config *config);
+
+/* nulterminate.c */
+t_cmd	*nulterminate(t_cmd *cmd);
+
+/* get_token.c */
+int		get_token(char **out_str_ptr, char *str_end, \
+	char **out_q, char **out_eq);
+
+char	**get_envp(t_list *config_head);
 
 void	remove_heredoc(t_list *hd_head);
 int		add_all_hdoc_node(const char *buf, t_list **out_hd_head);

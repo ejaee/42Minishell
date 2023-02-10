@@ -3,13 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   new_env.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 01:49:55 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/08 08:42:25 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:33:42 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stddef.h>
+#include <stdlib.h>
+#include "libft.h"
 #include "minishell.h"
 
 t_env	*new_env(const char	*env)
