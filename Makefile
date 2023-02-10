@@ -6,7 +6,7 @@
 #    By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 23:39:37 by ilhna             #+#    #+#              #
-#    Updated: 2023/02/10 13:52:40 by ilhna            ###   ########.fr        #
+#    Updated: 2023/02/10 14:28:58 by ilhna            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ generate_cmd.c \
 check_buf.c \
 get_token.c \
 nulterminate.c \
+get_envp.c \
 
 
 OBJS_DIR = ./objs

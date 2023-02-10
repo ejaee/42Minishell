@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 23:53:34 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 13:55:21 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:17:25 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,8 +125,6 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode);
 t_cmd	*pipecmd(t_cmd *left, t_cmd *right);
 
 /* parse_cmd */
-t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end);
-t_cmd	*parse_pipe(char **out_str_ptr, char *str_end);
 t_cmd	*parse_cmd(char *str);
 
 /* parse_quote */
@@ -157,5 +155,7 @@ t_cmd	*nulterminate(t_cmd *cmd);
 /* get_token.c */
 int		get_token(char **out_str_ptr, char *str_end, \
 	char **out_q, char **out_eq);
+
+char	**get_envp(t_list *config_head);
 
 #endif

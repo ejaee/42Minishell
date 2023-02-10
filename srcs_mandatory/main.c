@@ -6,59 +6,20 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/10 13:53:25 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:12:04 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "libft.h"
 #include "minishell.h"
 
 int	g_exit_code = 0;
-
-static void	set_redir(char **str, int *ret)
-{
-	if (**str == '>')
-	{
-		(*str)++;
-		if (**str == '>')
-		{
-			(*str)++;
-			*ret = '+';
-		}
-	}
-	else if (**str == '<')
-	{
-		(*str)++;
-		if (**str == '<')
-		{
-			(*str)++;
-			*ret = 'h';
-		}
-	}
-}
-
-static int	set_token(char **str, char *str_end)
-{
-	int	ret;
-
-	ret = **str;
-	if (**str == '|' || **str == '(' || **str == ')' || \
-		**str == '&')
-		(*str)++;
-	else if (**str == '>' || **str == '<')
-		set_redir(str, &ret);
-	else if (**str != 0)
-	{
-		ret = 'a';
-		while ((*str) < str_end && !ft_strchr(WHITE_SPACE, **str) && \
-			!ft_strchr(SYMBOLS, **str))
-			(*str)++;
-	}
-	return (ret);
-}
 
 int	main(int argc, char **argv, char **envp)
 {

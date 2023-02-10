@@ -6,13 +6,14 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:38:52 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:44:31 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:13:36 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "libft.h"

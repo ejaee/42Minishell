@@ -6,10 +6,11 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 21:05:09 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:40:22 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:13:56 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
 #include "minishell.h"
 
 static void	show_logo_1(void)

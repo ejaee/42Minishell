@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:37:10 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:59:48 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 14:07:31 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ t_cmd	*parse_cmd(char *str)
 	skip_space_check_toks(&str, str_end, "");
 	if (str != str_end)
 	{
-		ft_printf("leftovers: %s\n", str);
+		ft_fprintf(2, "leftovers: %s\n", str);
 		panic("syntax");
 	}
 	nulterminate(cmd);

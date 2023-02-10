@@ -6,13 +6,14 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:19:41 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:40:00 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:22:35 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "libft.h"
 #include "ft_printf.h"
 #include "minishell.h"
@@ -26,8 +27,7 @@ static void	runcmd_exec(t_execcmd *ecmd, t_config *config, int *status)
 		exit(1);
 	result = builtin_func(ecmd->argv[0], ecmd->argv, config);
 	if (result)
-	// TODO execve로 수정필요
-		execv(ecmd->argv[0], ecmd->argv);
+		execve(ecmd->argv[0], ecmd->argv, get_envp(config->head));
 	if (result)
 	{
 		ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
@@ -42,8 +42,7 @@ static void	runcmd_redir(t_redircmd *rcmd, t_config *config)
 	close(rcmd->fd);
 	if (open(rcmd->file, rcmd->mode) < 0)
 	{
-		// TODO fprintf 2로 출력 다른 것도 확인필요
-		ft_printf("open %s failed\n", rcmd->file);
+		ft_fprintf(2, "open %s failed\n", rcmd->file);
 		exit(1);
 	}
 	runcmd(rcmd->cmd, *config);

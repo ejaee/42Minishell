@@ -6,11 +6,12 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 19:00:20 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:09:52 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/10 15:12:44 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <sys/param.h>
 #include "ft_printf.h"
 #include "libft.h"
 #include "minishell.h"
