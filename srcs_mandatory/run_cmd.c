@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:19:41 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 18:26:52 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/19 16:24:31 by choiejae         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void	runcmd(t_cmd *cmd, t_config config)
 	int	status;
 
 	status = 0;
+	set_son_signal();
 	if (cmd == 0)
 		exit(0);
 	if (cmd->type == EXEC)
