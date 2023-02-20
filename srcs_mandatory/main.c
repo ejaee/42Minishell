@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 08:42:51 by choiejae          #+#    #+#             */
-/*   Updated: 2023/02/10 18:15:34 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/20 17:57:02 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@
 #include "minishell.h"
 
 int	g_exit_code = 0;
+
+static void	check_add_history(char *buf)
+{
+	if (*buf != '\0')
+		add_history(buf);
+}
 
 static void	init_setup(int argc, char **argv, t_list **hd_head)
 {
@@ -42,7 +48,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		set_signal();
 		buf = readline(PROMPT);
-		add_history(buf);
+		check_add_history(buf);
 		buf = check_heredoc(buf, &hd_head);
 		if (check_buf(&buf, &config) && *buf != '\n')
 		{
