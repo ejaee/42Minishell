@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:19:41 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 18:26:52 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/20 15:26:05 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	runcmd_redir(t_redircmd *rcmd, t_config *config)
 {
 	rcmd = (t_redircmd *)rcmd;
 	close(rcmd->fd);
-	if (open(rcmd->file, rcmd->mode) < 0)
+	if (open(rcmd->file, rcmd->mode, 0755) < 0)
 	{
 		ft_fprintf(2, "open %s failed\n", rcmd->file);
 		exit(1);
