@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 15:25:58 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 13:04:27 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/20 15:56:04 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ int	builtin_echo(char *const argv[], t_config *config)
 	int	jdx;
 	int	opt_flag;
 
+	if (!argv[1])
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	idx = 0;
 	opt_flag = check_opt_flag(argv[1], &idx);
 	while (argv[++idx])
