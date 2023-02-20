@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: choiejae <choiejae@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:19:41 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/19 16:24:31 by choiejae         ###   ########.fr       */
+/*   Updated: 2023/02/20 16:12:23 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include "ft_printf.h"
 #include "minishell.h"
 
+extern int	g_exit_code;
+
 static void	runcmd_exec(t_execcmd *ecmd, t_config *config, int *status)
 {
 	int	result;
@@ -27,7 +29,16 @@ static void	runcmd_exec(t_execcmd *ecmd, t_config *config, int *status)
 		exit(1);
 	result = builtin_func(ecmd->argv[0], ecmd->argv, config);
 	if (result)
+	{
+		if (ft_strnstr("/bin/expr", ecmd->argv[0], 10))
+		{
+			ecmd->argv[1] = ft_itoa(g_exit_code);
+			ecmd->argv[3] = ft_itoa(g_exit_code);
+		}
 		execve(ecmd->argv[0], ecmd->argv, get_envp(config->head));
+		free(ecmd->argv[1]);
+		free(ecmd->argv[3]);
+	}
 	if (result)
 	{
 		ft_fprintf(STDERR_FILENO, RED"%s: %s: %s\n"RESET, \
