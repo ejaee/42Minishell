@@ -38,42 +38,50 @@ $ ./minishell
 - "command"
 
     $bash-shell: [Run] command
+    
     $mong-shell: [Run] command
 
 - "'command'"
 
     $bash-shell: [Error] bash: 'command': command not found
+    
     $mong-shell: [Error] mong: 'command': command not found
 
 - '"command"'
 
     $bash-shell: [Error] bash: "command": command not found
+    
     $mong-shell: [Error] mong: "command": command not found
 
 
 - ""'command'""
 
     $bash-shell: [Run] command 
+    
     $mong-shell: [Error] mong: 'command': command not found
 
 - ''"command"''
 
     $bash-shell: [Run] command 
+    
     $mong-shell: [Error] mong: "command": command not found
 
 - """'command'"""
 
     $bash-shell: [Error] bash: 'command': command not found
+    
     $mong-shell: [Error] mong: 'command': command not found
 
 - "command
 
     $bash-shell: [Pause] >
+    
     $mong-shell: [Error] fail: Wrong input(quote)
 
 - "'command"'
 
     $bash-shell: [Pause] >
+    
     $mong-shell: [Error] fail: Wrong input(quote)
 
 
@@ -82,26 +90,31 @@ $ ./minishell
 - echo "$key"
 
     $bash-shell: [env] $value
+    
     $mong-shell: [env] $value
 
 - echo '$key'
 
     $bash-shell: [String] $key
+    
     $mong-shell: [String] $key
 
 - echo "'$key'"
 
     $bash-shell: [env] '$value'
+    
     $mong-shell: [env] '$value'
 
 - echo '"$key"'
 
     $bash-shell: [String] "$key"
+    
     $mong-shell: [String] "$key"
 
 - echo '"$key"'
 
     $bash-shell: [env] '$value'
+    
     $mong-shell: [env] '$value'  
 
 - echo "'"$key"'"
@@ -112,6 +125,7 @@ $ ./minishell
 - echo ""'"$key"'""
 
     $bash-shell: [String] "$key"
+    
     $mong-shell: [env] '$value'  
 
 ## **Quote Logic**
