@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 13:50:03 by ilhna             #+#    #+#             */
-/*   Updated: 2023/02/10 15:12:02 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/20 15:27:08 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,7 @@ static void	set_redir(char **str, int *ret)
 		}
 	}
 	else if (**str == '<')
-	{
 		(*str)++;
-		if (**str == '<')
-		{
-			(*str)++;
-			*ret = 'h';
-		}
-	}
 }
 
 static int	set_token(char **str, char *str_end)

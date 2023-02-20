@@ -6,10 +6,11 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:37:10 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 14:07:31 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/20 15:27:07 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -30,11 +31,9 @@ static t_cmd	*parse_redirs(t_cmd *cmd, char **str_ptr, char *str_end)
 		if (tok == '<')
 			cmd = redircmd(cmd, q, eq, O_RDONLY);
 		else if (tok == '>')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT);
+			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC);
 		else if (tok == '+')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT);
-		else if (tok == 'h')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT);
+			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND);
 	}
 	return (cmd);
 }

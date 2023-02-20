@@ -40,7 +40,7 @@ static void	runcmd_redir(t_redircmd *rcmd, t_config *config)
 {
 	rcmd = (t_redircmd *)rcmd;
 	close(rcmd->fd);
-	if (open(rcmd->file, rcmd->mode) < 0)
+	if (open(rcmd->file, rcmd->mode, 0755) < 0)
 	{
 		ft_fprintf(2, "open %s failed\n", rcmd->file);
 		exit(1);
