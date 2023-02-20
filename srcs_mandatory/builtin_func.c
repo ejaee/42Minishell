@@ -6,7 +6,7 @@
 /*   By: ilhna <ilhna@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 18:37:07 by ejachoi           #+#    #+#             */
-/*   Updated: 2023/02/10 15:11:36 by ilhna            ###   ########.fr       */
+/*   Updated: 2023/02/20 17:49:38 by ilhna            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,21 +94,21 @@ int	builtin_func(char *buf, char **argv, t_config *config)
 
 	result = -1;
 	splited_cmd = set_buf_by_process(&buf, argv, &output_flag);
-	if (ft_strnstr("cd", splited_cmd[0], 3))
+	if (ft_strncmp("cd", splited_cmd[0], 3) == 0)
 		result = builtin_cd(splited_cmd[1], config, output_flag);
-	if (ft_strnstr("export", splited_cmd[0], 7))
+	if (ft_strncmp("export", splited_cmd[0], 7) == 0)
 		if (splited_cmd[2] == NULL)
 			result = builtin_export(splited_cmd[1], config, output_flag);
-	if (ft_strnstr("unset", splited_cmd[0], 6))
+	if (ft_strncmp("unset", splited_cmd[0], 6) == 0)
 		if (splited_cmd[2] == NULL)
 			result = builtin_unset(splited_cmd[1], config, output_flag);
-	if (ft_strnstr("exit", splited_cmd[0], 5))
+	if (ft_strncmp("exit", splited_cmd[0], 5) == 0)
 		result = builtin_exit(splited_cmd, output_flag);
-	if (argv && ft_strnstr("echo", splited_cmd[0], 5))
+	if (argv && ft_strncmp("echo", splited_cmd[0], 5) == 0)
 		result = builtin_echo(splited_cmd, config);
-	if (argv && ft_strnstr("env", splited_cmd[0], 4))
+	if (argv && ft_strncmp("env", splited_cmd[0], 4) == 0)
 		result = builtin_env(splited_cmd[1], *config, 0);
-	if (argv && ft_strnstr("pwd", splited_cmd[0], 4))
+	if (argv && ft_strncmp("pwd", splited_cmd[0], 4) == 0)
 		result = builtin_pwd();
 	if (!argv)
 		free_split(splited_cmd);
