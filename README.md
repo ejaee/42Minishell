@@ -11,11 +11,13 @@ Mong-Shell Reference Manual
     
     M O N G S H E L L $
 
+<img src="https://github.com/ejaee/42Minishell/assets/87407504/d2723f69-55ba-4401-8a46-aca17ac6bb6e">
+
+
+
 This project is about creating a simple shell.
 
 learn: a lot about processes and file descriptors.
-
-<img src="https://github.com/ejaee/42Minishell/assets/87407504/d2723f69-55ba-4401-8a46-aca17ac6bb6e">
 
 ### Install
 
